@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "892713210363",
+    "firebase_url": "https://askmeanywhere-35f62.firebaseio.com",
+    "project_id": "askmeanywhere-35f62",
+    "storage_bucket": "askmeanywhere-35f62.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:892713210363:android:26774722cfd100739f7b5e",
+        "android_client_info": {
+          "package_name": "com.tehilafi.ama"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "892713210363-csk0janur3f7j29dvjglg47a8a73mbaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tehilafi.ama",
+            "certificate_hash": "2458cf0c28f79392c9587bf7962fe32b5bb4d877"
+          }
+        },
+        {
+          "client_id": "892713210363-ku088dlm91m5u8oudpqjodm5vshiuslt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8NXulXVShvj6qPsnPWd0ZNhsmcyNsSFA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "892713210363-ku088dlm91m5u8oudpqjodm5vshiuslt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
