@@ -78,9 +78,17 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.FirebaseError;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.File;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -96,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
     DatabaseReference reff1;
     Users users;
     Users chec_users;
-    int flag2=0;
 
 
     @Override
@@ -120,6 +127,11 @@ public class LoginActivity extends AppCompatActivity {
         logIn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                users.setUserName( userName.getText().toString().trim() );
+                users.setPassword( password.getText().toString().trim() );
+                users.setId(Long.parseLong(idUser.getText().toString().trim()));
+                users.setPhone( phone.getText().toString().trim() );
+                users.setScore( score );
                 if (access_location.isChecked())
                     check_acces = true;
                 else
@@ -153,54 +165,55 @@ public class LoginActivity extends AppCompatActivity {
                     check_phone = false;
                 } else
                     check_phone = true;
+                if(!flag&& check_username && check_password  && check_phone && check_acces){
+                reff.child(idUser.getText().toString().trim()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
+                        }
+                        else {
+                            users.setUserName( userName.getText().toString().trim() );
+                            users.setPassword( password.getText().toString().trim() );
+                            users.setId(Long.parseLong(idUser.getText().toString().trim()));
+                            users.setPhone( phone.getText().toString().trim() );
+                            users.setScore( score );
 
-                if( reff.child( idUser.getText().toString().trim() ).getKey()!=null)
-                {
-                    reff1 = reff.child(idUser.getText().toString().trim());
-                    if(reff1.child(phone.getText().toString().trim()).getKey()!=null)
-                    {
-                        Toast.makeText( LoginActivity.this, reff1.child(phone.getText().toString().trim()).toString(), Toast.LENGTH_LONG ).show();
-                        flag2=1;
+                            reff.child( idUser.getText().toString().trim() ).setValue( users );
+                            Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                     if(reff1.child(password.getText().toString().trim()).getKey()!=null)
-                     {
-                          Toast.makeText( LoginActivity.this, reff1.child(password.getText().toString().trim()).toString(), Toast.LENGTH_LONG ).show();
-                          flag2++;
 
-                     }
-                    if(reff1.child(userName.getText().toString().trim()).getKey()!=null)
-                     {
-                             Toast.makeText( LoginActivity.this, reff1.child(userName.getText().toString().trim()).toString(), Toast.LENGTH_LONG ).show();
-                             flag2++;
-                     }
-                     if(flag2==3)
-                    {
-                        Toast.makeText( LoginActivity.this, "you have already sighned", Toast.LENGTH_LONG ).show();
-                        flag=true;
-                        //                  intent = new Intent(LoginActivity.this, .class);
-                        //                  startActivity(intent);
+                });
 
-                    }
-                     else {
 
-                             Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
-                             flag = true;
-                         }
-
-                }
+////Check if any users exist
+////                reff(`users`).limitToFirst(1).once("value", snapshot => {
+////                if (snapshot.exists()){
+////                    console.log("exists!");
+////                    // TODO: Handle that users do exist
+////                    return true;
+////                }
+//
+//                // TODO: Handle that users do not exist
+//})
 
 
                 // if the user dont exists
-                if(!flag && check_username && check_password && check_id && check_phone && check_acces) {
-                    users.setUserName( userName.getText().toString().trim() );
-                    users.setPassword( password.getText().toString().trim() );
-                    users.setId(Long.parseLong(idUser.getText().toString().trim()));
-                    users.setPhone( phone.getText().toString().trim() );
-                    users.setScore( score );
-
-                    reff.child( idUser.getText().toString().trim() ).setValue( users );
-                    Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
+//                if(!flag && check_username && check_password && check_id && check_phone && check_acces) {
+//                    users.setUserName( userName.getText().toString().trim() );
+//                    users.setPassword( password.getText().toString().trim() );
+//                    users.setId(Long.parseLong(idUser.getText().toString().trim()));
+//                    users.setPhone( phone.getText().toString().trim() );
+//                    users.setScore( score );
+//
+//                    reff.child( idUser.getText().toString().trim() ).setValue( users );
+//                    Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
 
 //                    reff1=reff.getParent();
 //                    reff1.child(idUser.getText().toString().trim()).child()
