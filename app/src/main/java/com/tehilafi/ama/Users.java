@@ -5,7 +5,7 @@ public class Users {
     private String password;
     private String phone;
     private String score;
-    private Long id;
+    private int id;
 
     public String getUserName() {
         return userName;
@@ -39,11 +39,11 @@ public class Users {
         this.score = score;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
