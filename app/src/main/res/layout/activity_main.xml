@@ -45,6 +45,29 @@
     </SearchView>
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="400dp"
+        android:layout_marginLeft="320dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/request_location_updates_butten"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:text="Update location" />
+        <Button
+            android:id="@+id/remove_location_updates_butten"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:gravity="center"
+            android:text="Remove updates" />
+
+
+    </LinearLayout>
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginTop="200dp"
