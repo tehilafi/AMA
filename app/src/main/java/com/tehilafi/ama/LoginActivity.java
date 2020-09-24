@@ -3,9 +3,12 @@
 package com.tehilafi.ama;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,17 +16,14 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.FirebaseError;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -33,20 +33,21 @@ public class LoginActivity extends AppCompatActivity {
     private String score;
     private CheckBox access_location;
     private boolean check_acces;
-    private SharedPreferences sp; //  To know who the user is
     private Intent intent;
     private DatabaseReference reff;
     DatabaseReference reff1;
+    Context context1=this;
     Users users;
     Users chec_users;
+
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_login );
-        sp = getSharedPreferences( "MyPref", Context.MODE_PRIVATE );
-
         logIn = findViewById( R.id.logInID );
         userName = findViewById( R.id.userNameID );
         password = findViewById( R.id.passwordID );
@@ -114,10 +115,17 @@ public class LoginActivity extends AppCompatActivity {
                             users.setScore( score );
 
                             reff.child( idUser.getText().toString().trim() ).setValue( users );
+                            SharedPreferences sharedPref = getSharedPreferences("myPref",(Context.MODE_PRIVATE));
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("USERNAME",userName.getText().toString().trim());
+                            editor.putString("PASSWORD",userName.getText().toString().trim());
+                            editor.commit();
+//                            setDefaults("USERNAME",userName.getText().toString().trim(), context1);
+//                            setDefaults("PASSWORD",password.getText().toString().trim(), context1);
                             Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
+                            finish();
                         }
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
+
                     }
 
                     @Override
@@ -133,7 +141,32 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-
+//    private void buildAlertMessageNoGps()
+//    {
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+//                .setCancelable(false)
+//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    public void onClick(final DialogInterface dialog, final int id) {
+//                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+//                    }
+//                })
+//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    public void onClick(final DialogInterface dialog, final int id) {
+//                        dialog.cancel();
+//                    }
+//                });
+//        final AlertDialog alert = builder.create();
+//        alert.show();
+//    }
+//    public void statusCheck() {
+//        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//
+//        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//            buildAlertMessageNoGps();
+//
+//        }
+//    }
     // Function check if ID is valid
     public boolean validId(int idNumber){
         int sum = 0, i = 1;

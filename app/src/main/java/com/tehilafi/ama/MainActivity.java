@@ -6,7 +6,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -20,14 +19,10 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,96 +30,50 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DatabaseReference;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.IOException;
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener, LocationListener, OnMapReadyCallback {
-
+public class MainActivity extends FragmentActivity implements LocationListener, OnMapReadyCallback {
+    private Button btn_location;
     private TextView txv_location;
     private boolean isTrackLocation;
-    private ImageView add_location;
-
 
     LocationManager locationManager;
     GoogleMap mMap;
     SearchView searchView;
     SupportMapFragment mapFragment;
-    // for database
-    DatabaseReference reff;
-    DatabaseReference reff1;
-    Users location;
-    Users chec_users;
-    // for location
-    static MainActivity instance;
-    LocationRequest locationRequest;
-    FusedLocationProviderClient fusedLocationProviderClient;
-
-    public static MainActivity getInstance() {
-        return instance;
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
-        locationManager = (LocationManager) getSystemService( LOCATION_SERVICE );
-
         searchView = findViewById( R.id.search_location );
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById( R.id.google_map );
         mapFragment.getMapAsync( this );
 
+        btn_location = findViewById( R.id.btnLocation );
         txv_location = findViewById( R.id.txvLocation );
         isTrackLocation = false;
 
-        add_location = findViewById( R.id.add_locationID );
-        add_location.setOnClickListener( this );
+        locationManager = (LocationManager) getSystemService( LOCATION_SERVICE );
 
-
-        //Request permission for location
-        instance = this;
-        Dexter.withActivity( this ).withPermission( Manifest.permission.ACCESS_FINE_LOCATION ).withListener( new PermissionListener() {
-
-            @Override
-            public void onPermissionGranted(PermissionGrantedResponse response) {
-                updateLocation();
-            }
-
-            @Override
-            public void onPermissionDenied(PermissionDeniedResponse response) {
-                Toast.makeText( MainActivity.this, "You must accept this location", Toast.LENGTH_SHORT ).show();
-            }
-
-            @Override
-            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-
-            }
-        } ).check();
-
-
-        // location
-
-       /* if (isTrackLocation == false) {
+        if (isTrackLocation == false) {
             if (isPermissionToReadGPSLocationOK()) {
                 // display Last Known Location
                 if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                Toast.makeText(this, "****************showLocation****************", Toast.LENGTH_LONG).show();
                 showLocation( locationManager.getLastKnownLocation( LocationManager.GPS_PROVIDER ) );
-                Toast.makeText(this, "****************after ///////showLocation****************", Toast.LENGTH_LONG).show();
 
                 // start track GPS location as soon as possible or location changed
                 long minTime = 3000;     // minimum time interval between location updates, in milliseconds
@@ -148,27 +97,28 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 //            isTrackLocation = false;
         }
 
-*/
-        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
 
+
+
+
+        searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-
                 String location = searchView.getQuery().toString();
                 List<Address> addressList = null;
 
-                if (location != null || !location.equals( "" )) {
-                    Geocoder geocoder = new Geocoder( MainActivity.this );
-                    try {
-                        addressList = geocoder.getFromLocationName( location, 1 );
+                if(location != null || !location.equals("")){
+                    Geocoder geocoder = new Geocoder(MainActivity.this);
+                    try{
+                        addressList = geocoder.getFromLocationName(location, 1);
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Address address = addressList.get( 0 );
-                    LatLng latLng = new LatLng( address.getLatitude(), address.getLongitude() );
-                    mMap.addMarker( new MarkerOptions().position( latLng ).title( location ) );
-                    mMap.animateCamera( CameraUpdateFactory.newLatLngZoom( latLng, 10 ) );
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(),address.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(location));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
                 }
                 return false;
             }
@@ -180,45 +130,42 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         } );
         mapFragment.getMapAsync( this );
 
-
-    }
-
-    private void updateLocation() {
-        buildLocationRequest();
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient( this );
-        if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        fusedLocationProviderClient.requestLocationUpdates( locationRequest, getPendingIntent() );
-    }
-
-    // create broadcast receiver to update location in background and killed mode
-    private PendingIntent getPendingIntent() {
-        Intent intent = new Intent(this, MyLocationService.class);
-        intent.setAction(MyLocationService.ACTION_PROCESS_UPDATE);
-        return PendingIntent.getBroadcast( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT );
     }
 
 
-
-    private void buildLocationRequest() {
-        locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); // Requests highly accurate locations
-        locationRequest.setInterval( 5000 ); // Set the desired interval for active location updates, in millisecond
-        locationRequest.setFastestInterval( 3000 ); // Explicitly set the fastest interval for location updates
-        locationRequest.setSmallestDisplacement( 10f ); // Set the minimum displacement between location updates in meters
-    }
-
-    // update location in texetView
-    public void updateTextView(final String value)
-    {
-        MainActivity.this.runOnUiThread( new Runnable() {
-            @Override
-            public void run() {
-                txv_location.setText(value);
-            }
-        } );
-    }
+//    @SuppressLint("MissingPermission")
+//    public void trackLocation(View view)
+//    {
+//        if (isTrackLocation == false)
+//        {
+//            if (isPermissionToReadGPSLocationOK())
+//            {
+//                // display Last Known Location
+//                showLocation(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+//
+//                // start track GPS location as soon as possible or location changed
+//                long minTime = 3000;     // minimum time interval between location updates, in milliseconds
+//                float minDistance = 50;  // minimum distance between location updates, in meters
+//                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, (LocationListener) this );
+//
+//                isTrackLocation = true;
+//                btn_location.setText("Stop Track GPS Location");
+//            }
+//            else
+//            {
+//                Toast.makeText(this, "NO GPS or Location Permission!", Toast.LENGTH_SHORT).show();
+//            }
+//
+//        }
+//        else
+//        {
+//            // stop track GPS location
+//            locationManager.removeUpdates( (LocationListener) view );
+//            txv_location.setText("No GPS Location Tracking!");
+//            btn_location.setText("Start Track GPS Location");
+//            isTrackLocation = false;
+//        }
+//    }
 
     private boolean isPermissionToReadGPSLocationOK()
     {
@@ -284,11 +231,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 e.printStackTrace();
             }
 
-            String msg = "Address:" + fullAddress;
-//            String msg = String.format("Latitude: %1$.4f \n Longitude: %2$.4f \n Timestamp: %3$tT",
-//                    location.getLatitude(),
-//                    location.getLongitude(),
-//                    location.getTime()) + "\n\nAddress:\n" + fullAddress;
+            String msg = String.format("Latitude: %1$.4f \n Longitude: %2$.4f \n Timestamp: %3$tT",
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    location.getTime()) + "\n\nAddress:\n" + fullAddress;
 
             txv_location.setText(msg);
         }
@@ -303,14 +249,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onMapReady(GoogleMap googleMap)
     {
         mMap = googleMap;
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        Intent intent = new Intent(MainActivity.this, AskquestionActivity.class);
-        startActivity(intent);
-
     }
 }
 
