@@ -30,9 +30,14 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
-    //implementation 'com.google.firebase:firebase-core:19.4.0' ‏
     implementation 'com.google.firebase:firebase-database:19.4.0'
+
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    // for location
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.karumi:dexter:5.0.0'
+
+
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

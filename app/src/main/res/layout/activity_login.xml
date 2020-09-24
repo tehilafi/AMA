@@ -1,25 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_centerVertical="true"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/logo"
     tools:context=".LoginActivity">
 
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="389dp"
+        android:layout_height="378dp"
+        android:layout_alignTop="@+id/logInID"
+
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-355dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
         <EditText
             android:id="@+id/userNameID"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="10dp"
+            android:layout_height="42dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_logon"
             android:focusable="true"
             android:hint="User Name"
             android:textColorHighlight="#081871"
@@ -29,10 +35,9 @@
         <EditText
             android:id="@+id/passwordID"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="10dp"
+            android:layout_height="42dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_logon"
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
@@ -43,10 +48,9 @@
         <EditText
             android:id="@+id/idID"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="10dp"
+            android:layout_height="42dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_logon"
             android:ems="10"
             android:hint="Id"
             android:inputType="number"
@@ -57,10 +61,9 @@
         <EditText
             android:id="@+id/phoneID"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_marginTop="10dp"
+            android:layout_height="42dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/button_logon"
             android:ems="10"
             android:hint="Phone number"
             android:inputType="phone"
@@ -72,21 +75,24 @@
         <CheckBox
             android:id="@+id/checkBoxID"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="42dp"
+            android:layout_margin="10dp"
+            android:text="Permission to access the location"
             android:textColorHighlight="#081871"
             android:textColorHint="#081871"
-            android:textSize="14dp"
-            android:text="Permission to access the location" />
-
-        <Button
-            android:id="@+id/logInID"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginTop="10dp"
-            android:background="#7C7979"
-            android:text="Log In"
-            android:textColor="#FFFFFF"
             android:textSize="14dp" />
     </LinearLayout>
-</LinearLayout>
+
+    <Button
+        android:id="@+id/logInID"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="12dp"
+        android:layout_marginTop="10dp"
+        android:background="#7C7979"
+        android:text="Log In"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp" />
+
+</RelativeLayout>
