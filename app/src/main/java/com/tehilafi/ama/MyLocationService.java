@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationResult;
@@ -25,12 +26,15 @@ public class MyLocationService extends BroadcastReceiver {
                 {
                     Location location = result.getLastLocation();
                     String location_string = new StringBuilder("" + location.getLatitude()).append("/").append( location.getLongitude()).toString();
+
                     try{
                         // method to update TextView from BroadcastReceiver when app if foreground / background
                         MainActivity.getInstance().updateTextView(location_string);
+                        Log.i( String.valueOf( MyLocationService.this ), "i am eare!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     }catch(Exception e)
                     {
-                        Toast.makeText( context, location_string, Toast.LENGTH_SHORT ).show();
+                        Log.i( String.valueOf( MyLocationService.this ), "i am eare!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!********************");
+                        Toast.makeText( context, location_string, Toast.LENGTH_LONG ).show();
                     }
                 }
             }

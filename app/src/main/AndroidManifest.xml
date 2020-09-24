@@ -30,13 +30,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD7PAR0gdEqFnEokgJTFQLWfpuUG0NdaIw" />
 
+        <receiver
+            android:name=".MyLocationService">
+        </receiver>
+
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
-        <activity
-            android:name=".MainActivity">
-        </activity>
-        <activity android:name=".LoginActivity">
+
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
