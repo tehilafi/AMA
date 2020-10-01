@@ -8,20 +8,20 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class Common {
-    public static final String KEY_REQUESTING_LOCATION_UPDATES="LocationUpdateEnable";
+    public static final String KEY_REQUESTING_LOCATION_UPDATES = "LocationUpdateEnable" ;
 
-    public static String GetLocayionText(Location mLocation) {
-        return mLocation==null?"Unknown Location":new StringBuilder().append(mLocation.getAltitude()).append("/").append(mLocation.getLongitude()).toString();
+    public static String getLocationText(Location mLocation) {
+        return mLocation == null ? "Unknown Location" : new StringBuilder().append(mLocation.getLatitude()).append( "/").append(mLocation.getLongitude()).toString();
     }
 
-    public static CharSequence GetLocayionTitle(MyBackgroundService myBackgroundService) {
-        return String.format("Location update: %1$s", DateFormat.getInstance().format(new Date()));
+    public static CharSequence getLocationTitle(MyBackgroundService myBackgroundService) {
+        return String.format("Location update: %1$s", DateFormat.getDateInstance().format(new Date()));
     }
 
     public static void setLocationRequestingLocationUpdates(Context context, boolean value) {
         PreferenceManager.getDefaultSharedPreferences(context)
-               .edit()
-               .putBoolean(KEY_REQUESTING_LOCATION_UPDATES,value)
+                .edit()
+                .putBoolean(KEY_REQUESTING_LOCATION_UPDATES,value)
                 .apply();
 
     }

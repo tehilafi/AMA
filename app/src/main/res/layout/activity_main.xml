@@ -4,14 +4,31 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context="com.google.android.gms.location.sample.locationupdate">
 
-    <fragment
+
+<fragment
         android:id="@+id/google_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/requesr_location_updates_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="UPDATE LOCATION" />
+    <Button
+        android:id="@+id/remove_location_updates_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="REMOVE UPDATES" />
+    </LinearLayout>
 
     <SearchView
         android:id="@+id/search_location"
@@ -29,17 +46,6 @@
         android:elevation="5dp"
         android:background="@drawable/bg_round">
     </SearchView>
-
-
-
-        <TextView
-            android:id="@+id/txvLocation"
-            android:layout_width="match_parent"
-            android:layout_height="366dp"
-            android:layout_marginTop="100dp"
-            android:gravity="center"
-            android:text="No GPS Location Tracking!"
-            android:textSize="20sp" />
 
 
     <LinearLayout
