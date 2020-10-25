@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@drawable/background"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Title" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName3"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_width="398dp"
+            android:layout_marginLeft="7dp"
+            android:background="#FFFFFFFF"
+            android:inputType="text"
+            android:textColorLink="#000000" />
+
+        <TextView
+            android:id="@+id/textViewContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Content" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_height="336dp"
+            android:scrollbarAlwaysDrawHorizontalTrack="false"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:textColorHint="#000000"
+            android:visibility="visible"
+            android:layout_width="398dp"
+            android:layout_marginLeft="7dp"
+            android:background="#FFFFFFFF"
+            app:boxBackgroundColor="#FFFFFF"
+            app:boxStrokeColor="#009688">
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="#009999"
+            android:src="@drawable/ic_baseline_add_a_photo_24" />
+
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="#009999"
+            android:src="@drawable/ic_baseline_video_addl_24" />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="#009999"
+            android:text="Send" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:scrollbarAlwaysDrawHorizontalTrack="true">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The place" />
+
+        <TextView
+            android:id="@+id/textViewTheLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="43dp"
+            android:text="the location"
+            android:textColor="#000000"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/textViewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Title" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName3"
+            android:layout_height="wrap_content"
+            android:layout_width="398dp"
+            android:layout_marginLeft="7dp"
+            android:background="#FFFFFFFF"
+            android:ems="10"
+            android:inputType="text"
+            android:textColorLink="#000000" />
+
+        <TextView
+            android:id="@+id/textViewContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Content" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="398dp"
+            android:layout_height="336dp"
+            android:background="#FFFFFFFF"
+            android:scrollbarAlwaysDrawHorizontalTrack="false"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:textColorHint="#000000"
+            android:layout_marginLeft="7dp"
+            android:visibility="visible"
+            app:boxStrokeColor="#009688">
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ugent qustion " />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You have the ability to ask an urgent question " />
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="#009999"
+            android:text="Send" />
+    </LinearLayout>
+</LinearLayout>
