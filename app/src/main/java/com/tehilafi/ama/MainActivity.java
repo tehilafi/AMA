@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,8 +25,10 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +60,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import android.util.Log;
+
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -66,6 +71,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     SupportMapFragment mapFragment;
 
     Button requestLocation, removeLocation;
+    ImageView add_location, my_question, questionSentToMe;
+    private static final String TAG = "AskquestionActivity";
+
+
     MyBackgroundService mService = null;
     boolean mBound = false;
     private  final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -100,9 +109,41 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView( R.layout.activity_main );
         instance = this;
         searchView = findViewById( R.id.search_location );
+
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById( R.id.google_map );
         mapFragment.getMapAsync( this );
+        /////////////////////////////////////////////////////////////////////////////////////
+        // Activity transitions
 
+        // Moves to the activity of viewing my previous questions
+        my_question = findViewById( R.id.my_questionID );
+        my_question.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), MyQuestionActivity.class);
+                startActivity(intent);
+            }
+        } );
+
+        //Moves to the window of watching the questions I was asked
+        questionSentToMe = findViewById( R.id.questionSentToMeID );
+        questionSentToMe.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), QuestionSentToMeActivity.class);
+                startActivity(intent);
+            }
+        } );
+
+        // Moves to activity by asking questions by location
+        // for the dialog
+        add_location = findViewById( R.id.add_locationID );
+        add_location.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialog();
+            }
+        } );
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // for teh search location
@@ -178,7 +219,36 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }).check();
 
     }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // for the dialog
+    void showDialog(){
+        LayoutInflater inflater = LayoutInflater.from( this );
+        View view = inflater.inflate(R.layout.activity_askquestion, null );
 
+        Button ask = view.findViewById( R.id.askID);
+        Button viewQ = view.findViewById( R.id.viewID);
+
+        ask.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), AskingActivity.class);
+                startActivity(intent);
+            }
+        } );
+
+        viewQ.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), PreAskingActivity.class);
+                startActivity(intent);
+            }
+        } );
+
+        AlertDialog alertDialog = new AlertDialog.Builder( this ).setView(view).create();
+        alertDialog.show();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onStart() {
@@ -204,9 +274,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             setButtonState(sharedPreferences.getBoolean(Common.KEY_REQUESTING_LOCATION_UPDATES,false));
 
     }
-
-
-
 
     private void setButtonState(boolean isRequestEnable){
         if(isRequestEnable)

@@ -1,0 +1,6 @@
+package com.tehilafi.ama;
+
+import android.app.Activity;
+
+public class ProfilActivity extends Activity {
+}

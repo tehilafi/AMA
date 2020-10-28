@@ -46,6 +46,36 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".AskingActivity">
+        </activity>
+        <activity
+            android:name=".PreAskingActivity">
+        </activity>
+        <activity
+            android:name=".AnswerActivity">
+        </activity>
+        <activity
+            android:name=".AnsweringActivity">
+        </activity>
+        <activity
+            android:name=".MyQuestionActivity">
+        </activity>
+        <activity
+            android:name=".ProfilActivity">
+        </activity>
+        <activity
+            android:name=".QuestionActivity">
+        </activity>
+        <activity
+            android:name=".QuestionSentToMeActivity">
+        </activity>
+        <activity
+            android:name=".ChangProfilActivity">
+        </activity>
+
         <service android:name=".MyBackgroundService"
             android:enabled="true"
             android:exported="true"
