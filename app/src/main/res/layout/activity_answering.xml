@@ -51,26 +51,30 @@
         <ImageButton
             android:id="@+id/imageButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginTop="10dp"
             android:background="#009999"
+            android:alpha="0.50"
             android:src="@drawable/ic_baseline_add_a_photo_24" />
 
         <ImageButton
             android:id="@+id/imageButton2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="35dp"
             android:layout_marginTop="10dp"
             android:background="#009999"
+            android:alpha="0.50"
             android:src="@drawable/ic_baseline_video_addl_24" />
 
         <Button
-            android:id="@+id/button5"
+            android:id="@+id/sendID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
+            android:alpha="0.70"
             android:background="#009999"
-            android:text="Send" />
+            android:text="Send"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

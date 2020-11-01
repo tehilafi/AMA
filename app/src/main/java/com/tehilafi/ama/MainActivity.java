@@ -27,6 +27,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -62,6 +63,8 @@ import java.util.List;
 
 import android.util.Log;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -72,6 +75,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     Button requestLocation, removeLocation;
     ImageView add_location, my_question, questionSentToMe;
+    CircleImageView profile;
     private static final String TAG = "AskquestionActivity";
 
 
@@ -107,6 +111,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
+
+        // Hide the Activity Status Bar
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
         instance = this;
         searchView = findViewById( R.id.search_location );
 
@@ -119,9 +128,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         my_question = findViewById( R.id.my_questionID );
         my_question.setOnClickListener( new View.OnClickListener() {
             @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), MyQuestionActivity.class);
-                startActivity(intent);
+            public void onClick(View view) {
+                showDialogOfmy();
             }
         } );
 
@@ -135,18 +143,27 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         } );
 
-        // Moves to activity by asking questions by location
-        // for the dialog
+        // Moves to activity of asking questions by location
         add_location = findViewById( R.id.add_locationID );
         add_location.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showDialog();
+                showDialogOfAsk();
+            }
+        } );
+
+        // Moves to activity of profile
+        profile = findViewById( R.id.profileID );
+        profile.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), ProfilActivity.class);
+                startActivity(intent);
             }
         } );
 
         ///////////////////////////////////////////////////////////////////////////////////////
-        // for teh search location
+        // for the search location
         searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -154,14 +171,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 List<Address> addressList = null;
 
                 if (location != null || !location.equals( "" )) {
+                    ////////
+                    String fullAddress = "";
+                    ///////
                     Geocoder geocoder = new Geocoder( MainActivity.this );
                     try {
+                       // List<Address> addressesList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+
                         addressList = geocoder.getFromLocationName( location, 1 );
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    Address address = addressList.get( 0 );
+
+                    Address address = addressList.get(0);
+
                     LatLng latLng = new LatLng( address.getLatitude(), address.getLongitude() );
                     mMap.addMarker( new MarkerOptions().position( latLng ).title( location ) );
                     mMap.animateCamera( CameraUpdateFactory.newLatLngZoom( latLng, 10 ) );
@@ -220,8 +244,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
     ////////////////////////////////////////////////////////////////////////////////////////
-    // for the dialog
-    void showDialog(){
+    // for the dialog of ask question
+    void showDialogOfAsk(){
         LayoutInflater inflater = LayoutInflater.from( this );
         View view = inflater.inflate(R.layout.activity_askquestion, null );
 
@@ -248,6 +272,33 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         alertDialog.show();
     }
 
+    // for the dialog of my questions and answers
+    void showDialogOfmy(){
+        LayoutInflater inflater = LayoutInflater.from( this );
+        View view = inflater.inflate(R.layout.activity_my, null );
+
+        Button myQuestions = view.findViewById( R.id.my_questionID);
+        Button myAnswers = view.findViewById( R.id.my_answerID);
+
+        myQuestions.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), MyQuestionActivity.class);
+                startActivity(intent);
+            }
+        } );
+
+        myAnswers.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), MyAnswerActivity.class);
+                startActivity(intent);
+            }
+        } );
+
+        AlertDialog alertDialog = new AlertDialog.Builder( this ).setView(view).create();
+        alertDialog.show();
+    }
     ////////////////////////////////////////////////////////////////////////////////////////
 
     @Override

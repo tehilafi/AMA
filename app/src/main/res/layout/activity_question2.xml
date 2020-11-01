@@ -17,7 +17,6 @@
             android:layout_width="wrap_content"
             android:layout_height="43dp"
             android:text="IKEA rishon lezion"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:textColor="#000000"
             android:textSize="30sp" />
@@ -26,8 +25,8 @@
             android:id="@+id/textViewTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
             android:text="Title" />
 
         <EditText
@@ -44,15 +43,14 @@
             android:id="@+id/textViewContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_marginTop="30dp"
+            android:layout_marginLeft="10dp"
             android:text="Content" />
 
         <EditText
             android:layout_width="390dp"
-            android:layout_height="221dp"
+            android:layout_height="217dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:background="#FFFFFFFF"
             android:scrollbarAlwaysDrawHorizontalTrack="false"
             android:scrollbarAlwaysDrawVerticalTrack="true"
@@ -62,27 +60,15 @@
 
         </EditText>
 
-        <CheckBox
-            android:id="@+id/checkBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="Ugent qustion " />
-
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="You have the ability to ask an urgent question " />
 
         <Button
-            android:id="@+id/sendID"
+            android:id="@+id/viewID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="110dp"
+            android:layout_marginTop="160dp"
             android:alpha="0.70"
             android:background="#009999"
-            android:text="Send" />
+            android:text="ANSWER"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

@@ -16,7 +16,7 @@
 
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="My Questins"
+            android:text="My Answers"
             android:textSize="28sp" />
 
         <TextView
@@ -24,12 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="You asked 1 quastions" />
-        <Button
-            android:id="@+id/btnID"
-            android:alpha="0.01"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:text="You answered 1 answers" />
 
         <ListView
             android:id="@+id/listViewID"

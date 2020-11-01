@@ -13,8 +13,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,18 +27,35 @@ public class MyQuestionActivity extends AppCompatActivity {
 
     ListView listView;
     List<Question> questionList;
+    Button btn;
 
     DatabaseReference usersDBRef;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_my_quastions );
 
+        // Hide the Activity Status Bar
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+        // Hide the Activity  Bar
+        try {
+            this.getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+        }
+        btn = findViewById(R.id.btnID);
+        btn.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), QuestionActivity.class);
+                startActivity(intent);
+            }
+        } );
+
         listView = findViewById(R.id.listViewID);
         questionList = new ArrayList<>();
+
+
 
 
         // list item click event

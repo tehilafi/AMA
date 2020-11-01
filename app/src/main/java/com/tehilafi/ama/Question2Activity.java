@@ -1,22 +1,22 @@
 package com.tehilafi.ama;
 
-
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.maps.SupportMapFragment;
+public class Question2Activity extends AppCompatActivity {
 
-public class PreAskingActivity extends AppCompatActivity {
+    Button viewA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_preasking );
+        setContentView( R.layout.activity_question2 );
 
         // Hide the Activity Status Bar
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
@@ -25,7 +25,13 @@ public class PreAskingActivity extends AppCompatActivity {
             this.getSupportActionBar().hide();
         } catch (NullPointerException e) {
         }
-
-
+        viewA = findViewById(R.id.viewID);
+        viewA.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), AnsweringActivity.class);
+                startActivity(intent);
+            }
+        } );
     }
 }

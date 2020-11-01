@@ -39,7 +39,7 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,7 +47,9 @@
             </intent-filter>
         </activity>
 
-
+        <activity
+            android:name=".MainActivity">
+        </activity>
         <activity
             android:name=".AskingActivity">
         </activity>
@@ -64,10 +66,16 @@
             android:name=".MyQuestionActivity">
         </activity>
         <activity
+            android:name=".MyAnswerActivity">
+        </activity>
+        <activity
             android:name=".ProfilActivity">
         </activity>
         <activity
             android:name=".QuestionActivity">
+        </activity>
+        <activity
+            android:name=".Question2Activity">
         </activity>
         <activity
             android:name=".QuestionSentToMeActivity">

@@ -6,17 +6,24 @@
     android:layout_height="fill_parent"
     android:layout_centerVertical="true"
     android:layout_gravity="center_horizontal"
-    android:background="@drawable/logo"
+    android:background="@drawable/background"
     tools:context=".LoginActivity">
 
-
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="WELCOME TO AMA"
+        android:textSize="24sp"
+        android:textStyle="bold" />
     <LinearLayout
-        android:layout_width="389dp"
-        android:layout_height="378dp"
+        android:layout_width="379dp"
+        android:layout_height="492dp"
         android:layout_alignTop="@+id/logInID"
-
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="-355dp"
+        android:layout_marginTop="-468dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -25,24 +32,27 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_margin="10dp"
-            android:background="@drawable/button_logon"
+            android:alpha="0.50"
+            android:background="#009999"
             android:focusable="true"
             android:hint="User Name"
-            android:textColorHighlight="#081871"
-            android:textColorHint="#081871"
+            android:textColor="#000000"
+            android:textColorHint="#000000"
             android:textSize="14dp" />
+
 
         <EditText
             android:id="@+id/passwordID"
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_margin="10dp"
-            android:background="@drawable/button_logon"
+            android:alpha="0.20"
+            android:background="#7C7979"
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
-            android:textColorHighlight="#081871"
-            android:textColorHint="#081871"
+            android:textColor="#000000"
+            android:textColorHint="#000000"
             android:textSize="14dp" />
 
         <EditText
@@ -50,12 +60,13 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_margin="10dp"
-            android:background="@drawable/button_logon"
+            android:alpha="0.50"
+            android:background="#009999"
             android:ems="10"
             android:hint="Id"
             android:inputType="number"
-            android:textColorHighlight="#081871"
-            android:textColorHint="#081871"
+            android:textColor="#000000"
+            android:textColorHint="#000000"
             android:textSize="14dp" />
 
         <EditText
@@ -63,24 +74,25 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_margin="10dp"
-            android:background="@drawable/button_logon"
+            android:alpha="0.20"
+            android:background="#7C7979"
             android:ems="10"
-            android:hint="Phone number"
-            android:inputType="phone"
-            android:textColorHighlight="#081871"
-            android:textColorHint="#081871"
+            android:hint="Phone"
+            android:inputType="textPassword"
+            android:textColor="#000000"
+            android:textColorHint="#000000"
             android:textSize="14dp" />
 
 
         <CheckBox
             android:id="@+id/checkBoxID"
             android:layout_width="match_parent"
-            android:layout_height="42dp"
+            android:layout_height="75dp"
             android:layout_margin="10dp"
             android:text="Permission to access the location"
-            android:textColorHighlight="#081871"
-            android:textColorHint="#081871"
-            android:textSize="14dp" />
+            android:textColorHighlight="#000000"
+            android:textColorHint="#000000"
+            android:textSize="16dp" />
     </LinearLayout>
 
     <Button
@@ -90,6 +102,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="12dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
         android:background="#7C7979"
         android:text="Log In"
         android:textColor="#FFFFFF"

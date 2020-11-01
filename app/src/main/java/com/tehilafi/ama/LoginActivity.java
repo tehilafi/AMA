@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -41,20 +42,28 @@ public class LoginActivity extends AppCompatActivity {
     Users chec_users;
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_login );
+
+        // Hide the Activity Status Bar
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // Hide the Activity  Bar
+        try
+        {
+            this.getSupportActionBar().hide();
+        }
+        catch (NullPointerException e){}
+
+
+
         logIn = findViewById( R.id.logInID );
         userName = findViewById( R.id.userNameID );
         password = findViewById( R.id.passwordID );
         idUser = findViewById( R.id.idID );
         phone = findViewById( R.id.phoneID );
         access_location = findViewById( R.id.checkBoxID );
-
 
         users = new Users();
         chec_users=new Users();
@@ -94,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                         check_id = true;
                     else
                         check_id = false;
+                    check_id = true;
                 }
                 if (phone.getText().toString().equals( "" )) {
                     Toast.makeText( LoginActivity.this, "Missing phone", Toast.LENGTH_LONG ).show();
@@ -101,11 +111,13 @@ public class LoginActivity extends AppCompatActivity {
                 } else
                     check_phone = true;
                 if(!flag&& check_username && check_password  && check_phone && check_acces && check_id){
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
                 reff.child(idUser.getText().toString().trim()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
                         if (snapshot.exists()) {
-                            Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
+                           // Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
                         }
                         else {
                             users.setUserName( userName.getText().toString().trim() );
@@ -132,7 +144,6 @@ public class LoginActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-
                 });
 
                 }
@@ -141,32 +152,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-//    private void buildAlertMessageNoGps()
-//    {
-//        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-//                .setCancelable(false)
-//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                    public void onClick(final DialogInterface dialog, final int id) {
-//                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-//                    }
-//                })
-//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-//                    public void onClick(final DialogInterface dialog, final int id) {
-//                        dialog.cancel();
-//                    }
-//                });
-//        final AlertDialog alert = builder.create();
-//        alert.show();
-//    }
-//    public void statusCheck() {
-//        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//
-//        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//            buildAlertMessageNoGps();
-//
-//        }
-//    }
+
     // Function check if ID is valid
     public boolean validId(int idNumber){
         int sum = 0, i = 1;

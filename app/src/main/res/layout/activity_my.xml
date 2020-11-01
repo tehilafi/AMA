@@ -15,29 +15,29 @@
         <TextView
             android:id="@+id/textView6"
             android:layout_width="370dp"
-            android:layout_height="78dp"
+            android:layout_height="67dp"
             android:layout_gravity="center"
             android:layout_margin="30dp"
             android:gravity="center"
-            android:text="Ask a question or view previous questions and answers"
-            android:textSize="20sp" />
+            android:text="My questions and answers"
+            android:textSize="24sp" />
 
         <Button
-            android:id="@+id/askID"
+            android:id="@+id/my_questionID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0.70"
             android:background="#009999"
-            android:text="Ask Question" />
+            android:text="My Questions" />
 
         <Button
-            android:id="@+id/viewID"
+            android:id="@+id/my_answerID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:alpha="0.70"
             android:background="#009999"
-            android:text="View Previous Questions And Answers" />
+            android:text="My Answers" />
 
     </LinearLayout>
 
