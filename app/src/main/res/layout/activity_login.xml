@@ -83,7 +83,6 @@
             android:textColorHint="#000000"
             android:textSize="14dp" />
 
-
         <CheckBox
             android:id="@+id/checkBoxID"
             android:layout_width="match_parent"
@@ -107,5 +106,11 @@
         android:text="Log In"
         android:textColor="#FFFFFF"
         android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/logUpID"
+        android:layout_width="215dp"
+        android:layout_height="93dp"
+        android:text="log Up" />
 
 </RelativeLayout>

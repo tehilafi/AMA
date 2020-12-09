@@ -3,7 +3,9 @@ package com.tehilafi.ama;
 public class Question {
     private int numQuestion;
     private int idAsking;
-    private String question;
+    private String titleQuestion;
+    private String contentQuestion;
+    private Boolean ugentQuestion;
     private String location;
 
     public Question(){
@@ -17,8 +19,16 @@ public class Question {
         return idAsking;
     }
 
-    public String getQuestion() {
-        return question;
+    public String getTitleQuestion() {
+        return titleQuestion;
+    }
+
+    public String getContentQuestion() {
+        return contentQuestion;
+    }
+
+    public Boolean getUgentQuestion() {
+        return ugentQuestion;
     }
 
     public String getLocation() {
@@ -33,11 +43,20 @@ public class Question {
         this.idAsking = idAsking;
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setTitleQuestion(String titleQuestion) {
+        this.titleQuestion = titleQuestion;
+    }
+
+    public void setContentQuestion(String contentQuestion) {
+        this.contentQuestion = contentQuestion;
+    }
+
+    public void setUgentQuestion(Boolean ugentQuestion) {
+        this.ugentQuestion = ugentQuestion;
     }
 
     public void setLocation(String location) {
         this.location = location;
     }
+
 }

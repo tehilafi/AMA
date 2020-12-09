@@ -43,6 +43,7 @@
             android:text=" Questions you answered"
             android:textSize="20sp" />
 
+
         <ListView
             android:id="@+id/listView2ID"
             android:layout_width="wrap_content"

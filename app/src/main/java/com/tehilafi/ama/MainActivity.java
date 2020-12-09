@@ -1,5 +1,6 @@
 package com.tehilafi.ama;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -44,6 +45,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -66,12 +69,17 @@ import android.util.Log;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener{
-
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener {
 
     GoogleMap mMap;
     SearchView searchView;
     SupportMapFragment mapFragment;
+
+    Location currentLocation, currentLoc;
+    FusedLocationProviderClient fusedLocationProviderClient;
+    private static final int REQUEST_CODE = 101;
+    static MainActivity instance;
+    LocationRequest locationRequest;
 
     Button requestLocation, removeLocation;
     ImageView add_location, my_question, questionSentToMe;
@@ -79,13 +87,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = "AskquestionActivity";
 
 
-    MyBackgroundService mService = null;
+    MyBackgroundService mService;// = null;
     boolean mBound = false;
-    private  final ServiceConnection mServiceConnection = new ServiceConnection() {
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 
-            MyBackgroundService.LocalBinder binder = (MyBackgroundService.LocalBinder)iBinder;
+            MyBackgroundService.LocalBinder binder = (MyBackgroundService.LocalBinder) iBinder;
             mService = binder.getService();
             mBound = true;
         }
@@ -97,12 +105,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     };
 
-
-
-    static MainActivity instance;
-    LocationRequest locationRequest;
-    FusedLocationProviderClient fusedLocationProviderClient;
-
     public static MainActivity getInstance() {
         return instance;
     }
@@ -113,8 +115,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView( R.layout.activity_main );
 
         // Hide the Activity Status Bar
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient( this );
+        fetchLastLocation();
 
         instance = this;
         searchView = findViewById( R.id.search_location );
@@ -133,15 +137,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         } );
 
-        //Moves to the window of watching the questions I was asked
-        questionSentToMe = findViewById( R.id.questionSentToMeID );
-        questionSentToMe.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), QuestionSentToMeActivity.class);
-                startActivity(intent);
-            }
-        } );
+        // Moves to the activity of watching the questions I was asked
+//        questionSentToMe = findViewById( R.id.questionSentToMeID );
+//        questionSentToMe.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(android.view.View view) {
+//                Intent intent = new Intent(getBaseContext(), QuestionSentToMeActivity.class);
+//                startActivity(intent);
+//            }
+//        } );
 
         // Moves to activity of asking questions by location
         add_location = findViewById( R.id.add_locationID );
@@ -153,14 +157,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         } );
 
         // Moves to activity of profile
-        profile = findViewById( R.id.profileID );
-        profile.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), ProfilActivity.class);
-                startActivity(intent);
-            }
-        } );
+//        profile = findViewById( R.id.profileID );
+//        profile.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(android.view.View view) {
+//                Intent intent = new Intent(getBaseContext(), ProfilActivity.class);
+//                startActivity(intent);
+//            }
+//        } );
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // for the search location
@@ -171,21 +175,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 List<Address> addressList = null;
 
                 if (location != null || !location.equals( "" )) {
-                    ////////
-                    String fullAddress = "";
-                    ///////
                     Geocoder geocoder = new Geocoder( MainActivity.this );
                     try {
-                       // List<Address> addressesList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
                         addressList = geocoder.getFromLocationName( location, 1 );
-
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    Address address = addressList.get(0);
-
+                    Address address = addressList.get( 0 );
                     LatLng latLng = new LatLng( address.getLatitude(), address.getLongitude() );
                     mMap.addMarker( new MarkerOptions().position( latLng ).title( location ) );
                     mMap.animateCamera( CameraUpdateFactory.newLatLngZoom( latLng, 10 ) );
@@ -202,18 +198,17 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         ///////////////////////////////////////////////////////////////////////////////////////
 
 
-        Dexter.withActivity(this).withPermissions( Arrays.asList(
+        Dexter.withActivity( this ).withPermissions( Arrays.asList(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-        ))
-                .withListener(new MultiplePermissionsListener()
-                {
+        ) )
+                .withListener( new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
 
-                        requestLocation = (Button)findViewById( R.id.requesr_location_updates_button );
-                        removeLocation = (Button)findViewById( R.id.remove_location_updates_button );
+                        requestLocation = (Button) findViewById( R.id.requesr_location_updates_button );
+                        removeLocation = (Button) findViewById( R.id.remove_location_updates_button );
 
                         requestLocation.setOnClickListener( new View.OnClickListener() {
                             @Override
@@ -228,11 +223,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         } );
 
-                        setButtonState(Common.requestingLocationUpdates(MainActivity.this));
-                        bindService(new Intent(MainActivity.this,
-                                        MyBackgroundService.class),
+                        setButtonState( Common.requestingLocationUpdates( MainActivity.this ) );
+                        bindService( new Intent( MainActivity.this,
+                                        MyBackgroundService.class ),
                                 mServiceConnection,
-                                Context.BIND_AUTO_CREATE);
+                                Context.BIND_AUTO_CREATE );
                     }
 
 
@@ -240,9 +235,30 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
 
                     }
-                }).check();
+                } ).check();
 
     }
+
+    // To see the current location on the map
+    private void fetchLastLocation() {
+        if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            return;
+        }
+        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        task.addOnSuccessListener( new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if(location != null){
+                    currentLocation = location;
+                   // Toast.makeText(getApplicationContext(),"!!!!!!!!!!" +  currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+                    SupportMapFragment supportMapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.google_map);
+                    supportMapFragment.getMapAsync(MainActivity.this);
+                }
+            }
+        });
+    }
+
     ////////////////////////////////////////////////////////////////////////////////////////
     // for the dialog of ask question
     void showDialogOfAsk(){
@@ -299,7 +315,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         AlertDialog alertDialog = new AlertDialog.Builder( this ).setView(view).create();
         alertDialog.show();
     }
-    ////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onStart() {
@@ -355,7 +371,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap)
     {
         mMap = googleMap;
+
+       // Toast.makeText(getApplicationContext(),"****" +  currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+
+        LatLng latLng = new LatLng(40.714086, -78.228697); //new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("I am Here");
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5));
+        mMap.addMarker(markerOptions);
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case REQUEST_CODE:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    fetchLastLocation();
+                }
+                break;
+        }
+    }
 }

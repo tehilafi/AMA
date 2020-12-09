@@ -9,16 +9,15 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <TextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/textViewTitleID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Title" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName3"
+            android:id="@+id/titleID"
             android:layout_height="wrap_content"
             android:ems="10"
             android:layout_width="398dp"
@@ -28,28 +27,49 @@
             android:textColorLink="#000000" />
 
         <TextView
-            android:id="@+id/textViewContent"
+            android:id="@+id/ContentID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="Content" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_height="336dp"
+            android:layout_width="395dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="7dp"
+            android:background="#FFFFFFFF"
             android:scrollbarAlwaysDrawHorizontalTrack="false"
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:textColorHint="#000000"
             android:visibility="visible"
-            android:layout_width="398dp"
-            android:layout_marginLeft="7dp"
-            android:background="#FFFFFFFF"
             app:boxBackgroundColor="#FFFFFF"
             app:boxStrokeColor="#009688">
 
+
         </com.google.android.material.textfield.TextInputLayout>
 
-        <ImageButton
-            android:id="@+id/imageButton"
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="343dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/imageView1ID"
+                android:layout_width="match_parent"
+                android:layout_height="289dp"
+                android:layout_weight="1"></ImageView>
+
+            <VideoView
+                android:id="@+id/videoView1ID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageButtonID"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
@@ -58,7 +78,7 @@
             android:src="@drawable/ic_baseline_add_a_photo_24" />
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/videoButtonID"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"

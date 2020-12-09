@@ -1,7 +1,4 @@
-
-
 package com.tehilafi.ama;
-
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -10,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -20,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText password, userName, idUser, phone;
     private String score;
     private CheckBox access_location;
-    private boolean check_acces;
     private Intent intent;
     private DatabaseReference reff;
     DatabaseReference reff1;
@@ -57,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
         catch (NullPointerException e){}
 
 
-
         logIn = findViewById( R.id.logInID );
         userName = findViewById( R.id.userNameID );
         password = findViewById( R.id.passwordID );
@@ -77,14 +74,10 @@ public class LoginActivity extends AppCompatActivity {
                 users.setId(Integer.parseInt(idUser.getText().toString().trim()));
                 users.setPhone( phone.getText().toString().trim() );
                 users.setScore( score );
-                if (access_location.isChecked())
-                    check_acces = true;
-                else
-                    check_acces = false;
-                boolean flag = false, check_username, check_password, check_id, check_phone;
+
+                boolean check_username, check_password, check_id, check_phone;
 
                 //If one of the details is missing:
-
                 if (userName.getText().toString().equals( "" )) {
                     Toast.makeText( LoginActivity.this, "Missing userName", Toast.LENGTH_LONG ).show();
                     check_username = false;
@@ -103,23 +96,26 @@ public class LoginActivity extends AppCompatActivity {
                         check_id = true;
                     else
                         check_id = false;
-                    check_id = true;
                 }
                 if (phone.getText().toString().equals( "" )) {
                     Toast.makeText( LoginActivity.this, "Missing phone", Toast.LENGTH_LONG ).show();
                     check_phone = false;
                 } else
                     check_phone = true;
-                if(!flag&& check_username && check_password  && check_phone && check_acces && check_id){
-                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                    startActivity(intent);
-                reff.child(idUser.getText().toString().trim()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                if(check_username && check_password  && check_phone && check_id){
+
+                    reff.child(idUser.getText().toString().trim()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot snapshot) {
+                    public void onDataChange(DataSnapshot snapshot){
                         if (snapshot.exists()) {
-                           // Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
+                           Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
                         }
+                        // Save the data to db if the id is dosent exists
                         else {
+                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                            startActivity(intent);
+
                             users.setUserName( userName.getText().toString().trim() );
                             users.setPassword( password.getText().toString().trim() );
                             users.setId(Integer.parseInt(idUser.getText().toString().trim()));
@@ -144,10 +140,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {
 
                     }
-                });
-
+                    });
                 }
-
+                else
+                    Toast.makeText(LoginActivity.this, "אחד דהפרטים לא נכונים", Toast.LENGTH_LONG).show();
             }
         });
 

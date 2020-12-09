@@ -76,8 +76,8 @@ public class MyQuestionActivity extends AppCompatActivity {
                     Question question = userDatasnap.getValue(Question.class);
                     questionList.add(question);
                 }
-                ListAdapter adapter = new ListAdapter(MyQuestionActivity.this, questionList);
-                listView.setAdapter(adapter);
+//                ListAdapter adapter = new ListAdapter(MyQuestionActivity.this, questionList);
+//                listView.setAdapter(adapter);
             }
 
             @Override
