@@ -74,20 +74,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     GoogleMap mMap;
     SearchView searchView;
     SupportMapFragment mapFragment;
-
     Location currentLocation, currentLoc;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
     static MainActivity instance;
     LocationRequest locationRequest;
 
+    private static final String KEY_locatoin = "q_location";
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+
+    String locationToAddQuestion;
+    String id_user;
+
     Button requestLocation, removeLocation;
     ImageView add_location, my_question, questionSentToMe;
     CircleImageView profile;
-    private static final String TAG = "AskquestionActivity";
 
-
-    MyBackgroundService mService;// = null;
+    //MyBackgroundService mService
+    MyBackgroundService mService = null;
     boolean mBound = false;
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
@@ -117,14 +122,38 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // Hide the Activity Status Bar
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
+        /// to first time of login the app
+        Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                .getBoolean("isFirstRun", true);
+
+        if (isFirstRun) {
+            //show start activity
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            Toast.makeText(MainActivity.this, "First Run", Toast.LENGTH_LONG)
+                    .show();
+            /// to first time of login the app
+        }
+
+
+        getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
+                .putBoolean("isFirstRun", false).commit();
+
+        String id;
+        id = getIntent().getStringExtra("Extra id");
+        Toast.makeText(MainActivity.this, id, Toast.LENGTH_LONG);
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient( this );
         fetchLastLocation();
 
         instance = this;
         searchView = findViewById( R.id.search_location );
 
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
+
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById( R.id.google_map );
         mapFragment.getMapAsync( this );
+
         /////////////////////////////////////////////////////////////////////////////////////
         // Activity transitions
 
@@ -138,33 +167,24 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         } );
 
         // Moves to the activity of watching the questions I was asked
-//        questionSentToMe = findViewById( R.id.questionSentToMeID );
-//        questionSentToMe.setOnClickListener( new View.OnClickListener() {
-//            @Override
-//            public void onClick(android.view.View view) {
-//                Intent intent = new Intent(getBaseContext(), QuestionSentToMeActivity.class);
-//                startActivity(intent);
-//            }
-//        } );
-
-        // Moves to activity of asking questions by location
-        add_location = findViewById( R.id.add_locationID );
-        add_location.setOnClickListener( new View.OnClickListener() {
+        questionSentToMe = findViewById( R.id.questionSentToMeID );
+        questionSentToMe.setOnClickListener( new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                showDialogOfAsk();
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), QuestionSentToMeActivity.class);
+                startActivity(intent);
             }
         } );
 
         // Moves to activity of profile
-//        profile = findViewById( R.id.profileID );
-//        profile.setOnClickListener( new View.OnClickListener() {
-//            @Override
-//            public void onClick(android.view.View view) {
-//                Intent intent = new Intent(getBaseContext(), ProfilActivity.class);
-//                startActivity(intent);
-//            }
-//        } );
+        profile = findViewById( R.id.profileID );
+        profile.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), ProfilActivity.class);
+                startActivity(intent);
+            }
+        } );
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // for the search location
@@ -183,19 +203,41 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                     Address address = addressList.get( 0 );
                     LatLng latLng = new LatLng( address.getLatitude(), address.getLongitude() );
+                    String latLngString = String.valueOf(latLng);
+                    Toast.makeText(getApplicationContext(),"****"+ latLng +"latLngString" , Toast.LENGTH_LONG).show();
+                    mEditor.putString(getString(R.string.location), latLngString);
+                    mEditor.commit();
+
                     mMap.addMarker( new MarkerOptions().position( latLng ).title( location ) );
                     mMap.animateCamera( CameraUpdateFactory.newLatLngZoom( latLng, 10 ) );
+
+                    locationToAddQuestion = location;
                 }
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
             }
         } );
+
         mapFragment.getMapAsync( this );
         ///////////////////////////////////////////////////////////////////////////////////////
+        // Moves to activity of asking questions by location
+        add_location = findViewById( R.id.add_locationID );
+        add_location.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
+                    Intent intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                    intent.putExtra( "Extra locations", locationToAddQuestion);
+                    intent.putExtra( "Extra id", id_user);
+                    startActivity( intent );
+                }
+                else
+                    Toast.makeText(getApplicationContext(),"Enret locattion", Toast.LENGTH_LONG).show();
+            }
+        } );
 
 
         Dexter.withActivity( this ).withPermissions( Arrays.asList(
@@ -206,6 +248,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 .withListener( new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+
 
                         requestLocation = (Button) findViewById( R.id.requesr_location_updates_button );
                         removeLocation = (Button) findViewById( R.id.remove_location_updates_button );
@@ -225,9 +268,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                         setButtonState( Common.requestingLocationUpdates( MainActivity.this ) );
                         bindService( new Intent( MainActivity.this,
-                                        MyBackgroundService.class ),
-                                mServiceConnection,
-                                Context.BIND_AUTO_CREATE );
+                                        MyBackgroundService.class ), mServiceConnection, Context.BIND_AUTO_CREATE );
                     }
 
 
@@ -251,7 +292,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSuccess(Location location) {
                 if(location != null){
                     currentLocation = location;
-                   // Toast.makeText(getApplicationContext(),"!!!!!!!!!!" +  currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"!!!!!!!!!!" +  currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
                     SupportMapFragment supportMapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.google_map);
                     supportMapFragment.getMapAsync(MainActivity.this);
                 }
@@ -259,36 +300,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-    // for the dialog of ask question
-    void showDialogOfAsk(){
-        LayoutInflater inflater = LayoutInflater.from( this );
-        View view = inflater.inflate(R.layout.activity_askquestion, null );
 
-        Button ask = view.findViewById( R.id.askID);
-        Button viewQ = view.findViewById( R.id.viewID);
 
-        ask.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), AskingActivity.class);
-                startActivity(intent);
-            }
-        } );
-
-        viewQ.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), PreAskingActivity.class);
-                startActivity(intent);
-            }
-        } );
-
-        AlertDialog alertDialog = new AlertDialog.Builder( this ).setView(view).create();
-        alertDialog.show();
-    }
-
-    // for the dialog of my questions and answers
+  //   for the dialog of my questions and answers
     void showDialogOfmy(){
         LayoutInflater inflater = LayoutInflater.from( this );
         View view = inflater.inflate(R.layout.activity_my, null );
@@ -362,7 +376,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     .append( "/" )
                     .append( event.getLocation().getLongitude() )
                     .toString();
+            ////////////////////////////////////////
             Toast.makeText( mService, data, Toast.LENGTH_SHORT ).show();
+            ////////////////////////////////////////
         }
     }
 
@@ -371,14 +387,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap)
     {
         mMap = googleMap;
+//        LatLng latLng = new LatLng(-34, 151); //new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+//        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("I am Here");
+//        mMap.addMarker(markerOptions);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5));
 
-       // Toast.makeText(getApplicationContext(),"****" +  currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_LONG).show();
-
-        LatLng latLng = new LatLng(40.714086, -78.228697); //new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("I am Here");
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5));
-        mMap.addMarker(markerOptions);
     }
 
     @Override

@@ -6,33 +6,13 @@ android:orientation="vertical">
 
 
     <TextView
-        android:id="@+id/txvLocationID"
+        android:id="@+id/txvTitleID"
         android:layout_width="fill_parent"
-        android:layout_height="125dp"
+        android:layout_height="115dp"
         android:layout_gravity="center"
         android:paddingBottom="20dp"
         android:shadowColor="#050505"
         android:textColor="#000000"
         android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/txvtitleID"
-        android:layout_width="fill_parent"
-        android:layout_height="102dp"
-        android:layout_gravity="center"
-        android:paddingBottom="20dp"
-        android:shadowColor="#050505"
-        android:textColor="#000000"
-        android:textSize="10sp" />
-
-    <TextView
-        android:id="@+id/txvtryID"
-        android:layout_width="fill_parent"
-        android:layout_height="118dp"
-        android:layout_gravity="center"
-        android:paddingBottom="20dp"
-        android:shadowColor="#050505"
-        android:textColor="#000000"
-        android:textSize="10sp" />
 
 </LinearLayout>

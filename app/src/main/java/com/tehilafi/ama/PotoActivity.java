@@ -53,11 +53,10 @@ public class PotoActivity extends AppCompatActivity {
     public static final int GALLERY_REQUEST_CODE = 105;
     private static final int REQUEST_TAKE_PHOTO = 1;
 
-    ImageView selectedImage;
+    private ImageView selectedImage;
     Button cameraBtn,galleryBtn;
     private StorageReference storageReference;
     private String currentPhotoPath;
-
 
 
     @Override
@@ -93,7 +92,6 @@ public class PotoActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,new String[] {Manifest.permission.CAMERA}, CAMERA_PERM_CODE);
         }else {
             dispatchTakePictureIntent();
-            //openCamera();
         }
     }
 
@@ -102,16 +100,10 @@ public class PotoActivity extends AppCompatActivity {
         if(requestCode == CAMERA_PERM_CODE){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 dispatchTakePictureIntent();
-                //openCamera();
             }else {
                 Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private void openCamera(){
-        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(camera, CAMERA_REQUEST_CODE);
     }
 
     @Override
@@ -145,33 +137,6 @@ public class PotoActivity extends AppCompatActivity {
             }
         }
     }
-//
-//    //  Updating photos on firebase
-//    private void uploadImageToFirebase(String name , final Uri contentUri) {
-//        final StorageReference image = storageReference.child("pictures/" + name);
-//        image.putFile(contentUri).addOnSuccessListener( new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                image.getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        Log.d("tag", "on  Success: Uploaded image URI is " + uri.toString());
-//
-//
-//                         //Picasso.get().load(uri).into(selectedImage);
-//                        // Picasso.with(contentUri).load(uri).into(selectedImage);
-//                    }
-//                });
-//                Toast.makeText(PotoActivity.this, "Image is uploaded", Toast.LENGTH_SHORT).show();
-//            }
-//        }).addOnFailureListener( new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(PotoActivity.this, "Upload Failled", Toast.LENGTH_SHORT).show();
-//            }
-//        } );
-//    }
-
 
     // Updating photos on firebase
     private void uploadImageToFirebase(final String name , final Uri contentUri) {

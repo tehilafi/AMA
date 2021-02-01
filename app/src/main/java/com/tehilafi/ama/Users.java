@@ -1,11 +1,14 @@
 package com.tehilafi.ama;
 
+
 public class Users {
     private String userName;
     private String password;
     private String phone;
     private String score;
     private int id;
+
+
 
     public String getUserName() {
         return userName;
@@ -50,4 +53,5 @@ public class Users {
     public Users(){
 
     }
+
 }

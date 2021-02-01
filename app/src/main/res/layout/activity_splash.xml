@@ -3,30 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/backgraund"
     tools:context=".SplashScreenActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:orientation="vertical">
+    <ImageView
+        android:layout_width="315dp"
+        android:layout_height="441.5dp"
+        android:layout_marginTop="189dp"
+        android:layout_marginLeft="52dp"
+        tools:srcCompat="@drawable/logo_locatin"/>
+
+    <ImageView
+        android:layout_width="132.6dp"
+        android:layout_height="185.9dp"
+        android:layout_marginTop="444.6dp"
+        android:layout_marginLeft="196.4dp"
+        tools:srcCompat="@drawable/logo_locatin"/>
+
+    <ImageView
+        android:layout_width="202dp"
+        android:layout_height="130.6dp"
+        android:layout_marginTop="314dp"
+        android:layout_marginLeft="108dp"
+        tools:srcCompat="@drawable/logo"/>
 
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
 
-        <ProgressBar
-            android:id="@+id/splashProgress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp" />
 
-    </LinearLayout>
 
 </RelativeLayout>

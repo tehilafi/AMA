@@ -59,4 +59,10 @@ public class Question {
         this.location = location;
     }
 
+    public String title() {
+        return  this.titleQuestion;
+    }
+    public String location() {
+        return this.location;
+    }
 }

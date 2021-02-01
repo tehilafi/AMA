@@ -16,7 +16,7 @@
 
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:text="My Questins"
+            android:text="השאלות שלי"
             android:textSize="28sp" />
 
         <TextView
@@ -27,7 +27,7 @@
             android:text="You asked 1 quastions" />
         <Button
             android:id="@+id/btnID"
-            android:alpha="0.01"
+            android:alpha="0.5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+<style name="TextStyle">
+    <item name="android:fontFamily">@font/alex_brush</item>
+    <item name="android:textStyle">italic</item>
+    <item name="android:textSize">37sp</item>
+    <item name="android:lineSpacingExtra">12sp</item>
+    <item name="android:textColor">#fcba06</item>
+</style>
+</resources>

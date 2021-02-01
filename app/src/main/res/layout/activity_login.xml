@@ -4,113 +4,150 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_centerVertical="true"
-    android:layout_gravity="center_horizontal"
-    android:background="@drawable/background"
+    android:layout_centerInParent="false"
+    android:layout_centerHorizontal="false"
+    android:layout_centerVertical="false"
+    android:layout_gravity="center"
+    android:background="@drawable/backgraund"
     tools:context=".LoginActivity">
 
+    <ImageView
+        android:layout_width="66dp"
+        android:layout_height="42.6dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="325dp"
+        tools:srcCompat="@drawable/logo"/>
+
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:text="WELCOME TO AMA"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:layout_width="135dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="82dp"
+        android:layout_marginLeft="38dp"
+        android:fontFamily="sans-serif-light"
+        android:lineSpacingExtra="6sp"
+        android:textColor="#ffffff"
+        android:textSize="26sp"
+        android:textStyle="normal"
+        tools:text="welcom to " />
+
+    <TextView
+        android:layout_width="66dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="82dp"
+        android:layout_marginLeft="172dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="6sp"
+        android:textColor="#ffffff"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        tools:text="Ama !" />
+
+    <TextView
+        android:layout_width="148dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="118dp"
+        android:layout_marginLeft="38dp"
+        android:fontFamily="sans-serif-light"
+        android:lineSpacingExtra="4sp"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        android:textStyle="normal"
+        tools:text="Signup to continue" />
+
+    <TextView
+        android:layout_width="65dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="236dp"
+        android:layout_marginLeft="176dp"
+        android:fontFamily="sans-serif"
+        android:lineSpacingExtra="4sp"
+        android:textColor="#615e5e"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        tools:text="sign in" />
+
+    <View
+        android:layout_width="104dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="266.5dp"
+        android:layout_marginLeft="155.5dp"/>
+
+
     <LinearLayout
-        android:layout_width="379dp"
-        android:layout_height="492dp"
-        android:layout_alignTop="@+id/logInID"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-468dp"
-        android:gravity="center_horizontal"
+        android:layout_width="339dp"
+        android:layout_height="396dp"
+        android:layout_marginTop="226dp"
+        android:layout_marginLeft="38dp"
+        android:background="@drawable/bold"
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/userNameID"
-            android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:layout_margin="10dp"
-            android:alpha="0.50"
-            android:background="#009999"
-            android:focusable="true"
-            android:hint="User Name"
-            android:textColor="#000000"
-            android:textColorHint="#000000"
-            android:textSize="14dp" />
+        android:id="@+id/user_nameID"
+        android:layout_width="298dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="105dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/rectangle_yellow"
+        android:focusable="true"
+        android:hint="User Name"
+        android:gravity="center|center_vertical"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#777373"
+        android:textSize="16sp" />
 
 
         <EditText
-            android:id="@+id/passwordID"
-            android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:layout_margin="10dp"
-            android:alpha="0.20"
-            android:background="#7C7979"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:textColor="#000000"
-            android:textColorHint="#000000"
-            android:textSize="14dp" />
+        android:id="@+id/passwordID"
+        android:layout_width="298dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/rectangle_yellow"
+        android:focusable="true"
+        android:hint="Password"
+        android:gravity="center|center_vertical"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#777373"
+        android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/idID"
-            android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:layout_margin="10dp"
-            android:alpha="0.50"
-            android:background="#009999"
-            android:ems="10"
-            android:hint="Id"
-            android:inputType="number"
-            android:textColor="#000000"
-            android:textColorHint="#000000"
-            android:textSize="14dp" />
+    <EditText
+        android:id="@+id/phoneID"
+        android:layout_width="298dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/rectangle_yellow"
+        android:focusable="true"
+        android:hint="Phone"
+        android:gravity="center|center_vertical"
+        android:fontFamily="sans-serif-light"
+        android:textColor="#777373"
+        android:textSize="16sp" />
 
-        <EditText
-            android:id="@+id/phoneID"
-            android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:layout_margin="10dp"
-            android:alpha="0.20"
-            android:background="#7C7979"
-            android:ems="10"
-            android:hint="Phone"
-            android:inputType="textPassword"
-            android:textColor="#000000"
-            android:textColorHint="#000000"
-            android:textSize="14dp" />
+        <ImageView
+            android:layout_width="47.6dp"
+            android:layout_height="66.7dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="149.5dp"
+            tools:srcCompat="@drawable/logo_locatin"/>
 
-        <CheckBox
-            android:id="@+id/checkBoxID"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:layout_margin="10dp"
-            android:text="Permission to access the location"
-            android:textColorHighlight="#000000"
-            android:textColorHint="#000000"
-            android:textSize="16dp" />
     </LinearLayout>
 
     <Button
-        android:id="@+id/logInID"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="12dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:background="#7C7979"
-        android:text="Log In"
-        android:textColor="#FFFFFF"
-        android:textSize="20dp" />
+        android:id="@+id/button2"
+        android:layout_width="121dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="644dp"
+        android:layout_marginLeft="155dp"
+        android:textSize="14sp"
+        android:textColor="#168a91"
+        android:text="SIGN IN"
+        android:gravity="center|center_vertical"
+        android:fontFamily="sans-serif-light"
+        android:background="@drawable/rectangle_blue"/>
 
-    <Button
-        android:id="@+id/logUpID"
-        android:layout_width="215dp"
-        android:layout_height="93dp"
-        android:text="log Up" />
+
+
+
 
 </RelativeLayout>

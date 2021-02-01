@@ -2,125 +2,240 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background"
-    android:scrollbarAlwaysDrawHorizontalTrack="false"
-    android:scrollbarAlwaysDrawVerticalTrack="true">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:layout_centerInParent="false"
+    android:layout_centerHorizontal="false"
+    android:layout_centerVertical="false"
+    android:layout_gravity="center"
+    android:background="@drawable/backgraund"
+    tools:context=".AnswerActivity">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileID"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="337dp"
+        android:src="@drawable/photo_profile_start"></de.hdodenhof.circleimageview.CircleImageView>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="367dp"
+        android:layout_height="189dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/bold_white"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="82dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="344dp"
-                android:layout_height="72dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
-                android:text="IKEA rishon lezion"
-                android:textColor="#000000"
-                android:textColorHint="#FFFFFF"
-                android:textSize="30sp" />
-
-            <ImageView
-                android:id="@+id/backID"
-                android:layout_width="56dp"
-                android:layout_height="37dp"
-                android:layout_marginRight="6dp"
-                android:src="@drawable/ic_baseline_arrow_back_24" />
-
-        </LinearLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileuserID"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginLeft="18dp"
+            android:src="@drawable/photo_profile_start"></de.hdodenhof.circleimageview.CircleImageView>
 
         <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="320dp"
-            android:layout_marginLeft="15dp"
-            android:scrollbars="vertical"
-            android:text="Answer:"
+            android:layout_width="100dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="-50dp"
+            android:layout_marginLeft="75dp"
+            android:fontFamily="sans-serif-black"
+            android:textStyle="normal"
+            android:textSize="18sp"
+            android:textColor="#615e5e"
+            android:lineSpacingExtra="4sp"
+            tools:text="Joe muklin "
+            />
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="75dp"
+            android:fontFamily="sans-serif-black"
+            android:textStyle="normal"
+            android:textSize="14sp"
+            android:textColor="#615e5e"
+            android:lineSpacingExtra="4sp"
+            tools:text="Rating 6"
+            />
+
+        <TextView
+            android:layout_width="180dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="188dp"
+            android:layout_marginTop="-60dp"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#615e5e"
+            android:lineSpacingExtra="3sp"
+            tools:text="Ikea rishon letzion"/>
+
+        <View
+            android:layout_width="348dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="40dp"
+            android:outlineAmbientShadowColor="#85707070" />
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="340dp"
+            android:layout_marginTop="45dp"
+            tools:srcCompat="@drawable/arrow" />
+
+        <TextView
+            android:layout_width="330dp"
+            android:layout_height="100dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="-55dp"
+            android:fontFamily="sans-serif-light"
+            android:textStyle="normal"
+            android:textSize="12sp"
             android:textColor="#000000"
-            android:textSize="20sp" />
+            android:lineSpacingExtra="3sp"
+            tools:text="the question"/>
 
-        <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_marginTop="10dp"
-            android:alpha="0.50"
-            android:background="#009999"
-            android:src="@drawable/ic_baseline_photo_camera_24" />
-
-        <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:layout_marginTop="10dp"
-            android:alpha="0.50"
-            android:background="#009999"
-            android:src="@drawable/ic_baseline_videocam_24" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="146dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="19dp"
-                android:layout_height="66dp"
-                android:layout_marginTop="0dp"
-
-                android:layout_weight="2"
-                android:src="@drawable/photo_profile_start"
-                app:civ_border_color="#009999"
-                app:civ_border_width="4dp" />
-
-
-            <LinearLayout
-                android:layout_width="134dp"
-                android:layout_height="66dp"
-                android:layout_marginRight="10dp"
-                android:layout_weight="2"
-
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="39dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_thumb_down_24" />
-
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="6dp"
-                        android:src="@drawable/ic_baseline_thumb_up_24" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="0 peple liked the answer" />
-            </LinearLayout>
-        </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="367dp"
+        android:layout_height="269dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bold_white"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/questionID"
+            android:layout_width="140dp"
+            android:layout_height="19dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:focusable="true"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center|center_vertical"
+            android:hint="write your answer"
+            android:textColor="#615e5e"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="21dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="325dp"
+            android:layout_marginTop="-25dp"
+            tools:srcCompat="@drawable/write" />
+
+        <EditText
+            android:id="@+id/edtContentID"
+            android:layout_width="310dp"
+            android:layout_height="140dp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginTop="0dp"
+            android:background="#FFFFFFFF"
+            android:scrollbarAlwaysDrawHorizontalTrack="false"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:textColorHint="#000000"
+            android:visibility="visible" />
+
+        <View
+            android:layout_width="348dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="5dp"
+            android:outlineAmbientShadowColor="#85707070" />
+
+        <ImageView
+            android:id="@+id/add_picID"
+            android:layout_width="30dp"
+            android:layout_height="39dp"
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="20dp"
+            tools:srcCompat="@drawable/add_pic" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="106dp"
+            android:layout_marginTop="-32dp"
+            tools:srcCompat="@drawable/plus" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginLeft="187dp"
+            android:layout_marginTop="-45dp"
+            android:outlineAmbientShadowColor="#85707070" />
+
+        <ImageView
+            android:id="@+id/add_videoID"
+            android:layout_width="38dp"
+            android:layout_height="45dp"
+            android:layout_marginLeft="268dp"
+            android:layout_marginTop="-49dp"
+            tools:srcCompat="@drawable/add_video" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="312dp"
+            android:layout_marginTop="-32dp"
+            tools:srcCompat="@drawable/plus" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnSaveID"
+        android:layout_width="130dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/rectangle_blue"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:text="Update"
+        android:textColor="#168a91"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="388dp"
+        android:layout_height="57dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="13dp"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:id="@+id/add_locationID"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="35dp"
+            android:src="@drawable/search" />
+
+
+        <ImageView
+            android:id="@+id/my_questionID"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="120dp"
+            android:src="@drawable/q_a" />
+
+
+
+        <ImageView
+            android:id="@+id/questionSentToMeID"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="115dp"
+            android:src="@drawable/send" />
+
+
+    </LinearLayout>
+
 
 </LinearLayout>
