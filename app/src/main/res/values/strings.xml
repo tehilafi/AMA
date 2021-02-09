@@ -2,6 +2,9 @@
     <string name="app_name">AMA</string>
     <string name="title_activity_maps">Map</string>
     <string name="id">tabian.com.sharedpreferences.id</string>
+    <string name="name">tabian.com.sharedpreferences.name</string>
+    <string name="pas">tabian.com.sharedpreferences.pas</string>
+    <string name="ph">tabian.com.sharedpreferences.ph</string>
     <string name="location">tabian.com.sharedpreferences.location</string>
     <string name="map_key" translatable="false">AIzaSyDZBTVI5QwopPeZ8dA8LXYo70S-T9ex-Ds</string>
 

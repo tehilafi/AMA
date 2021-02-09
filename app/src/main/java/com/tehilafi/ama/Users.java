@@ -5,7 +5,7 @@ public class Users {
     private String userName;
     private String password;
     private String phone;
-    private String score;
+    private int score;
     private int id;
 
 
@@ -34,11 +34,11 @@ public class Users {
         this.phone = phone;
     }
 
-    public String getScore() {
+    public int getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(int score) {
         this.score = score;
     }
 

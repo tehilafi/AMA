@@ -47,6 +47,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -55,6 +61,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -84,12 +91,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
+    private DatabaseReference reff;
+    private FirebaseAuth mAuth;
+
     String locationToAddQuestion;
     String id_user;
 
     Button requestLocation, removeLocation;
-    ImageView add_location, my_question, questionSentToMe;
-    CircleImageView profile;
+    ImageView add_location, my_question, mainbtn;
+    private CircleImageView profile;
 
     //MyBackgroundService mService
     MyBackgroundService mService = null;
@@ -154,34 +164,39 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById( R.id.google_map );
         mapFragment.getMapAsync( this );
 
+        mAuth = FirebaseAuth.getInstance();
+        reff = FirebaseDatabase.getInstance().getReference().child( "Users" );
+
         /////////////////////////////////////////////////////////////////////////////////////
         // Activity transitions
 
-        // Moves to the activity of viewing my previous questions
-        my_question = findViewById( R.id.my_questionID );
+        // Moves to the activity of viewing my questions and uswers
+        my_question = findViewById( R.id.my_questionID);
         my_question.setOnClickListener( new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                showDialogOfmy();
-            }
-        } );
-
-        // Moves to the activity of watching the questions I was asked
-        questionSentToMe = findViewById( R.id.questionSentToMeID );
-        questionSentToMe.setOnClickListener( new View.OnClickListener() {
-            @Override
             public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), QuestionSentToMeActivity.class);
+                Intent intent = new Intent(getBaseContext(), MyAnswerActivity.class);
                 startActivity(intent);
             }
         } );
+
+        // Moves to the activity of watching the previous questions
+        mainbtn = findViewById( R.id.mainID );
+        mainbtn.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent(getBaseContext(), AskQuestionActivity.class);
+                startActivity(intent);
+            }
+        } );
+
 
         // Moves to activity of profile
         profile = findViewById( R.id.profileID );
         profile.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), ProfilActivity.class);
+                Intent intent = new Intent(getBaseContext(), ChangProfilActivity.class);
                 startActivity(intent);
             }
         } );
@@ -212,6 +227,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.animateCamera( CameraUpdateFactory.newLatLngZoom( latLng, 10 ) );
 
                     locationToAddQuestion = location;
+
                 }
                 return false;
             }
@@ -223,13 +239,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         mapFragment.getMapAsync( this );
         ///////////////////////////////////////////////////////////////////////////////////////
+
         // Moves to activity of asking questions by location
         add_location = findViewById( R.id.add_locationID );
         add_location.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
-                    Intent intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                    Intent intent = new Intent( getBaseContext(), AskingActivity.class );
+                    if(locationToAddQuestion == null)
+                        locationToAddQuestion = "qqqqq";
                     intent.putExtra( "Extra locations", locationToAddQuestion);
                     intent.putExtra( "Extra id", id_user);
                     startActivity( intent );
@@ -278,7 +297,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 } ).check();
 
+      //  getUserinfo();
+
     }
+
+    private void getUserinfo() {
+
+        reff.child( mAuth.getCurrentUser().getUid() ).addValueEventListener( new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
+                    //String name = snapshot.child("name").getValue().toString();
+                    if (snapshot.hasChild( "image" )) {
+                        String image = snapshot.child( "image" ).getValue().toString();
+                        Picasso.with( MainActivity.this ).load( image ).into( profile );
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        } );
+    }
+
 
     // To see the current location on the map
     private void fetchLastLocation() {
@@ -299,37 +342,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
-
-
-
-  //   for the dialog of my questions and answers
-    void showDialogOfmy(){
-        LayoutInflater inflater = LayoutInflater.from( this );
-        View view = inflater.inflate(R.layout.activity_my, null );
-
-        Button myQuestions = view.findViewById( R.id.my_questionID);
-        Button myAnswers = view.findViewById( R.id.my_answerID);
-
-        myQuestions.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), MyQuestionActivity.class);
-                startActivity(intent);
-            }
-        } );
-
-        myAnswers.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), MyAnswerActivity.class);
-                startActivity(intent);
-            }
-        } );
-
-        AlertDialog alertDialog = new AlertDialog.Builder( this ).setView(view).create();
-        alertDialog.show();
-    }
-    //////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     protected void onStart() {

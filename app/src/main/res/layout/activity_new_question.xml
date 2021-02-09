@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@drawable/backgraund"
-    tools:context=".MainActivity">
+    tools:context=".AskingActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileID"
@@ -23,8 +23,8 @@
         android:background="@drawable/bold_white"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/placeID"
+        <TextView
+            android:id="@+id/textViewTheLocationID"
             android:layout_width="109dp"
             android:layout_height="19dp"
             android:layout_marginLeft="15dp"
@@ -50,7 +50,7 @@
             android:layout_marginTop="9dp"
             android:outlineAmbientShadowColor="#85707070" />
 
-        <EditText
+        <TextView
             android:id="@+id/questionID"
             android:layout_width="140dp"
             android:layout_height="19dp"
@@ -136,7 +136,8 @@
         android:textSize="20sp"
         android:textColor="#453b3b"
         android:textStyle="bold"
-        android:text="Mark a question as important" />
+        android:onClick="itemClicked"
+    android:text="Mark a question as important" />
 
     <TextView
         android:layout_width="350dp"

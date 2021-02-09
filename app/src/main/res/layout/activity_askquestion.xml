@@ -9,7 +9,7 @@
         android:layout_width="436dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@drawable/background"
+        android:background="@drawable/backgraund"
         android:gravity="center"
         android:orientation="vertical">
 

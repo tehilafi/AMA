@@ -1,18 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="vertical">
 
 
-    <TextView
-        android:id="@+id/txvTitleID"
-        android:layout_width="fill_parent"
-        android:layout_height="115dp"
-        android:layout_gravity="center"
-        android:paddingBottom="20dp"
-        android:shadowColor="#050505"
-        android:textColor="#000000"
-        android:textSize="14sp" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileuserID"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/photo_profile_start"></de.hdodenhof.circleimageview.CircleImageView>
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/dateID"
+            android:layout_width="80dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="90dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif-black"
+            android:text="date "
+            android:textColor="#615e5e"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/desID"
+            android:layout_width="150dp"
+            android:layout_height="18dp"
+            android:layout_marginLeft="90dp"
+            android:layout_marginTop="35dp"
+            android:fontFamily="sans-serif-black"
+            android:text="describtion"
+            android:textColor="#615e5e"
+            android:textSize="12sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/newID"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="225dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="sans-serif-black"
+            android:text="new"
+            android:textColor="#ff0000"
+            android:textSize="14sp"
+            android:textStyle="normal" />
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="300dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/have_answer"/>
+
+
+</RelativeLayout>

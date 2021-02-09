@@ -1,34 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@drawable/backgraund"
     tools:context=".SplashScreenActivity">
+
 
     <ImageView
         android:layout_width="315dp"
         android:layout_height="441.5dp"
-        android:layout_marginTop="189dp"
-        android:layout_marginLeft="52dp"
-        tools:srcCompat="@drawable/logo_locatin"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        tools:srcCompat="@drawable/logo_locatin" />
 
-    <ImageView
-        android:layout_width="132.6dp"
-        android:layout_height="185.9dp"
-        android:layout_marginTop="444.6dp"
-        android:layout_marginLeft="196.4dp"
-        tools:srcCompat="@drawable/logo_locatin"/>
-
-    <ImageView
-        android:layout_width="202dp"
-        android:layout_height="130.6dp"
-        android:layout_marginTop="314dp"
-        android:layout_marginLeft="108dp"
-        tools:srcCompat="@drawable/logo"/>
-
-
-
-
-
-</RelativeLayout>
+</LinearLayout>

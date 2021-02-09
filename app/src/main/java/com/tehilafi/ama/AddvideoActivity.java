@@ -1,6 +1,7 @@
 package com.tehilafi.ama;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,7 +37,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 
-public class AddvideoActivity extends AppCompatActivity {
+public class AddvideoActivity extends Activity {
 
     private EditText etTitle;
     private VideoView videoView;
@@ -63,7 +64,7 @@ public class AddvideoActivity extends AppCompatActivity {
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         // Hide the Activity  Bar
         try {
-            this.getSupportActionBar().hide();
+            this.getActionBar().hide();
         } catch (NullPointerException e) {
         }
 

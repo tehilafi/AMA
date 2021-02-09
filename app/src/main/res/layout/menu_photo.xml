@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.23000002"
-        app:srcCompat="@drawable/background" />
+        app:srcCompat="@drawable/backgraund" />
 
     <Button
         android:id="@+id/cameraBtn"
@@ -46,5 +46,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.789"
-        app:srcCompat="@drawable/background" />
+        app:srcCompat="@drawable/backgraund" />
 </androidx.constraintlayout.widget.ConstraintLayout>

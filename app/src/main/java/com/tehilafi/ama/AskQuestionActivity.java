@@ -1,5 +1,6 @@
 package com.tehilafi.ama;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -26,10 +27,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class AskQuestionActivity extends AppCompatActivity {
+public class AskQuestionActivity extends Activity {
 
     private TextView txvLocation;
-    private Button btnNewquestion;
     private String locationQuestion;
 
     DatabaseReference reff;
@@ -41,38 +41,31 @@ public class AskQuestionActivity extends AppCompatActivity {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate( savedInstanceState );
-            setContentView( R.layout.activity_askquestion);
+            setContentView( R.layout.activity_preasking);
 
             // Hide the Activity Status Bar
             getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
             // Hide the Activity  Bar
             try {
-                this.getSupportActionBar().hide();
+                this.getActionBar().hide();
             } catch (NullPointerException e) {
             }
 
             txvLocation = findViewById( R.id.txvLocationID );
-            txvLocation.setText(getIntent().getStringExtra("Extra locations"));
+            if (getIntent().getStringExtra( "Extra locations" ) == null)
+                txvLocation.setText("facaza");
+            txvLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
+
 
             final String locationToAddQuestion = txvLocation.getText().toString();
 
-            //Moves to asking activity - add question
-            btnNewquestion = findViewById( R.id.btnNewquestionID );
-            btnNewquestion.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(android.view.View view) {
-                    Intent intent = new Intent(getBaseContext(), AskingActivity.class);
-                    intent.putExtra( "Extra locations", locationToAddQuestion);
-                    startActivity( intent );
-                }
-            });
-
-
             reff = FirebaseDatabase.getInstance().getReference("Questions");
-            listView = (ListView)findViewById(R.id.listViewtxt);
-            arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, arrayList);
+            listView = (ListView)findViewById(R.id.listView1ID);
+            //arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, arrayList);
+            arrayAdapter = new ArrayAdapter<String>(this,R.layout.my_listview_item, arrayList);
+
             listView.setAdapter(arrayAdapter);
-            Query myQuery = reff.orderByChild("location").equalTo("קניון עזריאלי");
+            Query myQuery = reff.orderByChild("location").equalTo("israel");
             myQuery.addChildEventListener( new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {

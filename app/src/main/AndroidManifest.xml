@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.tehilafi.ama">
 
     <!--
@@ -22,10 +23,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
+        android:supportsRtl="true">
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -50,6 +48,12 @@
         </activity> <!-- <service android:name=".services.MyFirebaseInsrance"> -->
         <!-- <action android: name = "com.google.firebase.MESSAGING_EVENT" /> -->
         <!-- </service> -->
+
+        <activity
+        android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+        android:theme="@style/Base.Theme.AppCompat" />
+
+
         <!-- for gallery -->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -61,21 +65,17 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".AddvideoActivity"></activity>
+<!--        <activity android:name=".LoginActivity"></activity>-->
+<!--        <activity android:name=".MainActivity"></activity>-->
+        <activity android:name=".AskQuestionActivity"></activity>
         <activity android:name=".AskingActivity"></activity>
-        <activity android:name=".PreAskingActivity"></activity>
-        <activity android:name=".AnswerActivity"></activity>
-        <activity android:name=".AnsweringActivity"></activity>
         <activity android:name=".MyQuestionActivity"></activity>
         <activity android:name=".MyAnswerActivity"></activity>
-        <activity android:name=".ProfilActivity"></activity>
-        <activity android:name=".QuestionActivity"></activity>
-        <activity android:name=".Question2Activity"></activity>
-        <activity android:name=".QuestionSentToMeActivity"></activity>
         <activity android:name=".ChangProfilActivity"></activity>
-        <activity android:name=".AskQuestionActivity"></activity>
-        <activity android:name=".PotoActivity"></activity>
+        <activity android:name=".ProfilActivity"></activity>
+        <activity android:name=".AnswerActivity"></activity>
+
+
 
         <service
             android:name=".MyBackgroundService"

@@ -1,28 +1,35 @@
 package com.tehilafi.ama;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 
-public class SplashScreenActivity extends AppCompatActivity{
+public class SplashScreenActivity extends Activity {
 
-    ProgressBar splashProgress;
-    int SPLASH_TIME = 3000; //This is 3 seconds
+    /** Duration of wait **/
+    private final int SPLASH_DISPLAY_LENGTH = 2000;
 
         @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_splash);
+        public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        setContentView(R.layout.activity_splash);
 
-            //This is additional feature, used to run a progress bar
-            splashProgress = findViewById(R.id.splashProgress);
-            playProgress();
+            // Hide the Activity Status Bar
+            getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            // Hide the Activity  Bar
+            try
+            {
+                this.getActionBar().hide();
+            }
+            catch (NullPointerException e){}
 
             //Code to start timer and take action after the timer ends
-            new Handler().postDelayed(new Runnable() {
+            new Handler().postDelayed(new Runnable(){
                 @Override
                 public void run() {
                     //Do any action here. Now we are moving to next page
@@ -33,14 +40,7 @@ public class SplashScreenActivity extends AppCompatActivity{
                     finish();
 
                 }
-            }, SPLASH_TIME);
-        }
-
-        //Method to run progress bar for 5 seconds
-        private void playProgress() {
-            ObjectAnimator.ofInt(splashProgress, "progress", 100)
-                    .setDuration(5000)
-                    .start();
+            }, SPLASH_DISPLAY_LENGTH);
         }
 
 }

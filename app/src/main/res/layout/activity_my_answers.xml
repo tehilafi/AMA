@@ -1,37 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@drawable/background"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@drawable/backgraund"
+    tools:context=".MyAnswerActivity">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileID"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="337dp"
+        android:src="@drawable/photo_profile_start"></de.hdodenhof.circleimageview.CircleImageView>
+
     <LinearLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
+        android:layout_width="349dp"
+        android:layout_height="542dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="29dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="85dp"
+        android:background="@drawable/bold_white"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="387dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="25dp"
+            android:src="@drawable/back" />
 
-            android:layout_marginTop="20dp"
+        <Button
+            android:id="@+id/Questions_I_was_askedID"
+            android:layout_width="140dp"
+            android:layout_height="52dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="-45dp"
+            android:background="@drawable/yellow_line"
+            android:fontFamily="sans-serif-light"
             android:gravity="center"
-            android:text="My Answers"
-            android:textSize="28sp" />
+            android:text="Questions I was asked"
+            android:textColor="#615e5e"
+            android:textSize="12sp"
+            android:textStyle="normal" />
 
-        <TextView
-            android:id="@+id/textViewNumOfQuastion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="You answered 1 answers" />
+        <Button
+            android:id="@+id/Questions_I_sentID"
+            android:layout_width="140dp"
+            android:layout_height="52dp"
+            android:layout_marginLeft="175dp"
+            android:layout_marginTop="-52dp"
+            android:background="@drawable/gray_line"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:text="Questions I sent"
+            android:textColor="#615e5e"
+            android:textSize="12sp"
+            android:textStyle="normal" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="314dp"
+            android:layout_marginTop="-48dp"
+            android:src="@drawable/next" />
+
 
         <ListView
-            android:id="@+id/listViewID"
-            android:layout_width="wrap_content"
-            android:layout_height="561dp"
-            android:layout_margin="20dp" />
+            android:id="@+id/listView1ID"
+            android:layout_width="match_parent"
+            android:layout_height="440dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/bold">
+
+        </ListView>
+
+        <LinearLayout
+            android:layout_width="388dp"
+            android:layout_height="57dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="-17dp"
+            android:layout_marginTop="19dp"
+            android:orientation="horizontal">
 
 
+            <ImageView
+                android:id="@+id/add_locationID"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="35dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/search" />
+
+
+            <ImageView
+                android:id="@+id/my_questionID"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="120dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/q_a" />
+
+
+            <ImageView
+                android:id="@+id/questionSentToMeID"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="115dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/send" />
+
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

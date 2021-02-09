@@ -1,11 +1,9 @@
 <resources>
-    <resources>
         <style name="TextStyle">
             <item name="android:fontFamily">@font/alex_brush</item>
             <item name="android:textSize">37sp</item>
             <item name="android:lineSpacingExtra">12sp</item>
             <item name="android:textColor">#fcba06</item>
         </style>
-    </resources>
-
 </resources>
+

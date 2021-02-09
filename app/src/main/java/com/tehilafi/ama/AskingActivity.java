@@ -1,6 +1,7 @@
 package com.tehilafi.ama;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,11 +30,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class AskingActivity extends AppCompatActivity {
+public class AskingActivity extends Activity {
 
     private Button send;
     private TextView textViewTheLocation, edtTitle, edtContent;
     private String iduser, latLngString, kmInLongitudeDegree;
+    private CheckBox checkBox;
+    private String important_questions = "false";
 
     DatabaseReference reff;
     Question question;
@@ -44,21 +47,21 @@ public class AskingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_asking );
+        setContentView( R.layout.activity_new_question );
         // Hide the Activity Status Bar
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         // Hide the Activity  Bar
         try {
-            this.getSupportActionBar().hide();
+            this.getActionBar().hide();
         } catch (NullPointerException e) {
         }
 
-        send = findViewById( R.id.sendID );
+        send = findViewById( R.id.btnSaveID );
         textViewTheLocation = findViewById( R.id.textViewTheLocationID );
         textViewTheLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
         edtTitle = findViewById( R.id.edtTitleID );
         edtContent = findViewById( R.id.edtContentID);
-
+        checkBox = findViewById( R.id.checkBoxID);
 
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = mPreferences.edit();
@@ -66,6 +69,7 @@ public class AskingActivity extends AppCompatActivity {
         iduser =  mPreferences.getString(getString(R.string.id), "");
         if(iduser == "")
             iduser = "null";
+
 
         latLngString = mPreferences.getString(getString(R.string.location), "");
         if(latLngString == "")
@@ -89,30 +93,32 @@ public class AskingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                boolean checkTitle, checkContent;
+                int num_question;
+                boolean checkContent;
                 //If one of the details is missing:
-                if (edtTitle.getText().toString().equals( "" )) {
-                    Toast.makeText( AskingActivity.this, "Missing title", Toast.LENGTH_LONG ).show();
-                    checkTitle = false;
-                } else
-                    checkTitle = true;
-
                 if (edtContent.getText().toString().equals( "" )) {
-                    Toast.makeText( AskingActivity.this, "Missing title", Toast.LENGTH_LONG ).show();
+                    Toast.makeText( AskingActivity.this, "Missing content", Toast.LENGTH_LONG ).show();
                     checkContent = false;
                 } else
                     checkContent = true;
 
-                if (checkTitle && checkContent) {
+                if (checkContent) {
+                    num_question= (int)counter;
                     question.setLocation(getIntent().getStringExtra("Extra locations"));
                     question.setIdAsking( Integer.parseInt( iduser ) );
-                    question.setTitleQuestion( edtTitle.getText().toString().trim() );
+                    question.setTitleQuestion("title");
                     question.setContentQuestion( edtContent.getText().toString().trim() );
+                    question.setNumQuestion(num_question +1);
+                    question.setImportant_questions(important_questions);
+
                     //question.setLocation(latLngString);
 
                     reff.child( String.valueOf( counter + 1 ) ).setValue( question );
 
                     Calculation_coordinates(latLngString);
+
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
                 }
                 else
                     Toast.makeText(AskingActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
@@ -143,6 +149,11 @@ public class AskingActivity extends AppCompatActivity {
     }
 
     private void sendNotification(String latLngString) {
+    }
+
+
+    public void itemClicked(View v) {
+        important_questions = "true";
     }
 
 

@@ -27,7 +27,7 @@ import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfilActivity extends AppCompatActivity{
+public class ProfilActivity extends Activity{
 
     private CircleImageView profile;
     private Button change;
@@ -46,7 +46,7 @@ public class ProfilActivity extends AppCompatActivity{
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         // Hide the Activity  Bar
         try {
-            this.getSupportActionBar().hide();
+            this.getActionBar().hide();
         } catch (NullPointerException e) {
         }
 

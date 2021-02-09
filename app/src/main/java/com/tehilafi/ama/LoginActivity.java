@@ -1,5 +1,6 @@
 package com.tehilafi.ama;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,7 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends Activity {
 
     private Button logIn;
     private EditText password, userName, idUser, phone;
@@ -55,19 +56,18 @@ public class LoginActivity extends AppCompatActivity {
         setContentView( R.layout.activity_login );
 
         // Hide the Activity Status Bar
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
         // Hide the Activity  Bar
-        try
-        {
-            this.getSupportActionBar().hide();
+        try {
+            this.getActionBar().hide();
+        } catch (NullPointerException e) {
         }
-        catch (NullPointerException e){}
 
 
         logIn = findViewById( R.id.logInID );
         userName = findViewById( R.id.userNameID );
         password = findViewById( R.id.passwordID );
-        idUser = findViewById( R.id.idID );
+        idUser = findViewById( R.id.iduserID);
         phone = findViewById( R.id.phoneID );
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -106,13 +106,12 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText( LoginActivity.this, "Missing id", Toast.LENGTH_LONG ).show();
                     check_id = false;
                 } else {
+                    check_id = true;
 
-                                         check_id = true;
-
-//                    if (validId(Integer.parseInt( idUser.getText().toString())))
-//                        check_id = true;
-//                    else
-//                        check_id = false;
+                    if (validId(Integer.parseInt( idUser.getText().toString())))
+                        check_id = true;
+                    else
+                        check_id = false;
                 }
                 if (phone.getText().toString().equals( "" )) {
                     Toast.makeText( LoginActivity.this, "Missing phone", Toast.LENGTH_LONG ).show();
@@ -139,9 +138,15 @@ public class LoginActivity extends AppCompatActivity {
 
                             reff.child( idUser.getText().toString().trim() ).setValue( users );
 
-
                             String id = idUser.getText().toString();
+                            String name = userName.getText().toString();
+                            String pas = password.getText().toString();
+                            String ph = phone.getText().toString();
+
                             mEditor.putString(getString(R.string.id), id);
+                            mEditor.putString(getString(R.string.name), name);
+                            mEditor.putString(getString(R.string.pas), pas);
+                            mEditor.putString(getString(R.string.ph), ph);
                             mEditor.commit();
 
                             Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
@@ -168,51 +173,51 @@ public class LoginActivity extends AppCompatActivity {
 
 
     // Function check if ID is valid
-//    public boolean validId(int idNumber){
-//        int sum = 0, i = 1;
-//
-//        int check_digit = idNumber % 10; // the last digit its the check digit
-//        int temp = idNumber / 10;
-//
-//        for ( i = 1; i < 9; i++)
-//        {
-//            if (i % 2 == 0)
-//            {
-//                sum += temp % 10; // the digit * 1
-//                temp = temp / 10;
-//            }
-//            else // if (i % 2 != 0)
-//            {
-//                int counter = (temp % 10) * 2; // the digit * 2
-//                temp = temp / 10;
-//                if (counter > 9) //if tje multiplied number is more than one digit, the digits are summed
-//                {
-//                    int n = 0;
-//                    while (counter != 0)
-//                    {
-//                        n += counter % 10;
-//                        counter = counter / 10;
-//                    }
-//                    sum += n;
-//                }
-//                else
-//                    sum += counter;
-//            }
-//        }
-        // find how much need to complete to divide the digit by ten.
-//        int balance = 0;
-//        while (sum % 10 != 0)
-//        {
-//            balance++;
-//            sum++;
-//        }
-//        if (balance == check_digit)
-//            return true;
-//        else
-//            return false;
-//
-//
-//    }
+    public boolean validId(int idNumber){
+        int sum = 0, i = 1;
+
+        int check_digit = idNumber % 10; // the last digit its the check digit
+        int temp = idNumber / 10;
+
+        for ( i = 1; i < 9; i++)
+        {
+            if (i % 2 == 0)
+            {
+                sum += temp % 10; // the digit * 1
+                temp = temp / 10;
+            }
+            else // if (i % 2 != 0)
+            {
+                int counter = (temp % 10) * 2; // the digit * 2
+                temp = temp / 10;
+                if (counter > 9) //if tje multiplied number is more than one digit, the digits are summed
+                {
+                    int n = 0;
+                    while (counter != 0)
+                    {
+                        n += counter % 10;
+                        counter = counter / 10;
+                    }
+                    sum += n;
+                }
+                else
+                    sum += counter;
+            }
+        }
+         //find how much need to complete to divide the digit by ten.
+        int balance = 0;
+        while (sum % 10 != 0)
+        {
+            balance++;
+            sum++;
+        }
+        if (balance == check_digit)
+            return true;
+        else
+            return false;
 
 
+    }
 }
+
+

@@ -75,7 +75,7 @@
 
 
             <ImageView
-                android:id="@+id/add_locationID"
+                android:id="@+id/mainID"
                 android:layout_width="30dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
@@ -94,7 +94,7 @@
 
 
             <ImageView
-                android:id="@+id/questionSentToMeID"
+                android:id="@+id/add_locationID"
                 android:layout_width="30dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"

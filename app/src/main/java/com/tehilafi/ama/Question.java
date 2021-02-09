@@ -7,6 +7,7 @@ public class Question {
     private String contentQuestion;
     private Boolean ugentQuestion;
     private String location;
+    private String important_questions;
 
     public Question(){
     }
@@ -35,6 +36,10 @@ public class Question {
         return location;
     }
 
+    public String getImportant_questions() {
+        return important_questions;
+    }
+
     public void setNumQuestion(int numQuestion) {
         this.numQuestion = numQuestion;
     }
@@ -59,10 +64,29 @@ public class Question {
         this.location = location;
     }
 
+    public void setImportant_questions(String important_questions) {
+        this.important_questions = important_questions;
+    }
+
+
     public String title() {
         return  this.titleQuestion;
     }
     public String location() {
         return this.location;
     }
+    public String content() {
+        return this.contentQuestion;
+    }
+    public String numQuestion() {
+        return String.valueOf(this.numQuestion);
+    }
+    public String id_user() {
+        return String.valueOf(this.idAsking);
+    }
+    public String important_questions() {
+        return this.important_questions;
+    }
+
+
 }
