@@ -65,14 +65,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-<!--        <activity android:name=".LoginActivity"></activity>-->
+        <activity android:name=".LoginActivity"></activity>
 <!--        <activity android:name=".MainActivity"></activity>-->
         <activity android:name=".AskQuestionActivity"></activity>
         <activity android:name=".AskingActivity"></activity>
         <activity android:name=".MyQuestionActivity"></activity>
         <activity android:name=".MyAnswerActivity"></activity>
         <activity android:name=".ChangProfilActivity"></activity>
-        <activity android:name=".ProfilActivity"></activity>
         <activity android:name=".AnswerActivity"></activity>
 
 

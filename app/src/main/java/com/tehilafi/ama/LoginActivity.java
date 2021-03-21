@@ -32,7 +32,7 @@ public class LoginActivity extends Activity {
 
     private Button logIn;
     private EditText password, userName, idUser, phone;
-    private String score;
+    private int score;
     private CheckBox access_location;
     private Intent intent;
     private DatabaseReference reff;
@@ -77,7 +77,7 @@ public class LoginActivity extends Activity {
         users = new Users();
         chec_users=new Users();
         reff = FirebaseDatabase.getInstance().getReference().child( "Users" );
-        score = "0";
+        score = 0;
         logIn.setOnClickListener(  new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +87,7 @@ public class LoginActivity extends Activity {
                 users.setPassword( password.getText().toString().trim() );
                 users.setId(Integer.parseInt(idUser.getText().toString().trim()));
                 users.setPhone( phone.getText().toString().trim() );
-                users.setScore( score );
+                users.setScore(score);
 
                 boolean check_username, check_password, check_id, check_phone;
 
@@ -127,9 +127,8 @@ public class LoginActivity extends Activity {
                         if (snapshot.exists()) {
                            Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
                         }
-                        // Save the data to db if the id is dosent exists
+                        // Save the data in DB if the id is dosent exists
                         else {
-
                             users.setUserName( userName.getText().toString().trim() );
                             users.setPassword( password.getText().toString().trim() );
                             users.setId(Integer.parseInt(idUser.getText().toString().trim()));
@@ -152,9 +151,7 @@ public class LoginActivity extends Activity {
                             Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
                             Intent intent = new Intent(getBaseContext(), MainActivity.class);
                             startActivity(intent);
-
                         }
-
                     }
 
                     @Override
@@ -164,57 +161,55 @@ public class LoginActivity extends Activity {
                     });
                 }
                 else
-                   Toast.makeText(LoginActivity.this, "אחד דהפרטים לא נכונים", Toast.LENGTH_LONG).show();
+                   Toast.makeText(LoginActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
             }
         });
-
     }
-
-
 
     // Function check if ID is valid
     public boolean validId(int idNumber){
-        int sum = 0, i = 1;
-
-        int check_digit = idNumber % 10; // the last digit its the check digit
-        int temp = idNumber / 10;
-
-        for ( i = 1; i < 9; i++)
-        {
-            if (i % 2 == 0)
-            {
-                sum += temp % 10; // the digit * 1
-                temp = temp / 10;
-            }
-            else // if (i % 2 != 0)
-            {
-                int counter = (temp % 10) * 2; // the digit * 2
-                temp = temp / 10;
-                if (counter > 9) //if tje multiplied number is more than one digit, the digits are summed
-                {
-                    int n = 0;
-                    while (counter != 0)
-                    {
-                        n += counter % 10;
-                        counter = counter / 10;
-                    }
-                    sum += n;
-                }
-                else
-                    sum += counter;
-            }
-        }
-         //find how much need to complete to divide the digit by ten.
-        int balance = 0;
-        while (sum % 10 != 0)
-        {
-            balance++;
-            sum++;
-        }
-        if (balance == check_digit)
-            return true;
-        else
-            return false;
+//        int sum = 0, i = 1;
+//
+//        int check_digit = idNumber % 10; // the last digit its the check digit
+//        int temp = idNumber / 10;
+//
+//        for ( i = 1; i < 9; i++)
+//        {
+//            if (i % 2 == 0)
+//            {
+//                sum += temp % 10; // the digit * 1
+//                temp = temp / 10;
+//            }
+//            else // if (i % 2 != 0)
+//            {
+//                int counter = (temp % 10) * 2; // the digit * 2
+//                temp = temp / 10;
+//                if (counter > 9) //if tje multiplied number is more than one digit, the digits are summed
+//                {
+//                    int n = 0;
+//                    while (counter != 0)
+//                    {
+//                        n += counter % 10;
+//                        counter = counter / 10;
+//                    }
+//                    sum += n;
+//                }
+//                else
+//                    sum += counter;
+//            }
+//        }
+//         //find how much need to complete to divide the digit by ten.
+//        int balance = 0;
+//        while (sum % 10 != 0)
+//        {
+//            balance++;
+//            sum++;
+//        }
+//        if (balance == check_digit)
+//            return true;
+//        else
+//            return false;
+        return true;
 
 
     }

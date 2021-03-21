@@ -97,7 +97,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     String locationToAddQuestion;
     String id_user;
 
-    Button requestLocation, removeLocation;
+    ImageView requestLocation, removeLocation;
     ImageView add_location, my_question, mainbtn;
     private CircleImageView profile;
 
@@ -132,7 +132,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // Hide the Activity Status Bar
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
-        /// to first time of login the app
+//***************************************************************************************************************
+        // to first time of login the app
         Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
                 .getBoolean("isFirstRun", true);
 
@@ -141,9 +142,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             Toast.makeText(MainActivity.this, "First Run", Toast.LENGTH_LONG)
                     .show();
-            /// to first time of login the app
         }
-
+//***************************************************************************************************************
 
         getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit()
                 .putBoolean("isFirstRun", false).commit();
@@ -192,14 +192,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         // Moves to activity of profile
-        profile = findViewById( R.id.profileID );
-        profile.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                Intent intent = new Intent(getBaseContext(), ChangProfilActivity.class);
-                startActivity(intent);
-            }
-        } );
+//        profile = findViewById( R.id.profileID );
+//        profile.setOnClickListener( new View.OnClickListener() {
+//            @Override
+//            public void onClick(android.view.View view) {
+//                Intent intent = new Intent(getBaseContext(), ChangProfilActivity.class);
+//                startActivity(intent);
+//            }
+//        } );
 
         ///////////////////////////////////////////////////////////////////////////////////////
         // for the search location
@@ -269,8 +269,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
 
 
-                        requestLocation = (Button) findViewById( R.id.requesr_location_updates_button );
-                        removeLocation = (Button) findViewById( R.id.remove_location_updates_button );
+                        requestLocation = findViewById( R.id.requesr_location_updates_button );
+                        removeLocation = findViewById( R.id.remove_location_updates_button );
 
                         requestLocation.setOnClickListener( new View.OnClickListener() {
                             @Override
@@ -297,7 +297,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 } ).check();
 
-      //  getUserinfo();
+      //getUserinfo();
 
     }
 
@@ -389,7 +389,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     .append( event.getLocation().getLongitude() )
                     .toString();
             ////////////////////////////////////////
-            Toast.makeText( mService, data, Toast.LENGTH_SHORT ).show();
+            // print the current location
+            Toast.makeText(mService,  "**" + data + "**", Toast.LENGTH_SHORT ).show();
             ////////////////////////////////////////
         }
     }
