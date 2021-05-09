@@ -1,4 +1,4 @@
-package com.tehilafi.ama;
+package com.tehilafi.ama.db;
 
 public class Question {
     private int numQuestion;

@@ -9,7 +9,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Binder;
 import android.os.Build;
@@ -19,7 +18,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.IntegerRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -34,15 +32,13 @@ import com.google.android.gms.tasks.Task;
 
 import org.greenrobot.eventbus.EventBus;
 
-import javax.crypto.NullCipher;
-
 public class MyBackgroundService extends Service {
 
 
     private static final String CHANNEL_ID = "my_channel";
     private static final String EXTRA_STARTED_FROM_NOTIFICATIN = "com.tehilafi.myapplication"+ ".started_from_notification";
     private final IBinder mBinder = new LocalBinder();
-    private static final long UPDATE_INTERVAL_IN_MIL = 10000;
+    private static final long UPDATE_INTERVAL_IN_MIL = 1000*30; // Updated at location every 60 seconds
     private static final long FASTEST_UPDATE_INTERVAL_IN_MUL = UPDATE_INTERVAL_IN_MIL / 2;
     private static final int NOTI_ID = 1223;
     private boolean mChangingConfiguration = false;
@@ -105,10 +101,10 @@ public class MyBackgroundService extends Service {
     public void removeLocationUpdates() {
         try{
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-            Common.setLocationRequestingLocationUpdates(this,false);
+            ListViewAdapte.Common.setLocationRequestingLocationUpdates(this,false);
             stopSelf();
         }catch(SecurityException ex){
-            Common.setLocationRequestingLocationUpdates(this,true);
+            ListViewAdapte.Common.setLocationRequestingLocationUpdates(this,true);
             Log.e("EDMT_DEV","Lost location permission. Could not remove Updates. "+ex);
 
         }
@@ -135,14 +131,14 @@ public class MyBackgroundService extends Service {
 
     private void createLocationRequest() {
         locationRequest = new LocationRequest();
-        locationRequest.setInterval( UPDATE_INTERVAL_IN_MIL );
-        locationRequest.setFastestInterval( FASTEST_UPDATE_INTERVAL_IN_MUL );
-        locationRequest.setPriority( LocationRequest.PRIORITY_HIGH_ACCURACY );
+        locationRequest.setInterval( UPDATE_INTERVAL_IN_MIL ); // Set the time interval at which you want to update the location (60 sec)
+        locationRequest.setFastestInterval( FASTEST_UPDATE_INTERVAL_IN_MUL ); // If another app uses the location we will get the location away in less time (30 sec)
+        locationRequest.setPriority( LocationRequest.PRIORITY_HIGH_ACCURACY ); // Appropriate for mapping applications that are showing your location in real-time.
     }
 
     private void onNewLocation(Location lastLocation) {
         mLocation = lastLocation;
-        EventBus.getDefault().postSticky( new SendLocationToActivity(mLocation) );
+        EventBus.getDefault().postSticky( new ListViewAdapte.SendLocationToActivity(mLocation) );
 
         // Update notification content if running as a foreground service
         if(serviceIsRunningInForeGround(this))
@@ -151,13 +147,13 @@ public class MyBackgroundService extends Service {
 
     private Notification getNotification() {
         Intent intent = new Intent(this, MyBackgroundService.class);
-        String text = Common.getLocationText(mLocation);
+        String text = ListViewAdapte.Common.getLocationText(mLocation);
 
         intent.putExtra(EXTRA_STARTED_FROM_NOTIFICATIN, true);
         PendingIntent servicePendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent activityPendingIntent = PendingIntent.getActivity( this, 0, new Intent(this, MainActivity.class),0 );
 
-        NotificationCompat.Builder builder= new NotificationCompat.Builder(this).addAction(R.drawable.ic_baseline_launch_24, "Launch", activityPendingIntent).addAction(R.drawable.ic_baseline_cancel_24, "Remove",servicePendingIntent).setContentText( text ).setContentTitle( Common.getLocationTitle(this)).setOngoing( true ).setPriority( Notification.PRIORITY_HIGH ).setSmallIcon( R.mipmap.ic_launcher).setTicker( text).setWhen( System.currentTimeMillis() );
+        NotificationCompat.Builder builder= new NotificationCompat.Builder(this).addAction(R.drawable.ic_baseline_launch_24, "Launch", activityPendingIntent).addAction(R.drawable.ic_baseline_cancel_24, "Remove",servicePendingIntent).setContentText( text ).setContentTitle( ListViewAdapte.Common.getLocationTitle(this)).setOngoing( true ).setPriority( Notification.PRIORITY_HIGH ).setSmallIcon( R.mipmap.ic_launcher).setTicker( text).setWhen( System.currentTimeMillis() );
 
         // set the channel id for Android o
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -178,7 +174,7 @@ public class MyBackgroundService extends Service {
 
 
     public void requestLocationUpdates() {
-        Common.setLocationRequestingLocationUpdates(this,true);
+        ListViewAdapte.Common.setLocationRequestingLocationUpdates(this,true);
         startService(new Intent(getApplicationContext(),MyBackgroundService.class));
         try{
             fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
@@ -192,7 +188,7 @@ public class MyBackgroundService extends Service {
 
 
     public class LocalBinder extends Binder {
-        MyBackgroundService getService(){
+        public MyBackgroundService getService(){
             return MyBackgroundService.this;
         }
     }
@@ -215,7 +211,7 @@ public class MyBackgroundService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if(!mChangingConfiguration&&Common.requestingLocationUpdates(this))
+        if(!mChangingConfiguration&& ListViewAdapte.Common.requestingLocationUpdates(this))
             startForeground(NOTI_ID,getNotification());
         return true;
     }
@@ -226,10 +222,3 @@ public class MyBackgroundService extends Service {
         super.onDestroy();
     }
 }
-
-
-
-
-
-
-

@@ -3,7 +3,6 @@ package com.tehilafi.ama;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
@@ -15,16 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.tehilafi.ama.db.Answer;
+import com.tehilafi.ama.db.Users;
+import com.tehilafi.ama.media.AddvideoActivity;
+import com.tehilafi.ama.media.PotoActivity;
 
 public class AnswerActivity extends Activity {
 
@@ -32,6 +31,9 @@ public class AnswerActivity extends Activity {
     private EditText edtContent;
     private Button btnSave;
     private String iduser;
+    private ImageView  add_pic, add_video;
+
+
     long counter = 0;
     private boolean important_answer = false;
     DatabaseReference reff, reffuser;
@@ -63,6 +65,22 @@ public class AnswerActivity extends Activity {
         txvquestion.setText( getIntent().getStringExtra( "Extra content" ) );
 
         edtContent = findViewById(R.id.edtContentID);
+        // For add image or video //
+        add_pic = findViewById(R.id.add_picID);
+        add_pic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(AnswerActivity.this, PotoActivity.class));
+            }
+        });
+        add_video = findViewById(R.id.add_videoID);
+        add_video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(AnswerActivity.this, AddvideoActivity.class));
+            }
+        });
+        // *** //
 
         if(getIntent().getStringExtra( "Extra important_questions" ) == "true")
             important_answer = true;

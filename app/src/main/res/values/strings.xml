@@ -5,7 +5,10 @@
     <string name="name">tabian.com.sharedpreferences.name</string>
     <string name="pas">tabian.com.sharedpreferences.pas</string>
     <string name="ph">tabian.com.sharedpreferences.ph</string>
+    <string name="token_d">tabian.com.sharedpreferences.token_d</string>
+
     <string name="location">tabian.com.sharedpreferences.location</string>
+
     <string name="map_key" translatable="false">AIzaSyDZBTVI5QwopPeZ8dA8LXYo70S-T9ex-Ds</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package com.tehilafi.ama;
+package com.tehilafi.ama.db;
 
 
 public class Users {
@@ -7,8 +7,9 @@ public class Users {
     private String phone;
     private int score;
     private int id;
-
-
+    private Double latitude; // width
+    private Double longitude; // Length
+    private String token;
 
     public String getUserName() {
         return userName;
@@ -48,6 +49,30 @@ public class Users {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Users(){

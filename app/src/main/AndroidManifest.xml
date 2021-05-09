@@ -12,18 +12,24 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> <!-- for camera and gallery -->
-    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> <!-- to track location -->
+    <uses-permission android:name="android.permission.CAMERA" /> <!-- for camera and gallery -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+<!--    <uses-library android:name="org.apache.http.legacy" android:required="false"/>-->
+
+
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:name="App"
         android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true">
+<!--        android:networkSecurityConfig="@xml/network_security_config">-->
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -36,13 +42,36 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD7PAR0gdEqFnEokgJTFQLWfpuUG0NdaIw" />
+
+        <!-- Set custom default icon -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/masseg" />
+        <!-- Set color used with incoming notification messages -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <activity android:name=".MainActivity">
+
+<!--    Prevent auto initialization-->
+<!--        <meta-data-->
+<!--            android:name="firebase_messaging_auto_init_enabled"-->
+<!--            android:value="false" />-->
+<!--        <meta-data-->
+<!--            android:name="firebase_analytics_collection_enabled"-->
+<!--            android:value="false" />-->
+
+
+        <!--        <meta-data-->
+<!--            android:name="com.google.firebase.messaging.default_notification_channel_id"-->
+<!--            android:value="@string/default_notification_channel_id" />-->
+
+        <activity android:name=".SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- <service android:name=".services.MyFirebaseInsrance"> -->
@@ -65,8 +94,11 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+
+<!--        <activity android:name=".TrynotifictionActivity"></activity>-->
+
         <activity android:name=".LoginActivity"></activity>
-<!--        <activity android:name=".MainActivity"></activity>-->
+        <activity android:name=".MainActivity"></activity>
         <activity android:name=".AskQuestionActivity"></activity>
         <activity android:name=".AskingActivity"></activity>
         <activity android:name=".MyQuestionActivity"></activity>
@@ -75,26 +107,18 @@
         <activity android:name=".AnswerActivity"></activity>
 
 
-
         <service
             android:name=".MyBackgroundService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location" />
+
+
         <service
-            android:name=".not.MyFireBaseMessagingService"
-            android:enabled="true"
+            android:name=".FCMMessageReceiverSrvice"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".not.MyFirebaseIdService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 

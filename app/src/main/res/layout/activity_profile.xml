@@ -6,229 +6,50 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     android:background="@drawable/backgraund"
-    android:screenOrientation="portrait">
+    android:screenOrientation="portrait"
+    tools:context=".ProfilActivity">
+    <!--Linear Layout with horizontal orientation
+        and other properties-->
 
-    <ImageView
-        android:id="@+id/profileID"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:src="@drawable/profil"
-        android:layout_marginTop="15dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="300dp"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="377dp"
-        android:layout_height="393dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:padding="5dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="95dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/bold_white">
-
-        <TextView
-            android:id="@+id/textViewTheLocationID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:fontFamily="sans-serif-light"
-            android:hint="Enter the place"
-            android:textColor="#615e5e"
-            android:textSize="18sp"
+        <!--Button for choosing image from gallery-->
+        <Button
+            android:id="@+id/btnChoose"
+            android:text="Choose"
+            android:layout_height="50dp"
+            android:layout_width="100dp"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="15dp"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <ImageView
-            android:layout_width="21dp"
-            android:layout_height="30dp"
-            tools:srcCompat="@drawable/inser"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="325dp"
-            android:layout_marginTop="12dp"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-       <View
-           android:layout_width="match_parent"
-           android:layout_height="0.01dp"
-           android:layout_marginEnd="16dp"
-           app:layout_constraintRight_toRightOf="parent"
-           android:layout_marginRight="16dp"
-           android:layout_marginStart="16dp"
-           android:padding="10dp"
-           app:layout_constraintLeft_toLeftOf="parent"
-           android:layout_marginLeft="16dp"
-           android:layout_marginTop="50dp"
-           app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/questionID"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusable="true"
-            android:fontFamily="sans-serif-light"
-            android:hint="Enter your question"
-            android:textColor="#615e5e"
-            android:textSize="18sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="15dp"
             android:layout_marginTop="60dp"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <ImageView
-            android:layout_width="21dp"
-            android:layout_height="30dp"
-            tools:srcCompat="@drawable/write"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="325dp"
-            android:layout_marginTop="58dp"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <EditText
-            android:id="@+id/edtContentID"
-            android:layout_width="match_parent"
-            android:layout_height="184dp"
-            android:background="#FFFFFFFF"
-            android:scrollbarAlwaysDrawHorizontalTrack="false"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:textColorHint="#000000"
-            android:visibility="visible"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:padding="10dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="90dp"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <ImageView
-            android:id="@+id/add_picID"
-            android:layout_width="30dp"
-            android:layout_height="39dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="55dp"
-            android:layout_marginTop="310dp"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/add_pic" />
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="90dp"
-            android:layout_marginTop="318dp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/plus" />
+            tools:ignore="MissingConstraints"/>
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="60dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:padding="10dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="300dp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:outlineAmbientShadowColor="#85707070" />
+        <!--Button for uploading image-->
 
-        <ImageView
-            android:id="@+id/add_videoID"
-            android:layout_width="38dp"
-            android:layout_height="45dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="250dp"
-            android:layout_marginTop="310dp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/add_video" />
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="295dp"
-            android:layout_marginTop="318dp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/plus" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:padding="5dp"
+    <Button
+        android:id="@+id/btnUpload"
+        android:text="Upload"
+        android:layout_height="50dp"
+        android:layout_width="100dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="560dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/bold">
-
-        <ImageView
-            android:id="@+id/mainID"
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:src="@drawable/search"
-            android:layout_marginTop="5dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="8dp"/>
-
-        <ImageView
-            android:id="@+id/my_questionID"
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:src="@drawable/q_a"
-            android:layout_marginTop="5dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="150dp"/>
-
-        <ImageView
-            android:id="@+id/add_locationID"
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:src="@drawable/send"
-            android:layout_marginTop="5dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginLeft="300dp"/>
+        tools:ignore="MissingConstraints"/>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <CheckBox
-        android:id="@+id/checkBoxID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:textColor="#453b3b"
-        android:textStyle="bold"
-        android:onClick="itemClicked"
-        android:text="Mark a question as important" />
 
-    <TextView
-        android:layout_width="350dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="545dp"
-        android:layout_marginLeft="30dp"
-        android:textColor="#615e5e"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        android:text="You have 3 important questions left" />
+    <!--Image View for showing image choosen from gallery-->
+    <ImageView
+        android:id="@+id/imgView"
+        android:layout_width="379dp"
+        android:layout_height="644dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.645"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="31dp"
+        tools:ignore="MissingConstraints"/>
 
 
 

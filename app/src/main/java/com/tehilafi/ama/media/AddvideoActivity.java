@@ -1,4 +1,4 @@
-package com.tehilafi.ama;
+package com.tehilafi.ama.media;
 
 import android.Manifest;
 import android.app.Activity;
@@ -21,7 +21,6 @@ import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -34,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.tehilafi.ama.R;
 
 import java.util.HashMap;
 
@@ -52,7 +52,6 @@ public class AddvideoActivity extends Activity {
     private Uri videoUri = null;
 
     private String title;
-
     private ProgressDialog progressDialog;
 
     @Override

@@ -1,22 +1,10 @@
-package com.tehilafi.ama;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-
-import static android.os.Environment.DIRECTORY_PICTURES;
+package com.tehilafi.ama.media;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,6 +16,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,8 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Picasso;
+import com.tehilafi.ama.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 
-public class PotoActivity extends AppCompatActivity {
+public class PotoActivity extends Activity {
 
     public static final int CAMERA_PERM_CODE = 101;
     public static final int CAMERA_REQUEST_CODE = 102;
@@ -62,7 +55,7 @@ public class PotoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.menu_photo);
+        setContentView( R.layout.menu_photo);
 
         selectedImage = findViewById(R.id.displayImageView);
         cameraBtn = findViewById(R.id.cameraBtn);
@@ -152,7 +145,7 @@ public class PotoActivity extends AppCompatActivity {
                 Uri downloadUri = uriTask.getResult();
                 if(uriTask.isSuccessful()){
                     HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("id", "" + timestamp);
+//                    hashMap.put("id", "" + timestamp);
                     hashMap.put("title", "" + name);
                     hashMap.put("timestamp", "" + timestamp);
                     hashMap.put("videoUri", "" + downloadUri);

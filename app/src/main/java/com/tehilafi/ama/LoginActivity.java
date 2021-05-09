@@ -1,15 +1,12 @@
 package com.tehilafi.ama;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,14 +15,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
+import com.tehilafi.ama.db.Users;
 
 
 public class LoginActivity extends Activity {
@@ -33,6 +34,7 @@ public class LoginActivity extends Activity {
     private Button logIn;
     private EditText password, userName, idUser, phone;
     private int score;
+    private String token;
     private CheckBox access_location;
     private Intent intent;
     private DatabaseReference reff;
@@ -41,7 +43,10 @@ public class LoginActivity extends Activity {
     Users users;
     Users chec_users;
 
+
     FirebaseAuth firebaseAuth;
+    public static final String TAG = "MyTag";
+
 
     private static final String MY_PREFERENCES = "pref_previously_started";
 
@@ -62,6 +67,20 @@ public class LoginActivity extends Activity {
             this.getActionBar().hide();
         } catch (NullPointerException e) {
         }
+
+        // Find the token of the device
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if(task.isSuccessful()){
+                            token=task.getResult().getToken();
+                            Log.d(TAG, "onComplete: Token: "+token);
+                        }else{
+                        }
+
+                    }
+                });
 
 
         logIn = findViewById( R.id.logInID );
@@ -88,10 +107,18 @@ public class LoginActivity extends Activity {
                 users.setId(Integer.parseInt(idUser.getText().toString().trim()));
                 users.setPhone( phone.getText().toString().trim() );
                 users.setScore(score);
+                users.setLatitude(0.0);
+                users.setLongitude(0.0);
+                users.setToken(token);
 
-                boolean check_username, check_password, check_id, check_phone;
+                boolean check_token, check_username, check_password, check_id, check_phone;
 
                 //If one of the details is missing:
+                if(token.equals( "" ))
+                    check_token = false;
+                else
+                    check_token = true;
+
                 if (userName.getText().toString().equals( "" )) {
                     Toast.makeText( LoginActivity.this, "Missing userName", Toast.LENGTH_LONG ).show();
                     check_username = false;
@@ -119,7 +146,7 @@ public class LoginActivity extends Activity {
                 } else
                     check_phone = true;
 
-                if(check_username && check_password  && check_phone && check_id){
+                if(check_username && check_password  && check_phone && check_id && check_token){
 
                     reff.child(idUser.getText().toString().trim()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -134,6 +161,9 @@ public class LoginActivity extends Activity {
                             users.setId(Integer.parseInt(idUser.getText().toString().trim()));
                             users.setPhone( phone.getText().toString().trim() );
                             users.setScore( score );
+                            users.setLatitude(0.0);
+                            users.setLongitude(0.0);
+                            users.setToken(token);
 
                             reff.child( idUser.getText().toString().trim() ).setValue( users );
 
@@ -141,11 +171,13 @@ public class LoginActivity extends Activity {
                             String name = userName.getText().toString();
                             String pas = password.getText().toString();
                             String ph = phone.getText().toString();
+                            String token_d = token;
 
                             mEditor.putString(getString(R.string.id), id);
                             mEditor.putString(getString(R.string.name), name);
                             mEditor.putString(getString(R.string.pas), pas);
                             mEditor.putString(getString(R.string.ph), ph);
+                            mEditor.putString(getString(R.string.token_d), ph);
                             mEditor.commit();
 
                             Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();

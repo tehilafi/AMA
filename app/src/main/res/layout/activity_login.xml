@@ -7,7 +7,7 @@
     android:padding="5dp"
     android:background="@drawable/backgraund"
     android:screenOrientation="portrait"
-    tools:context=".LoginActivity">
+    tools:context=".TryActivity">
 
     <ImageView
         android:layout_width="66dp"
