@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -15,12 +16,23 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.Nullable;
 import com.tehilafi.ama.db.Question;
+import com.tehilafi.ama.db.Users;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import static com.tehilafi.ama.not.NotificationSender.sendNotification;
 
@@ -33,11 +45,18 @@ public class AskingActivity extends Activity {
     private CheckBox checkBox;
     private String important_questions = "false";
 
-    DatabaseReference reff;
+    private DatabaseReference reff, reffUser;
+    private FirebaseAuth mAuth;
+    Users users;
     Question question;
-    long counter = 0;
+    public static long counter = 0;
 
     private static final String KEY_ID = "id";
+
+    public static final String TAG = "MyTag";
+
+   ArrayList<String> tokens = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +69,11 @@ public class AskingActivity extends Activity {
             this.getActionBar().hide();
         } catch (NullPointerException e) {
         }
+
+        // Init
+        mAuth = FirebaseAuth.getInstance();
+        users = new Users();
+        reffUser = FirebaseDatabase.getInstance().getReference( "Users" );
 
         send = findViewById( R.id.btnSaveID );
         textViewTheLocation = findViewById( R.id.textViewTheLocationID );
@@ -88,73 +112,107 @@ public class AskingActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                String token = "fzEcDneIQiibbpqDU2L-a6:APA91bFMxPXx3gzzuIKkezjE6N4rYoGgnqAC9Mp3zjThgi1UNYxBvyoZAfu3NZhjdcCGKfJM0EzEFHaXa3_rzcrsmkGX4z-iJalIwVmucWsPJ3UnBAQq6ef9FPUMTeh1GomjtDSaWdrj";
-                sendNotification( AskingActivity.this, "/topics/t-topic", "try", "massege" );
-                
-//
-//                int num_question;
-//                boolean checkContent;
-//                //If one of the details is missing:
-//                if (edtContent.getText().toString().equals( "" )) {
-//                    Toast.makeText( AskingActivity.this, "Missing content", Toast.LENGTH_LONG ).show();
-//                    checkContent = false;
-//                } else
-//                    checkContent = true;
-//
-//                if (checkContent) {
-//                    num_question= (int)counter;
-//                    question.setLocation(getIntent().getStringExtra("Extra locations"));
-//                    question.setIdAsking( Integer.parseInt( iduser ) );
-//                    question.setTitleQuestion("title");
-//                    question.setContentQuestion( edtContent.getText().toString().trim() );
-//                    question.setNumQuestion(num_question +1);
-//                    question.setImportant_questions(important_questions);
-//
-//                    //question.setLocation(latLngString);
-//
-//                    reff.child( String.valueOf( counter + 1 ) ).setValue( question );
-////                    String token = "cDXCAbQfSM24QsMk3czo2n:APA91bFbuFrfkG4CKP7pLjtVFMUc07uOzU7SJ54JdNR27_jck6Z6AAfC_u0erzz";
-////                    sendNotification(AskingActivity.this, token, "try", "nassege");
-//
-//
-//                    Calculation_coordinates(latLngString);
-//
+                Query myQuery = reffUser;
+                myQuery.addChildEventListener( new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        String token = snapshot.getValue( Users.class ).getToken();
+                        Log.d(TAG, "the token = " + token);
+                        Double lat = snapshot.getValue( Users.class ).getLatitude();
+                        Double lng = snapshot.getValue( Users.class ).getLongitude();
+
+                        // split latLngString to longitude and latitude
+                        String[] s = latLngString.split("\\(");
+                        String s1 = s[1];
+                        s = s1.split("\\,");
+                        String la = s[0];
+                        String ln = s[1].substring(0, s[1].length() - 1);
+                        // Check if the location is within range
+                        float[] results = new float[1];
+                        Location.distanceBetween(Double.parseDouble(la), Double.parseDouble(ln), lat, lng, results );
+                        float distanceInMeters = results[0];
+                        if(distanceInMeters < 700){
+                            Log.d(TAG, "the token in = " + token);
+                            tokens.add(token);
+                        }
+
+                        int num_question;
+                        boolean checkContent;
+                        //If one of the details is missing:
+                        if (edtContent.getText().toString().equals( "" )) {
+                            Toast.makeText( AskingActivity.this, "Missing content", Toast.LENGTH_LONG ).show();
+                            checkContent = false;
+                        } else
+                            checkContent = true;
+
+                        if (checkContent) {
+                            // send notification to tokens
+                            Log.d(TAG, "array tokens = " + tokens);
+                            sendNotification( AskingActivity.this, tokens, "try", "massege", "question" );
+
+                            num_question= (int)counter;
+                            // save in DB question
+                            question.setLocation(getIntent().getStringExtra("Extra locations"));
+                            question.setIdAsking( Integer.parseInt( iduser ) );
+                            question.setContentQuestion( edtContent.getText().toString().trim() );
+                            question.setNumQuestion(num_question +1);
+                            question.setImportant_questions(important_questions);
+                            question.setLatLngString(latLngString);
+                            question.setSend_to_tokens(tokens);
+                            question.setDateTimeQuestion(currentDateTime());
+                            question.setNumLikes(0);
+                            question.setNumComments(0);
+                            question.setUsernameAsk(mPreferences.getString(getString(R.string.name), ""));
+
+                            reff.child( String.valueOf( counter + 1 ) ).setValue( question );
+
 //                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
 //                    startActivity(intent);
-//                }
-//                else
-//                    Toast.makeText(AskingActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
-            }
+                        }
+                        else
+                            Toast.makeText(AskingActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
+                    }
+
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                } );
+
+
+           }
 
         } );
-    }
-
-    //private ArrayList<String> Calculation_coordinates(String latLngString){
-    private void Calculation_coordinates(String latLngString){
-
-        String latString = null;
-        String lngString = null;
-        String[] location = latLngString.split("\\,");
-        latString = location[0];
-        lngString = location[1];
-
-        String userlat = "31.200";
-        String userlng = "35.04";
-
-        float[] results = new float[1];
-       // Location.distanceBetween(latString,Double.parseDouble(lngString) , Double.parseDouble(userlat), Double.parseDouble(userlng), results);
-        Location.distanceBetween(31.9325, 35.0423, 31.9, 35.0, results);
-        float distance = results[0];
-
-        Toast.makeText( this, "#####" + distance+  "#####"  , Toast.LENGTH_SHORT ).show();
-//        return latLngStrings;
     }
 
     public void itemClicked(View v) {
         important_questions = "true";
     }
 
+    //  The function returns the current date and time
+    public String currentDateTime(){
+        String pattern = "MM/dd/yyyy HH:mm:ss";
+        DateFormat df = new SimpleDateFormat(pattern);
+        Date currentTime = Calendar.getInstance().getTime();
+        String todayAsString = df.format(currentTime);
 
-
-
+        return todayAsString;
     }
+
+}

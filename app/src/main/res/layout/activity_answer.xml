@@ -50,7 +50,7 @@
             tools:text="Joe muklin "
             />
         <TextView
-            android:id="@+id/txvratingID"
+            android:id="@+id/txvdateTimeID"
             android:layout_width="100dp"
             android:layout_height="25dp"
             android:layout_marginTop="0dp"
@@ -60,7 +60,7 @@
             android:textSize="14sp"
             android:textColor="#615e5e"
             android:lineSpacingExtra="4sp"
-            tools:text="Rating 6"
+            tools:text="dateTime"
             />
 
         <TextView

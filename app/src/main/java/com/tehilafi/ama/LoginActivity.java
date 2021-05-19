@@ -96,7 +96,7 @@ public class LoginActivity extends Activity {
         users = new Users();
         chec_users=new Users();
         reff = FirebaseDatabase.getInstance().getReference().child( "Users" );
-        score = 0;
+        score = 10;
         logIn.setOnClickListener(  new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -171,13 +171,13 @@ public class LoginActivity extends Activity {
                             String name = userName.getText().toString();
                             String pas = password.getText().toString();
                             String ph = phone.getText().toString();
-                            String token_d = token;
+                            String myToken = token;
 
                             mEditor.putString(getString(R.string.id), id);
                             mEditor.putString(getString(R.string.name), name);
                             mEditor.putString(getString(R.string.pas), pas);
                             mEditor.putString(getString(R.string.ph), ph);
-                            mEditor.putString(getString(R.string.token_d), ph);
+                            mEditor.putString(getString(R.string.myToken), myToken);
                             mEditor.commit();
 
                             Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();

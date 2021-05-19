@@ -1,4 +1,4 @@
-package com.tehilafi.ama;
+package com.tehilafi.ama.location;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -42,6 +42,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.tehilafi.ama.R;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -160,6 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled( true );
 
+
         if (fusedLocationProviderClient != null)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
@@ -184,7 +186,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     @Subscribe(sticky = true, threadMode =  ThreadMode.MAIN)
-    public void onListenLocation(ListViewAdapte.SendLocationToActivity event){
+    public void onListenLocation(SendLocationToActivity event){
         if(event != null){
             String data = new StringBuilder()
                     .append( event.getLocation().getLatitude() )

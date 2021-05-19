@@ -1,10 +1,10 @@
 package com.tehilafi.ama;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -15,28 +15,44 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.annotations.Nullable;
 import com.tehilafi.ama.db.Answer;
+import com.tehilafi.ama.db.Question;
 import com.tehilafi.ama.db.Users;
-import com.tehilafi.ama.media.AddvideoActivity;
-import com.tehilafi.ama.media.PotoActivity;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import static com.tehilafi.ama.not.NotificationSender.sendNotification;
 
 public class AnswerActivity extends Activity {
 
-    private TextView txvname, txvrating, txvLocation, txvquestion;
+    private TextView txvname, txvdateTime, txvLocation, txvquestion;
     private EditText edtContent;
     private Button btnSave;
     private String iduser;
     private ImageView  add_pic, add_video;
+    private String num_question;
+
+    public static final String TAG = "MyTag";
 
 
-    long counter = 0;
+    private String id_asking;
+    ArrayList<String> askingToken = new ArrayList<String>();
+
+    public static long counter = 0;
     private boolean important_answer = false;
-    DatabaseReference reff, reffuser;
+    DatabaseReference reff, reffAnswer, reffUser;
     Answer answer;
     Users users;
 
@@ -52,51 +68,95 @@ public class AnswerActivity extends Activity {
         } catch (NullPointerException e) {
         }
 
-        txvname = findViewById(R.id.txvnameID);
-        txvname.setText("user name");
-
-        txvrating = findViewById(R.id.txvratingID);
-        txvrating.setText("Rating 2");
-
-        txvLocation = findViewById(R.id.txvLocationID);
-        txvLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
-
-        txvquestion = findViewById(R.id.txvquestionID);
-        txvquestion.setText( getIntent().getStringExtra( "Extra content" ) );
-
-        edtContent = findViewById(R.id.edtContentID);
-        // For add image or video //
-        add_pic = findViewById(R.id.add_picID);
-        add_pic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(AnswerActivity.this, PotoActivity.class));
-            }
-        });
-        add_video = findViewById(R.id.add_videoID);
-        add_video.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(AnswerActivity.this, AddvideoActivity.class));
-            }
-        });
-        // *** //
-
-        if(getIntent().getStringExtra( "Extra important_questions" ) == "true")
-            important_answer = true;
-
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = mPreferences.edit();
 
-        iduser =  mPreferences.getString(getString(R.string.id), "");
-        if(iduser == "")
-            iduser = "null";
+// *******************************  Get the data from the Question DB  *******************************
+        reff = FirebaseDatabase.getInstance().getReference("Questions");
+        Query myQuery = reff.orderByChild("numQuestion");
+        myQuery.addChildEventListener( new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
+                num_question = getIntent().getStringExtra("Extra numQuestion");
+                Log.d(TAG, "Extra numQuestion" + num_question);
+                String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
+                if(numberQuestion.equals(num_question)){
+                    String content = snapshot.getValue( Question.class ).content();
+                    String location = snapshot.getValue( Question.class ).location();
+                    id_asking = snapshot.getValue( Question.class ).id_user();
+                    String importantQuestions = snapshot.getValue( Question.class ).important_questions();
+
+                    txvname = findViewById(R.id.txvnameID);
+                    txvname.setText(mPreferences.getString(getString(R.string.name), ""));
+                    txvdateTime = findViewById(R.id.txvdateTimeID);
+                    txvdateTime.setText(currentDateTime());
+                    txvLocation = findViewById(R.id.txvLocationID);
+                    txvLocation.setText(location);
+                    txvquestion = findViewById(R.id.txvquestionID);
+                    txvquestion.setText(content);
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        } );
+
+
+// *******************************  Get the token of device asking  *******************************
+        reff = FirebaseDatabase.getInstance().getReference("Users");
+        Query myQueryUser = reff.orderByChild("token");
+        myQueryUser.addChildEventListener( new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                int idAsking = snapshot.getValue( Users.class ).getId();
+                Log.d(TAG, "idAsking = " + idAsking);
+                Log.d(TAG, "String.valueOf( idAsking )  = " + String.valueOf( idAsking ) );
+                if (id_asking.equals( String.valueOf( idAsking ) ))
+                    askingToken.add(snapshot.getValue( Users.class ).getToken());
+
+                Log.d(TAG, "askingToken = " + askingToken);
+            }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        } );
+// *******************************  Sava the answer data in the Answers DB  *******************************
         answer = new Answer();
-
-        reffuser = FirebaseDatabase.getInstance().getReference().child("Users");
-
-        reff = FirebaseDatabase.getInstance().getReference().child( "Answers");
+        reff = FirebaseDatabase.getInstance().getReference().child( "Answers" );
         reff.addValueEventListener( new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -109,74 +169,55 @@ public class AnswerActivity extends Activity {
             }
         });
 
-        btnSave = findViewById(R.id.btnSaveID);
+        edtContent = findViewById( R.id.edtContentID );
+        btnSave = findViewById( R.id.btnSaveID );
         btnSave.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int numAnswer;
+                int num_ans;
                 boolean checkContent;
-                //If the answer is missing:
                 if (edtContent.getText().toString().equals( "" )) {
                     Toast.makeText( AnswerActivity.this, "Missing Answer", Toast.LENGTH_LONG ).show();
                     checkContent = false;
                 } else
                     checkContent = true;
                 if (checkContent) {
-                    numAnswer= (int)counter;
 
-                    answer.setIdAnswering(Integer.parseInt( iduser ));
-                    answer.setContentAnswer(edtContent.getText().toString().trim());
-                    answer.setNumQuestion(Integer.parseInt(getIntent().getExtras().getString("Extra numQuestion")));
-                    answer.setNumAnswer(numAnswer +1);
+                    // send notification to tokens of asking
+                    sendNotification( AnswerActivity.this, askingToken, "try", "massege", "answer");
 
-                    reff.child( String.valueOf( counter + 1 ) ).setValue( answer );
+                    num_ans= (int)counter;
+                    // save in DB question
+                    answer.setIdAsking( Integer.parseInt(id_asking) );
+                    answer.setContentAnswer( edtContent.getText().toString().trim() );
+                    answer.setNumAnswer(num_ans +1);
+                    answer.setNumQuestion(Integer.parseInt(num_question));
+                    answer.setIdAnswering(Integer.parseInt(mPreferences.getString(getString(R.string.id), "")));
+                    answer.setDateTimeAnswer(currentDateTime());
+                    answer.setNumLikes(0);
+                    answer.setNumComments(0);
+                    answer.setUserNameAns(mPreferences.getString(getString(R.string.name), ""));
 
 
+//                    answer.setSend_to_token( askingToken.get( 0 ) );
+
+                    reff.child( String.valueOf( counter + 1 ) ).setValue(answer);
                 }
+            else
+                Toast.makeText(AnswerActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
 
 
             }
-        } );
+        });
+    }
 
-//        if(important_answer = true)
-//            //Query myQuery = reffuser.orderByChild("id").equalTo(iduser);
-//            Query mQuery = reffuser.orderByChild("id").equalTo(iduser);
-//            myQuery.addChildEventListener( new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                content = snapshot.getValue( Question.class ).content();
-//                title = snapshot.getValue( Question.class ).title();
-//                location = snapshot.getValue( Question.class ).location();
-//                numQuestion = snapshot.getValue( Question.class ).numQuestion();
-//                id_user = snapshot.getValue( Question.class ).id_user();
-//                importantQuestions = snapshot.getValue( Question.class).important_questions();
-//
-//                arrayList.add(new ListView_item(R.drawable.photo_profile_start, title, content ));
-//                listViewAdapte.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        } );
+    //  The function returns the current date and time
+    public String currentDateTime(){
+        String pattern = "MM/dd/yyyy HH:mm:ss";
+        DateFormat df = new SimpleDateFormat(pattern);
+        Date currentTime = Calendar.getInstance().getTime();
+        String todayAsString = df.format(currentTime);
 
-
-
+        return todayAsString;
     }
 }

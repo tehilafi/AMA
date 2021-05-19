@@ -1,15 +1,62 @@
 package com.tehilafi.ama.db;
 
+import java.util.ArrayList;
+
 public class Question {
     private int numQuestion;
     private int idAsking;
-    private String titleQuestion;
+    private String usernameAsk;
     private String contentQuestion;
-    private Boolean ugentQuestion;
     private String location;
     private String important_questions;
+    private String latLngString;
+    private ArrayList<String> send_to_tokens;
+    private String dateTimeQuestion;
+    private int numLikes;
+    private int numComments;
+
 
     public Question(){
+    }
+
+    public String getDateTimeQuestion() {
+        return dateTimeQuestion;
+    }
+
+    public int getNumLikes() {
+        return numLikes;
+    }
+
+    public int getNumComments() {
+        return numComments;
+    }
+
+    public String getUsernameAsk() {
+        return usernameAsk;
+    }
+
+    public void setUsernameAsk(String usernameAsk) {
+        this.usernameAsk = usernameAsk;
+    }
+
+    public void setNumLikes(int numLikes) {
+        this.numLikes = numLikes;
+    }
+
+    public void setNumComments(int numComments) {
+        this.numComments = numComments;
+    }
+
+    public void setDateTimeQuestion(String dateTime) {
+        this.dateTimeQuestion = dateTime;
+    }
+
+    public ArrayList<String> getSend_to_tokens() {
+        return send_to_tokens;
+    }
+
+    public void setSend_to_tokens(ArrayList<String> send_to_tokens) {
+        this.send_to_tokens = send_to_tokens;
     }
 
     public int getNumQuestion() {
@@ -20,16 +67,8 @@ public class Question {
         return idAsking;
     }
 
-    public String getTitleQuestion() {
-        return titleQuestion;
-    }
-
     public String getContentQuestion() {
         return contentQuestion;
-    }
-
-    public Boolean getUgentQuestion() {
-        return ugentQuestion;
     }
 
     public String getLocation() {
@@ -48,17 +87,11 @@ public class Question {
         this.idAsking = idAsking;
     }
 
-    public void setTitleQuestion(String titleQuestion) {
-        this.titleQuestion = titleQuestion;
-    }
 
     public void setContentQuestion(String contentQuestion) {
         this.contentQuestion = contentQuestion;
     }
 
-    public void setUgentQuestion(Boolean ugentQuestion) {
-        this.ugentQuestion = ugentQuestion;
-    }
 
     public void setLocation(String location) {
         this.location = location;
@@ -68,10 +101,14 @@ public class Question {
         this.important_questions = important_questions;
     }
 
-
-    public String title() {
-        return  this.titleQuestion;
+    public String getLatLngString() {
+        return latLngString;
     }
+
+    public void setLatLngString(String latLngString) {
+        this.latLngString = latLngString;
+    }
+
     public String location() {
         return this.location;
     }

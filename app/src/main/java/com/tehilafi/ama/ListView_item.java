@@ -3,13 +3,15 @@ package com.tehilafi.ama;
 public class ListView_item {
 
     int Image;
+    String UserName;
     String Date;
-    String Des;
+    String Location;
 
-    public ListView_item(int image, String date, String des){
+    public ListView_item(int image,  String userName, String date, String location){
         Image = image;
+        UserName = userName;
         Date = date;
-        Des = des;
+        Location = location;
     }
 
     public int getImage() {
@@ -20,8 +22,20 @@ public class ListView_item {
         return Date;
     }
 
-    public String getDes() {
-        return Des;
+    public String getUserName() {
+        return UserName;
+    }
+
+    public String getLocation() {
+        return Location;
+    }
+
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
+
+    public void setLocation(String location) {
+        Location = location;
     }
 
     public void setImage(int image) {
@@ -32,7 +46,4 @@ public class ListView_item {
         Date = date;
     }
 
-    public void setDes(String des) {
-        Des = des;
-    }
 }

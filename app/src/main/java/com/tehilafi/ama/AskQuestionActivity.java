@@ -2,8 +2,8 @@ package com.tehilafi.ama;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,10 +28,13 @@ public class AskQuestionActivity extends Activity {
     DatabaseReference reff;
 
     ListView listView;
-    ArrayAdapter<String> arrayAdapter;
-    ArrayList<String> arrayList = new ArrayList<>();
+    ListViewAdapte listViewAdapte;
+    ArrayList<ListView_item> arrayList = new ArrayList<>();
+    public static final String TAG = "MyTag";
 
-        @Override
+
+
+    @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate( savedInstanceState );
             setContentView( R.layout.activity_preasking);
@@ -45,26 +48,30 @@ public class AskQuestionActivity extends Activity {
             }
 
             txvLocation = findViewById( R.id.txvLocationID );
-            if (getIntent().getStringExtra( "Extra locations" ) == null)
-                txvLocation.setText("facaza");
             txvLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
-
 
             final String locationToAddQuestion = txvLocation.getText().toString();
 
             reff = FirebaseDatabase.getInstance().getReference("Questions");
             listView = (ListView)findViewById(R.id.listView1ID);
-            //arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, arrayList);
-            arrayAdapter = new ArrayAdapter<String>(this,R.layout.my_listview_item, arrayList);
+            listViewAdapte = new ListViewAdapte(this,R.layout.my_listview_item, arrayList);
+            listView.setAdapter(listViewAdapte);
 
-            listView.setAdapter(arrayAdapter);
-            Query myQuery = reff.orderByChild("location").equalTo("israel");
+            Query myQuery = reff.orderByChild("location");
             myQuery.addChildEventListener( new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    String value = snapshot.getValue( Question.class ).title();
-                    arrayList.add( value );
-                    arrayAdapter.notifyDataSetChanged();
+
+                    String location = snapshot.getValue( Question.class ).location();
+                    Log.d(TAG, "location = " + location);
+                    if(location.equals(getIntent().getStringExtra( "Extra locations" ))){
+                        String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
+                        String idAsking = snapshot.getValue( Question.class ).id_user();
+
+                        arrayList.add( new ListView_item( R.drawable.photo_profile_start, idAsking, dateTime,  location ) );
+                        listViewAdapte.notifyDataSetChanged();
+                    }
+                    Log.d(TAG, "arrayList = " + arrayList);
                 }
 
                 @Override

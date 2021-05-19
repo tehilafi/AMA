@@ -6,6 +6,7 @@ public class Users {
     private String password;
     private String phone;
     private int score;
+    private int stars;
     private int id;
     private Double latitude; // width
     private Double longitude; // Length
@@ -51,6 +52,14 @@ public class Users {
         this.id = id;
     }
 
+    public int getStars() {
+        return stars;
+    }
+
+    public void setStars(int stars) {
+        this.stars = stars;
+    }
+
     public Double getLatitude() {
         return latitude;
     }
@@ -76,7 +85,7 @@ public class Users {
     }
 
     public Users(){
-
     }
+
 
 }
