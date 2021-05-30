@@ -14,12 +14,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -34,6 +36,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,19 +48,15 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.tehilafi.ama.db.Users;
 import com.tehilafi.ama.location.Common;
 import com.tehilafi.ama.location.MyBackgroundService;
-import com.tehilafi.ama.location.SendLocationToActivity;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener {
-
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener{
     GoogleMap mMap;
     SearchView searchView;
     SupportMapFragment mapFragment;
@@ -68,31 +67,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     LocationRequest locationRequest;
     private Boolean isWithin0_5km = false;
     Boolean isFirstRun;
-
     Users users;
-
     private static final String KEY_locatoin = "q_location";
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
-
     private DatabaseReference reff, reffLocation;
     CurrentLocation locationDB;
     private FirebaseAuth mAuth;
-
     String locationToAddQuestion;
     String id_user;
     String idUser;
-
     ImageView requestLocation, removeLocation;
     ImageView add_location, my_question, mainbtn;
     private ImageView profile;
-
     private Boolean requestLocationButton = true;
-
     public static final String TAG = "MyTag";
 
-
-    //MyBackgroundService mService
+    // *******************************  Background Service  *******************************
     MyBackgroundService mService = null;
     boolean mBound = false;
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -111,20 +102,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     };
 
-    // Save current locations in users DB
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onListenLocation(final SendLocationToActivity event) {
-        if (event != null) {
-            Toast.makeText( mService, event.getLocation().getLatitude() + " / " + event.getLocation().getLongitude(), Toast.LENGTH_SHORT ).show();
-            users = new Users();
-            reff = FirebaseDatabase.getInstance().getReference( "Users" );
-            String id = mPreferences.getString( getString( R.string.id ), "" );
-            reff.child( id ).child( "latitude" ).setValue( event.getLocation().getLatitude() );
-            reff.child( id ).child( "longitude" ).setValue( event.getLocation().getLongitude() );
-
-        }
-    }
-
+//// *******************************  Save current locations in users DB  *******************************
+//    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+//    public void onListenLocation(final SendLocationToActivity event) {
+//        if (event != null) {
+//            Toast.makeText( mService, event.getLocation().getLatitude() + " / " + event.getLocation().getLongitude(), Toast.LENGTH_SHORT ).show();
+//            users = new Users();
+//            reff = FirebaseDatabase.getInstance().getReference( "Users" );
+//            String id = mPreferences.getString( getString( R.string.id ), "" );
+//            reff.child( id ).child( "latitude" ).setValue( event.getLocation().getLatitude() );
+//            reff.child( id ).child( "longitude" ).setValue( event.getLocation().getLongitude() );
+//
+//        }
+//    }
 
     public static MainActivity getInstance() {
         return instance;
@@ -132,8 +122,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate( savedInstanceState );
-        setContentView( R.layout.activity_main );
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         // Hide the Activity Status Bar
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
@@ -146,6 +136,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             startActivity( new Intent( MainActivity.this, LoginActivity.class ) );
 
         }
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).edit()
                 .putBoolean( "isFirstRun", false ).commit();
@@ -161,7 +154,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) == PackageManager.PERMISSION_GRANTED) {
             getCurrentLocation();
         }
-
         instance = this;
         searchView = findViewById( R.id.search_location );
 
@@ -171,7 +163,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mAuth = FirebaseAuth.getInstance();
         reff = FirebaseDatabase.getInstance().getReference( "Users" );
 
-// *******************************  Search location in map  *******************************
+//        // *******************************  Search location in map  *******************************
 
         searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
             @Override
@@ -215,7 +207,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 // *******************************  End search location in map  *******************************
 
 // *******************************  Activity transitions  *******************************
-
         // Moves to activity of profile
         profile = findViewById( R.id.profileID );
         profile.setOnClickListener( new View.OnClickListener() {
@@ -225,66 +216,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity( intent );
             }
         } );
-
-        // Moves to the activity of watching the previous questions
-        mainbtn = findViewById( R.id.mainID );
-        mainbtn.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
-                    Intent intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-//                    if (locationToAddQuestion == null)
-//                        locationToAddQuestion = "qqqqq";
-                    intent.putExtra( "Extra locations", locationToAddQuestion );
-                    intent.putExtra( "Extra id", id_user );
-                    startActivity( intent );
-                } else
-                    Toast.makeText( getApplicationContext(), "Enret locattion", Toast.LENGTH_LONG ).show();
-            }
-        } );
-
-        // Moves to activity of asking new questions by location
-        add_location = findViewById( R.id.add_locationID );
-        add_location.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
-                    Intent intent = new Intent( getBaseContext(), AskingActivity.class );
-//                    if (locationToAddQuestion == null)
-//                        locationToAddQuestion = "qqqqq";
-                    intent.putExtra( "Extra locations", locationToAddQuestion );
-                    intent.putExtra( "Extra id", id_user );
-                    startActivity( intent );
-                } else
-                    Toast.makeText( getApplicationContext(), "Enret locattion", Toast.LENGTH_LONG ).show();
-            }
-        } );
-
-        // Moves to the activity of viewing my questions and uswers
-        my_question = findViewById( R.id.my_questionID );
-        my_question.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
-                Log.d(TAG, "my_token = " + my_token );
-                Intent intent = new Intent( getBaseContext(), MyAnswerActivity.class );
-                startActivity( intent );
-            }
-        } );
-
-// *******************************  End activity transitions  *******************************
-
-
-//********************************************************************************************************************************//
-//        // Disabling the device's topic
-//        FirebaseMessaging.getInstance().unsubscribeFromTopic("/topics/t-topic");
-//        Log.d( TAG, "unsubscribeFromTopic:" );
-
-//********************************************************************************************************************************//
-
-
-        ///////////////////////////////////////////////////////////////////////////////////////
-
 
         Dexter.withActivity( this ).withPermissions( Arrays.asList(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -313,7 +244,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                         } );
 
-                        setButtonState(Common.requestingLocationUpdates( MainActivity.this ) );
+                        setButtonState( Common.requestingLocationUpdates( MainActivity.this ) );
                         bindService( new Intent( MainActivity.this,
                                 MyBackgroundService.class ), mServiceConnection, Context.BIND_AUTO_CREATE );
                     }
@@ -325,31 +256,43 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     }
                 } ).check();
 
-        //getUserinfo();
 
     }
 
-//    private void getUserinfo() {
-//
-//        reff.child( mAuth.getCurrentUser().getUid() ).addValueEventListener( new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (snapshot.exists() && snapshot.getChildrenCount() > 0) {
-//                    //String name = snapshot.child("name").getValue().toString();
-//                    if (snapshot.hasChild( "image" )) {
-//                        String image = snapshot.child( "image" ).getValue().toString();
-//                        Picasso.with( MainActivity.this ).load( image ).into( profile );
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        } );
-//    }
+    // *******************************  For NavBar  *******************************
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Intent intent;
+                    switch (item.getItemId()) {
+                        case R.id.mainID:
+                            if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
+                                intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                                intent.putExtra( "Extra locations", locationToAddQuestion );
+                                intent.putExtra( "Extra id", id_user );
+                                startActivity( intent );
+                            }
+                            break;
 
+                        case R.id.my_questionID:
+                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
+                            Log.d(TAG, "my_token = " + my_token );
+                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
+                            startActivity( intent );
+                            break;
+                        case R.id.add_locationID:
+                            if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
+                                intent = new Intent( getBaseContext(), AskingActivity.class );
+                                intent.putExtra( "Extra locations", locationToAddQuestion );
+                                intent.putExtra( "Extra id", id_user );
+                                startActivity( intent );
+                            }
+                            break;
+                    }
+                    return true;
+                }
+            };
 
     // To see the current location on the map
     private void getCurrentLocation() {
@@ -380,12 +323,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( this );
-        EventBus.getDefault().register( this );
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( this );
+//        EventBus.getDefault().register( this );
+//    }
 
     @Override
     protected void onStop() {
@@ -423,14 +366,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode){
-//            case REQUEST_CODE:
-//                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-////                    fetchLastLocation();
-//                }
-//                break;
-//        }
-//    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
 }

@@ -8,9 +8,10 @@ public class Users {
     private int score;
     private int stars;
     private int id;
-    private Double latitude; // width
-    private Double longitude; // Length
     private String token;
+    private Double latitude;
+    private Double longitude;
+
 
     public String getUserName() {
         return userName;

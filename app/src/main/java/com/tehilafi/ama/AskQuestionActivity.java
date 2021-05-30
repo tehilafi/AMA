@@ -54,7 +54,7 @@ public class AskQuestionActivity extends Activity {
 
             reff = FirebaseDatabase.getInstance().getReference("Questions");
             listView = (ListView)findViewById(R.id.listView1ID);
-            listViewAdapte = new ListViewAdapte(this,R.layout.my_listview_item, arrayList);
+            listViewAdapte = new ListViewAdapte(this,R.layout.listview_my, arrayList);
             listView.setAdapter(listViewAdapte);
 
             Query myQuery = reff.orderByChild("location");
@@ -66,9 +66,9 @@ public class AskQuestionActivity extends Activity {
                     Log.d(TAG, "location = " + location);
                     if(location.equals(getIntent().getStringExtra( "Extra locations" ))){
                         String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
-                        String idAsking = snapshot.getValue( Question.class ).id_user();
+                        String nameUser = snapshot.getValue( Question.class ).getUsernameAsk();
 
-                        arrayList.add( new ListView_item( R.drawable.photo_profile_start, idAsking, dateTime,  location ) );
+                        arrayList.add( new ListView_item( R.drawable.photo_profile_start, nameUser, dateTime,  location ) );
                         listViewAdapte.notifyDataSetChanged();
                     }
                     Log.d(TAG, "arrayList = " + arrayList);

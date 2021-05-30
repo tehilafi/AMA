@@ -2,96 +2,112 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/a_my_answers"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
+    app:layout_editor_absoluteX="0dp"
+    app:layout_editor_absoluteY="80dp"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="80dp"
     android:background="@drawable/backgraund"
-    android:screenOrientation="portrait"
     tools:context=".MyQuestionActivity">
+
 
     <ImageView
         android:id="@+id/profileID"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="290dp"
+        android:layout_width="75dp"
+        android:layout_height="70dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/profil"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.952"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:src="@drawable/profil"/>
+        app:layout_constraintVertical_bias="0.024" />
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="455dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/bold_white"
-        android:padding="5dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/con"
+        android:layout_width="314dp"
+        android:layout_height="506dp"
+        android:background="@drawable/bold"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.588"
+        app:layout_editor_absoluteX="0dp"
+        app:layout_editor_absoluteY="80dp">
 
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="25dp"
-            android:src="@drawable/back"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/Questions_I_was_askedID"
-            android:layout_width="122dp"
-            android:layout_height="52dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/gray_line"
-            android:fontFamily="sans-serif-light"
-            android:gravity="center"
-            android:text="Questions I was asked"
-            android:textColor="#615e5e"
-            android:textSize="12sp"
-            android:textStyle="normal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/Questions_I_sentID"
             android:layout_width="122dp"
             android:layout_height="52dp"
-            android:layout_marginLeft="158dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="436dp"
+            android:text="Questions_I_sentID"
             android:background="@drawable/yellow_line"
             android:fontFamily="sans-serif-light"
             android:gravity="center"
-            android:text="Questions I sent"
             android:textColor="#615e5e"
             android:textSize="12sp"
             android:textStyle="normal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="@+id/con"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintRight_toRightOf="@+id/con"
+            app:layout_editor_absoluteX="304dp"
+            app:layout_editor_absoluteY="543dp"
+            tools:layout_constraintBottom_creator="1"
+            tools:layout_constraintRight_creator="1" />
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="275dp"
-            android:layout_marginTop="25dp"
-            android:src="@drawable/next"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/Questions_I_was_askedID"
+            android:layout_width="122dp"
+            android:layout_height="52dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="436dp"
+            android:text="Questions_I_was_askedID"
+            android:background="@drawable/gray_line"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:textColor="#615e5e"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="@+id/con"
+            app:layout_constraintRight_toLeftOf="@+id/Questions_I_sentID"
+            app:layout_editor_absoluteX="200dp"
+            app:layout_editor_absoluteY="543dp"
+            tools:layout_constraintBottom_creator="1"
+            tools:layout_constraintRight_creator="1" />
+
 
         <ListView
             android:id="@+id/listView2ID"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="305dp"
+            android:layout_height="406dp"
             android:layout_marginTop="88dp"
             android:background="@drawable/list"
+            app:layout_constraintBottom_creator="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.493"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.588"
+            app:layout_editor_absoluteX="0dp"
+            app:layout_editor_absoluteY="80dp"
             tools:ignore="MissingConstraints" />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

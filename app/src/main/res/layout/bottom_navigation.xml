@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <item
+        android:id="@+id/mainID"
+        android:icon="@drawable/search"
+        android:title="Home"
+        android:layout_height="33dp"
+        android:layout_width="24dp"/>
+
+    <item
+        android:id="@+id/my_questionID"
+        android:icon="@drawable/q_a"
+        android:title="Favorites"
+        android:layout_height="27dp"
+        android:layout_width="31dp"/>
+    <item
+        android:id="@+id/add_locationID"
+        android:icon="@drawable/send"
+        android:title="Search"
+        android:layout_height="29dp"
+        android:layout_width="33dp"/>
+</menu>

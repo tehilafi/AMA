@@ -181,7 +181,7 @@ public class LoginActivity extends Activity {
                             mEditor.commit();
 
                             Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
-                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                            Intent intent = new Intent(getBaseContext(), TryActivity.class);
                             startActivity(intent);
                         }
                     }

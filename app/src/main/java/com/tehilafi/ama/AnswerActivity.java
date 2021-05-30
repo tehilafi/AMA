@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class AnswerActivity extends Activity {
     private String iduser;
     private ImageView  add_pic, add_video;
     private String num_question;
+    private RatingBar myRating;
 
     public static final String TAG = "MyTag";
 
@@ -70,6 +72,9 @@ public class AnswerActivity extends Activity {
 
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        myRating = findViewById( R.id.MyRatingID);
+
+
 // *******************************  Get the data from the Question DB  *******************************
         reff = FirebaseDatabase.getInstance().getReference("Questions");
         Query myQuery = reff.orderByChild("numQuestion");
@@ -83,13 +88,15 @@ public class AnswerActivity extends Activity {
                 if(numberQuestion.equals(num_question)){
                     String content = snapshot.getValue( Question.class ).content();
                     String location = snapshot.getValue( Question.class ).location();
+                    String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
+                    String userName = snapshot.getValue( Question.class ).getUsernameAsk();
                     id_asking = snapshot.getValue( Question.class ).id_user();
                     String importantQuestions = snapshot.getValue( Question.class ).important_questions();
 
                     txvname = findViewById(R.id.txvnameID);
-                    txvname.setText(mPreferences.getString(getString(R.string.name), ""));
+                    txvname.setText(userName);
                     txvdateTime = findViewById(R.id.txvdateTimeID);
-                    txvdateTime.setText(currentDateTime());
+                    txvdateTime.setText(dateTime);
                     txvLocation = findViewById(R.id.txvLocationID);
                     txvLocation.setText(location);
                     txvquestion = findViewById(R.id.txvquestionID);
@@ -209,7 +216,12 @@ public class AnswerActivity extends Activity {
 
             }
         });
+
+
+
+
     }
+
 
     //  The function returns the current date and time
     public String currentDateTime(){

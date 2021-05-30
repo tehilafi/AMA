@@ -41,8 +41,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD7PAR0gdEqFnEokgJTFQLWfpuUG0NdaIw" />
-
+            android:value="AIzaSyD7PAR0gdEqFnEokgJTFQLWfpuUG0NdaIw"/>
         <!-- Set custom default icon -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -69,7 +68,8 @@
 <!--            android:name="com.google.firebase.messaging.default_notification_channel_id"-->
 <!--            android:value="@string/default_notification_channel_id" />-->
 
-        <activity android:name=".SplashScreenActivity">
+        <activity android:name=".SplashScreenActivity"
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -97,8 +97,12 @@
 
 <!--        <activity android:name=".TrynotifictionActivity"></activity>-->
 
+        <activity android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
+
+
         <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".MainActivity"></activity>
         <activity android:name=".AskQuestionActivity"></activity>
         <activity android:name=".AskingActivity"></activity>
         <activity android:name=".MyQuestionActivity"></activity>

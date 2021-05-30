@@ -160,6 +160,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled( true );
+//        MapStyleOptions mapStyleOptions = MapStyleOptions.loadRawResourceStyle(this, );
+//        googleMap.setMapStyle(mapStyleOptions);
 
 
         if (fusedLocationProviderClient != null)

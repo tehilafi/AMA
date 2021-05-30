@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.location.Location;
 import android.os.Binder;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -29,8 +31,11 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.tehilafi.ama.MainActivity;
 import com.tehilafi.ama.R;
+import com.tehilafi.ama.db.Users;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -52,6 +57,13 @@ public class MyBackgroundService extends Service {
     private Handler mServiceHandler;
     private Location mLocation;
 
+    Users users;
+    private DatabaseReference reff;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+
+
+
 
     public MyBackgroundService() {
 
@@ -69,6 +81,9 @@ public class MyBackgroundService extends Service {
         };
         createLocationRequest();
         getLastLocation();
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        mEditor = mPreferences.edit();
 
         HandlerThread handlerThread = new HandlerThread( "EDMTDev" );
         handlerThread.start();
@@ -143,8 +158,20 @@ public class MyBackgroundService extends Service {
         EventBus.getDefault().postSticky( new SendLocationToActivity(mLocation) );
 
         // Update notification content if running as a foreground service
-        if(serviceIsRunningInForeGround(this))
+        if(serviceIsRunningInForeGround(this)) {
             mNotificationManager.notify( NOTI_ID, getNotification() );
+
+            // *******************************  Save current locations in users DB  *******************************
+            users = new Users();
+            reff = FirebaseDatabase.getInstance().getReference( "Users" );
+            String id = mPreferences.getString( getString( R.string.id ), "" );
+            reff.child( id ).child( "latitude" ).setValue(Double.parseDouble(Common.getLatitudeText(mLocation)));
+            reff.child( id ).child( "longitude" ).setValue(Double.parseDouble(Common.getLongitudeText(mLocation)));
+
+
+        }
+
+
     }
 
     private Notification getNotification() {
@@ -155,7 +182,7 @@ public class MyBackgroundService extends Service {
         PendingIntent servicePendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent activityPendingIntent = PendingIntent.getActivity( this, 0, new Intent(this, MainActivity.class),0 );
 
-        NotificationCompat.Builder builder= new NotificationCompat.Builder(this).addAction(R.drawable.ic_baseline_launch_24, "Launch", activityPendingIntent).addAction(R.drawable.ic_baseline_cancel_24, "Remove",servicePendingIntent).setContentText( text ).setContentTitle( Common.getLocationTitle(this)).setOngoing( true ).setPriority( Notification.PRIORITY_HIGH ).setSmallIcon( R.mipmap.ic_launcher).setTicker( text).setWhen( System.currentTimeMillis() );
+        NotificationCompat.Builder builder= new NotificationCompat.Builder(this).addAction(R.drawable.logo, "Launch", activityPendingIntent).addAction(R.drawable.logo, "Remove",servicePendingIntent).setContentText( text ).setContentTitle( Common.getLocationTitle(this)).setOngoing( true ).setPriority( Notification.PRIORITY_HIGH ).setSmallIcon( R.mipmap.ic_launcher).setTicker( text).setWhen( System.currentTimeMillis() );
 
         // set the channel id for Android o
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){

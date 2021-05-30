@@ -15,6 +15,13 @@ public class Common {
         return mLocation == null ? "Unknown Location" : new StringBuilder().append(mLocation.getLatitude()).append( "/").append(mLocation.getLongitude()).toString();
     }
 
+    public static String getLatitudeText(Location mLocation) {
+        return mLocation == null ? "Unknown Location" : new StringBuilder().append(mLocation.getLatitude()).toString();
+    }
+    public static String getLongitudeText(Location mLocation) {
+        return mLocation == null ? "Unknown Location" : new StringBuilder().append(mLocation.getLongitude()).toString();
+    }
+
     public static CharSequence getLocationTitle(MyBackgroundService myBackgroundService) {
         return String.format("Location update: %1$s", DateFormat.getDateInstance().format(new Date()));
     }
