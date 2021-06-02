@@ -25,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.annotations.Nullable;
 import com.tehilafi.ama.db.Question;
+import com.tehilafi.ama.lists.ListViewAdapteMy;
+import com.tehilafi.ama.lists.ListView_item_my;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +49,8 @@ public class MyAnswerActivity extends Activity {
     DatabaseReference reff;
 
     ListView listView;
-    ListViewAdapte listViewAdapte;
-    ArrayList<ListView_item> arrayList = new ArrayList<>();
+    ListViewAdapteMy listViewAdapteMy;
+    ArrayList<ListView_item_my> arrayList = new ArrayList<>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -87,8 +89,8 @@ public class MyAnswerActivity extends Activity {
 
         reff = FirebaseDatabase.getInstance().getReference("Questions");
         listView = (ListView)findViewById(R.id.listView1ID);
-        listViewAdapte = new ListViewAdapte(this,R.layout.listview_my, arrayList);
-        listView.setAdapter(listViewAdapte);
+        listViewAdapteMy = new ListViewAdapteMy(this,R.layout.listview_my, arrayList);
+        listView.setAdapter(listViewAdapteMy);
 
         Query myQuery = reff.orderByChild("send_to_tokens");
         myQuery.addChildEventListener( new ChildEventListener() {
@@ -108,12 +110,14 @@ public class MyAnswerActivity extends Activity {
                         importantQuestions = snapshot.getValue( Question.class ).important_questions();
                         dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                         userName = snapshot.getValue( Question.class ).getUsernameAsk();
+                        //////////////////////////////////////////
+                        String anew = "";
+                        //////////////////////////////////////////
 
-
-                        arrayList.add( new ListView_item( R.drawable.photo_profile_start, userName , dateTime, location) );
+                        arrayList.add( new ListView_item_my( R.drawable.photo_profile_start, userName , dateTime, location, anew, R.drawable.with_answer));
                         items.add( numQuestion );
 
-                        listViewAdapte.notifyDataSetChanged();
+                        listViewAdapteMy.notifyDataSetChanged();
                     }
                 }
 
@@ -143,7 +147,6 @@ public class MyAnswerActivity extends Activity {
         } );
 
 // *******************************  When click on one of the questions  *******************************
-
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {

@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.tehilafi.ama.db.Question;
+import com.tehilafi.ama.lists.ListViewAdapteMy;
+import com.tehilafi.ama.lists.ListView_item_my;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +38,8 @@ public class MyQuestionActivity extends Activity {
     DatabaseReference reff;
 
     ListView listView;
-    ListViewAdapte listViewAdapte;
-    ArrayList<ListView_item> arrayList = new ArrayList<>();
+    ListViewAdapteMy listViewAdapteMy;
+    ArrayList<ListView_item_my> arrayList = new ArrayList<>();
     private List<String> items = new ArrayList<String>();
 
     private SharedPreferences mPreferences;
@@ -82,8 +84,8 @@ public class MyQuestionActivity extends Activity {
 
         reff = FirebaseDatabase.getInstance().getReference("Questions");
         listView = (ListView)findViewById(R.id.listView2ID);
-        listViewAdapte = new ListViewAdapte(this,R.layout.listview_my, arrayList);
-        listView.setAdapter(listViewAdapte);
+        listViewAdapteMy = new ListViewAdapteMy(this,R.layout.listview_my, arrayList);
+        listView.setAdapter(listViewAdapteMy);
 
         String idUser = mPreferences.getString( getString( R.string.id), "" );
         Log.d(TAG, "idUser = " + idUser);
@@ -96,12 +98,18 @@ public class MyQuestionActivity extends Activity {
                 String location = snapshot.getValue( Question.class ).location();
                 String idAsking = snapshot.getValue( Question.class ).id_user();
                 String userName = snapshot.getValue( Question.class ).getUsernameAsk();
+                String numQuestion = snapshot.getValue( Question.class ).numQuestion();
+
+
+                //////////////////////////////////////////
+                String anew = "";
+                //////////////////////////////////////////
 
 
                 if(idAsking.equals(idUser)){
-                    arrayList.add( new ListView_item( R.drawable.photo_profile_start, userName , dateTime, location) );
-
-                    listViewAdapte.notifyDataSetChanged();
+                    arrayList.add( new ListView_item_my( R.drawable.photo_profile_start, userName , dateTime, location,  anew, R.drawable.with_answer) );
+                    items.add( numQuestion );
+                    listViewAdapteMy.notifyDataSetChanged();
                 }
 
                 Log.d(TAG, "arrayList = " + arrayList);
@@ -135,7 +143,7 @@ public class MyQuestionActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 Toast.makeText( MyQuestionActivity.this, "Extra numQuestion" + items.get( position ), Toast.LENGTH_SHORT ).show();
-                Intent intent = new Intent(getBaseContext(), AnswerActivity.class);
+                Intent intent = new Intent(getBaseContext(), AnswerDetailActivity.class);
                 intent.putExtra( "Extra numQuestion", items.get( position ) );
                 startActivity(intent);
             }
