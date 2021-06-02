@@ -2,6 +2,7 @@ package com.tehilafi.ama;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class AskingActivity extends Activity {
     private String iduser, latLngString, kmInLongitudeDegree;
     private CheckBox checkBox;
     private String important_questions = "false";
+    private int score;
 
     private DatabaseReference reff, reffUser;
     private FirebaseAuth mAuth;
@@ -117,9 +119,13 @@ public class AskingActivity extends Activity {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         String token = snapshot.getValue( Users.class ).getToken();
+                        int idd = snapshot.getValue( Users.class ).getId();
                         Log.d(TAG, "the token = " + token);
                         Double lat = snapshot.getValue( Users.class ).getLatitude();
                         Double lng = snapshot.getValue( Users.class ).getLongitude();
+
+                        if (iduser.equals( String.valueOf(idd)))
+                            score =  snapshot.getValue( Users.class ).getScore();
 
                         // split latLngString to longitude and latitude
                         String[] s = latLngString.split("\\(");
@@ -166,8 +172,14 @@ public class AskingActivity extends Activity {
 
                             reff.child( String.valueOf( counter + 1 ) ).setValue( question );
 
-//                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
-//                    startActivity(intent);
+                            int score_now = score + 4;
+                            reffUser.child(iduser).child("score").setValue(score_now);
+
+
+
+
+                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                            startActivity(intent);
                         }
                         else
                             Toast.makeText(AskingActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();

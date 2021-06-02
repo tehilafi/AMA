@@ -38,18 +38,27 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.annotations.Nullable;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.tehilafi.ama.db.Question;
 import com.tehilafi.ama.db.Users;
 import com.tehilafi.ama.location.Common;
 import com.tehilafi.ama.location.MyBackgroundService;
+import com.tehilafi.ama.location.SendLocationToActivity;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -68,11 +77,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Boolean isWithin0_5km = false;
     Boolean isFirstRun;
     Users users;
+    String id;
+    int stars;
+    int scoreUser;
     private static final String KEY_locatoin = "q_location";
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
     private DatabaseReference reff, reffLocation;
-    CurrentLocation locationDB;
     private FirebaseAuth mAuth;
     String locationToAddQuestion;
     String id_user;
@@ -102,19 +113,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     };
 
-//// *******************************  Save current locations in users DB  *******************************
-//    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-//    public void onListenLocation(final SendLocationToActivity event) {
-//        if (event != null) {
-//            Toast.makeText( mService, event.getLocation().getLatitude() + " / " + event.getLocation().getLongitude(), Toast.LENGTH_SHORT ).show();
-//            users = new Users();
-//            reff = FirebaseDatabase.getInstance().getReference( "Users" );
-//            String id = mPreferences.getString( getString( R.string.id ), "" );
-//            reff.child( id ).child( "latitude" ).setValue( event.getLocation().getLatitude() );
-//            reff.child( id ).child( "longitude" ).setValue( event.getLocation().getLongitude() );
-//
-//        }
-//    }
+// *******************************  Save current locations in users DB  *******************************
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onListenLocation(final SendLocationToActivity event) {
+        if (event != null) {
+            Toast.makeText( mService, event.getLocation().getLatitude() + " / " + event.getLocation().getLongitude(), Toast.LENGTH_SHORT ).show();
+            id = mPreferences.getString( getString( R.string.id ), "" );
+            users = new Users();
+            reff = FirebaseDatabase.getInstance().getReference( "Users" );
+            reff.child( id ).child( "latitude" ).setValue( event.getLocation().getLatitude() );
+            reff.child( id ).child( "longitude" ).setValue( event.getLocation().getLongitude() );
+
+        }
+    }
 
     public static MainActivity getInstance() {
         return instance;
@@ -161,10 +172,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mEditor = mPreferences.edit();
 
         mAuth = FirebaseAuth.getInstance();
-        reff = FirebaseDatabase.getInstance().getReference( "Users" );
 
-//        // *******************************  Search location in map  *******************************
+        updateRating();
 
+//      *******************************  Search location in map  *******************************
         searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -203,11 +214,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         } );
 
         mapFragment.getMapAsync( this );
+//  *******************************  End search location in map  *******************************
 
-// *******************************  End search location in map  *******************************
-
-// *******************************  Activity transitions  *******************************
-        // Moves to activity of profile
+//  *******************************  Activity transitions to profile  *******************************
         profile = findViewById( R.id.profileID );
         profile.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -216,6 +225,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 startActivity( intent );
             }
         } );
+//  *******************************  End activity transitions to profile *******************************
+
 
         Dexter.withActivity( this ).withPermissions( Arrays.asList(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -259,7 +270,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    // *******************************  For NavBar  *******************************
+// *******************************  For NavBar  *******************************
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -267,13 +278,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Intent intent;
                     switch (item.getItemId()) {
                         case R.id.mainID:
-                            if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
-                                intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-                                intent.putExtra( "Extra locations", locationToAddQuestion );
-                                intent.putExtra( "Extra id", id_user );
-                                startActivity( intent );
-                            }
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
                             break;
+
+                        case R.id.preID:
+                        if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
+                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                            intent.putExtra( "Extra locations", locationToAddQuestion );
+                            intent.putExtra( "Extra id", id_user );
+                            startActivity( intent );
+                        }
+                        else
+                            Toast.makeText( MainActivity.this, "Enter Location", Toast.LENGTH_LONG );
+                        break;
 
                         case R.id.my_questionID:
                             String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
@@ -288,13 +306,60 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 intent.putExtra( "Extra id", id_user );
                                 startActivity( intent );
                             }
+                            else
+                                Toast.makeText( MainActivity.this, "Enter Location", Toast.LENGTH_LONG );
                             break;
                     }
                     return true;
                 }
             };
+// *******************************  End NavBar  *******************************
 
-    // To see the current location on the map
+    private void updateRating(){
+        reff = FirebaseDatabase.getInstance().getReference( "Users" );
+        Query myQuery = reff.orderByChild("score");
+        myQuery.addChildEventListener( new ChildEventListener() {
+           @Override
+           public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+               String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
+               if(id.equals(snapshot.getValue( Users.class ).getId())) {
+                   scoreUser = snapshot.getValue( Users.class ).getScore();
+                   if(scoreUser < 50)
+                       stars = 1;
+                   if(scoreUser >= 60 && scoreUser < 130)
+                       stars = 2;
+                   if(scoreUser >= 130 && scoreUser < 280)
+                       stars = 3;  // image
+                   if(scoreUser >= 280 && scoreUser < 570)
+                       stars = 4;
+                   if(scoreUser >= 570)
+                       stars = 5; // video
+
+                   reff.child(id).child("stars").setValue(stars);
+               }
+           }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+            // To see the current location on the map
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "checkSelfPermission : No");
@@ -323,12 +388,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( this );
-//        EventBus.getDefault().register( this );
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener( this );
+        EventBus.getDefault().register( this );
+    }
 
     @Override
     protected void onStop() {
@@ -347,7 +412,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             setButtonState(sharedPreferences.getBoolean(Common.KEY_REQUESTING_LOCATION_UPDATES,false));
 
     }
-
     private void setButtonState(boolean isRequestEnable){
         if(isRequestEnable)
         {

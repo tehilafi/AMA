@@ -44,7 +44,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/locationID"
+        android:id="@+id/questionID"
         android:layout_width="150dp"
         android:layout_height="18dp"
         android:layout_marginStart="75dp"
@@ -56,23 +56,6 @@
         android:textColor="#615e5e"
         android:textSize="10sp"
         android:textStyle="normal"/>
-
-
-    <TextView
-        android:id="@+id/newID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="37dp"
-        android:layout_marginEnd="65dp"
-        android:layout_marginRight="65dp"
-        android:fontFamily="sans-serif"
-        android:gravity="start"
-        android:text="new"
-        android:textColor="#fcba06"
-        android:textSize="12sp"
-        android:textStyle="normal" />
 
     <ImageView
         android:id="@+id/with_ansID"

@@ -29,8 +29,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintlayout1"
-        android:layout_width="367dp"
-        android:layout_height="189dp"
+        android:layout_width="wrap_content"
+        android:layout_height="180dp"
         android:background="@drawable/bold_white"
         app:layout_constraintBottom_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -153,12 +153,53 @@
             tools:layout_editor_absoluteX="48dp" />
 
         <TextView
-            android:id="@+id/txvquestionID"
-            android:layout_width="312dp"
-            android:layout_height="74dp"
+            android:id="@+id/numAnsID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="39dp"
+            android:layout_marginLeft="39dp"
+            android:layout_marginTop="25dp"
+            android:fontFamily="sans-serif"
+            android:gravity="start"
+            android:text="18"
+            android:textColor="#615e5e"
+            android:textSize="8sp"
+            android:textStyle="normal"
+            app:layout_constraintLeft_creator="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_creator="0"
+            app:layout_constraintTop_toBottomOf="@+id/lID"
+            app:layout_editor_absoluteX="16dp"
+            app:layout_editor_absoluteY="140dp"
+            tools:layout_constraintLeft_creator="0"
+            tools:layout_constraintTop_creator="0" />
+
+        <ImageView
+            android:id="@+id/with_ansID"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/with_answer"
+            app:layout_constraintRight_toLeftOf="@+id/numAnsID"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_creator="0"
+            app:layout_constraintTop_toBottomOf="@+id/lID"
+            app:layout_editor_absoluteX="16dp"
+            app:layout_editor_absoluteY="140dp"
+            tools:layout_constraintLeft_creator="0"
+            tools:layout_constraintTop_creator="0" />
+
+
+        <TextView
+            android:id="@+id/txvquestionID"
+            android:layout_width="320dp"
+            android:layout_height="81dp"
+            android:layout_marginTop="88dp"
             android:fontFamily="sans-serif-light"
             android:text="The question"
             android:textColor="#000000"
@@ -181,18 +222,34 @@
             app:layout_constraintBottom_creator="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.953"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/txvquestionID"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.455" />
+
+        <ImageView
+            android:id="@+id/importentID"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/star"
+            app:layout_constraintBottom_creator="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.92"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/txvquestionID"
-            app:layout_constraintVertical_bias="0.792" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.48" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintlayout2"
-        android:layout_width="367dp"
+        android:layout_width="wrap_content"
         android:layout_height="269dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/bold_white"
@@ -258,8 +315,6 @@
             android:id="@+id/edtContentID"
             android:layout_width="324dp"
             android:layout_height="90dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
             android:layout_marginTop="12dp"
             android:background="#FFFFFFFF"
             android:ems="14"

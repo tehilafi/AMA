@@ -95,16 +95,18 @@
         </provider>
 
 
-<!--        <activity android:name=".TrynotifictionActivity"></activity>-->
+        <activity android:name=".LoginActivity"></activity>
 
         <activity android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light">
         </activity>
 
+        <activity android:name=".AskQuestionActivity"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
 
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".AskQuestionActivity"></activity>
         <activity android:name=".AskingActivity"></activity>
+        <activity android:name=".AnswerDetailActivity"></activity>
         <activity android:name=".MyQuestionActivity"></activity>
         <activity android:name=".MyAnswerActivity"></activity>
         <activity android:name=".ChangProfilActivity"></activity>
@@ -116,15 +118,6 @@
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="location" />
-
-
-        <service
-            android:name=".FCMMessageReceiverSrvice"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
 
     </application>
 

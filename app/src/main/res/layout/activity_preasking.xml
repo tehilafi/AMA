@@ -13,76 +13,107 @@ android:background="@drawable/backgraund"
 tools:context=".AskQuestionActivity">
 
 
-<ImageView
-    android:id="@+id/profileID"
-    android:layout_width="75dp"
-    android:layout_height="70dp"
-    android:scaleType="centerCrop"
-    android:src="@drawable/profil"
-    app:layout_constraintBottom_creator="1"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.952"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.024" />
-
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/con"
-    android:layout_width="314dp"
-    android:layout_height="506dp"
-    android:background="@drawable/bold"
-    app:layout_constraintBottom_creator="1"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.493"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.588"
-    app:layout_editor_absoluteX="0dp"
-    app:layout_editor_absoluteY="80dp">
-
-
-    <TextView
-        android:id="@+id/txvLocationID"
-        android:layout_width="215dp"
-        android:layout_height="46dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rectangle_yellow"
-        android:focusable="true"
-        android:fontFamily="sans-serif-light"
-        android:gravity="center|center_vertical"
-        android:hint="Enter the place"
-        android:textColor="#615e5e"
-        android:textSize="20sp"
-        android:textStyle="normal"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profileID"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/profil"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.952"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.024" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintlayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/search_location_yellow"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.15"
+        app:layout_editor_absoluteX="0dp"
+        app:layout_editor_absoluteY="80dp">
+
+        <ImageView
+            android:id="@+id/lID"
+            android:layout_width="35dp"
+            android:layout_height="51dp"
+            android:src="@drawable/search_location"
+            app:layout_constraintBottom_creator="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.047"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.1" />
+
+        <TextView
+            android:id="@+id/txvLocationID"
+            android:layout_width="215dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginLeft="36dp"
+            android:layout_marginTop="4dp"
+            android:focusable="true"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center|center_vertical"
+            android:hint="Enter the place"
+            android:textColor="#615e5e"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            app:layout_constraintLeft_creator="1"
+            app:layout_constraintRight_toRightOf="@+id/lID"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_creator="0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_editor_absoluteX="16dp"
+            app:layout_editor_absoluteY="140dp"
+            tools:layout_constraintLeft_creator="0"
+            tools:layout_constraintTop_creator="0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <ListView
         android:id="@+id/listView1ID"
-        android:layout_width="305dp"
-        android:layout_height="406dp"
-        android:layout_marginTop="88dp"
-        android:background="@drawable/list"
+        android:layout_width="306dp"
+        android:layout_height="402dp"
+        android:background="@drawable/navbar_border"
         app:layout_constraintBottom_creator="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.493"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.588"
+        app:layout_constraintTop_toBottomOf="@id/constraintlayout1"
+        app:layout_constraintTop_toTopOf="@id/constraintlayout1"
+        app:layout_constraintVertical_bias="0.38"
         app:layout_editor_absoluteX="0dp"
-        app:layout_editor_absoluteY="80dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_editor_absoluteY="0dp" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/navbar_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bootom_nav"
+        tools:layout_editor_absoluteX="31dp"
+        app:labelVisibilityMode="labeled"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
