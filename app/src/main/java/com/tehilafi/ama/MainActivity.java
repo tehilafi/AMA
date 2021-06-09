@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -25,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -45,6 +47,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -63,6 +67,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener{
@@ -90,9 +96,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     String idUser;
     ImageView requestLocation, removeLocation;
     ImageView add_location, my_question, mainbtn;
-    private ImageView profile;
+    private CircleImageView profile;
     private Boolean requestLocationButton = true;
     public static final String TAG = "MyTag";
+    private StorageReference storageReff;
+    FirebaseStorage storage;
+
+
 
     // *******************************  Background Service  *******************************
     MyBackgroundService mService = null;
@@ -151,6 +161,25 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+        mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        mEditor = mPreferences.edit();
+
+        // get the Firebase  storage reference
+        storage = FirebaseStorage.getInstance();
+        storageReff = storage.getReference();
+
+        // Show the profile image in profileID
+        storageReff.child("profile picture/").child(mPreferences.getString( getString( R.string.id ), "" )).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+        {
+            @Override
+            public void onSuccess(Uri downloadUrl)
+            {
+                Glide.with( MainActivity.this).load(downloadUrl).into(profile);
+            }
+        });
+
+
+
         getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).edit()
                 .putBoolean( "isFirstRun", false ).commit();
 
@@ -168,8 +197,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         instance = this;
         searchView = findViewById( R.id.search_location );
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-        mEditor = mPreferences.edit();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -322,21 +349,21 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
            @Override
            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
-               if(id.equals(snapshot.getValue( Users.class ).getId())) {
-                   scoreUser = snapshot.getValue( Users.class ).getScore();
-                   if(scoreUser < 50)
-                       stars = 1;
-                   if(scoreUser >= 60 && scoreUser < 130)
-                       stars = 2;
-                   if(scoreUser >= 130 && scoreUser < 280)
-                       stars = 3;  // image
-                   if(scoreUser >= 280 && scoreUser < 570)
-                       stars = 4;
-                   if(scoreUser >= 570)
-                       stars = 5; // video
-
-                   reff.child(id).child("stars").setValue(stars);
-               }
+//               if(id.equals(snapshot.getValue( Users.class ).getId())) {
+//                   scoreUser = snapshot.getValue( Users.class ).getScore();
+//                   if(scoreUser < 50)
+//                       stars = 1;
+//                   if(scoreUser >= 60 && scoreUser < 130)
+//                       stars = 2;
+//                   if(scoreUser >= 130 && scoreUser < 280)
+//                       stars = 3;  // image
+//                   if(scoreUser >= 280 && scoreUser < 570)
+//                       stars = 4;
+//                   if(scoreUser >= 570)
+//                       stars = 5; // video
+//
+//                   reff.child(id).child("stars").setValue(stars);
+//               }
            }
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {

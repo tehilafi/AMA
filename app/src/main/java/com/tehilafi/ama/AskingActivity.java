@@ -80,7 +80,6 @@ public class AskingActivity extends Activity {
         send = findViewById( R.id.btnSaveID );
         textViewTheLocation = findViewById( R.id.textViewTheLocationID );
         textViewTheLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
-        edtTitle = findViewById( R.id.edtTitleID );
         edtContent = findViewById( R.id.edtContentID);
         checkBox = findViewById( R.id.checkBoxID);
 
