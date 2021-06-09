@@ -30,7 +30,7 @@ import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.tehilafi.ama.media.PotoActivity.uploadImageToFirebase;
+import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageToFirebase;
 
 
 public class ChangProfilActivity extends Activity {
