@@ -1,21 +1,31 @@
 package com.tehilafi.ama;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,16 +35,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.tehilafi.ama.db.Answer;
 import com.tehilafi.ama.db.Question;
 import com.tehilafi.ama.db.Users;
 
+import java.io.ByteArrayOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageFromCamera;
+import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageToFirebase;
 import static com.tehilafi.ama.not.NotificationSender.sendNotification;
 
 public class AnswerActivity extends Activity {
@@ -49,6 +64,27 @@ public class AnswerActivity extends Activity {
     private ImageView with_ans;
     private int score;
     private String importantQuestions;
+    private Uri videoUri = null;
+    private String[] cameraPermissions;
+    private ProgressBar progressBar;
+    private Uri contentUri;
+    private String imageFileName;
+    private String from;
+    private int num_ans;
+
+    private AlertDialog.Builder builder;
+
+
+    public static final int CAMERA_REQUEST_CODE = 102;
+    public static final int GALLERY_REQUEST_CODE = 105;
+    private static final int CAMERA_PIC_REQUEST = 1111;
+    private static final int VIDEO_PICK_CAMERA_CODE = 101;
+    static final int REQUEST_IMAGE_CAPTURE = 100;
+    static final int REQUEST_VIDEO_CAPTURE = 1;
+
+    StorageReference storageReff;
+    FirebaseStorage storage;
+
 
     public static final String TAG = "MyTag";
 
@@ -76,6 +112,7 @@ public class AnswerActivity extends Activity {
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         myRating = findViewById( R.id.MyRatingID);
+
 
 // *******************************  Get the data from the Question DB  *******************************
         reff = FirebaseDatabase.getInstance().getReference("Questions");
@@ -199,12 +236,19 @@ public class AnswerActivity extends Activity {
             }
         });
 
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        // get the Firebase  storage reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageReff = storage.getReference();
+        progressBar = findViewById(R.id.progressBarID);
+
+
         edtContent = findViewById( R.id.edtContentID );
         btnSave = findViewById( R.id.btnSaveID );
         btnSave.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int num_ans;
                 boolean checkContent;
                 if (edtContent.getText().toString().equals( "" )) {
                     Toast.makeText( AnswerActivity.this, "Missing Answer", Toast.LENGTH_LONG ).show();
@@ -213,8 +257,6 @@ public class AnswerActivity extends Activity {
                     checkContent = true;
                 if (checkContent) {
 
-                    // send notification to tokens of asking
-                    sendNotification( AnswerActivity.this, askingToken, "try", "massege", "answer");
 
                     num_ans= (int)counter;
                     // save in DB question
@@ -228,6 +270,10 @@ public class AnswerActivity extends Activity {
                     answer.setNumComments(0);
                     answer.setUserNameAns(mPreferences.getString(getString(R.string.name), ""));
 
+                    progressBar.setVisibility( View.VISIBLE );
+                    if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf(num_ans +1) ) == true)
+                        progressBar.setVisibility( View.INVISIBLE );
+
                     reff.child( String.valueOf( counter + 1 ) ).setValue(answer);
 
                     // update score
@@ -237,6 +283,10 @@ public class AnswerActivity extends Activity {
                     else
                         score_now = score + 10;
                     reffUser.child(mPreferences.getString(getString(R.string.id), "")).child("score").setValue(score_now);
+
+                    // send notification to tokens of asking
+                    sendNotification( AnswerActivity.this, askingToken, "try", "massege", "answer");
+
                 }
             else
                 Toast.makeText(AnswerActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
@@ -244,6 +294,84 @@ public class AnswerActivity extends Activity {
 
             }
         });
+
+        add_pic = findViewById( R.id.add_picID );
+        add_pic.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                from = "pic";
+                pickDialog();
+
+            }
+        } );
+        add_video = findViewById( R.id.add_videoID );
+        add_video.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                from = "video";
+                pickDialog();
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
+        super.onActivityResult( requestCode, resultCode, data );
+
+        if ((requestCode == GALLERY_REQUEST_CODE || requestCode == CAMERA_PIC_REQUEST || requestCode == REQUEST_VIDEO_CAPTURE) && resultCode == RESULT_OK && data != null) {
+            Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE );
+            contentUri = data.getData();
+            Log.d(TAG, "contentUri = " + contentUri);
+            mediaScanIntent.setData(contentUri);
+            this.sendBroadcast( mediaScanIntent );
+            String timeStamp = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
+            imageFileName = "JPEG_" + timeStamp;
+
+        }
+        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+            byte bb[] = bytes.toByteArray();
+
+            progressBar.setVisibility( View.VISIBLE );
+            if (uploadImageFromCamera(getApplicationContext(), bb, String.valueOf(num_ans +1)) == true)
+                progressBar.setVisibility( View.INVISIBLE );
+        }
+        else if(requestCode == VIDEO_PICK_CAMERA_CODE && resultCode == RESULT_OK) {
+            contentUri = data.getData();
+
+        }
+        else{
+            Toast.makeText(this, "Error. Try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void pickDialog() {
+        Log.d(TAG, "in pickDialog");
+        String[] options = {"Camera", "Gallery"};
+        builder = new AlertDialog.Builder(this);
+
+//        AlertDialog.Builder builder = new AlertDialog.Builder( this );
+        builder.setTitle( "Pick picture From" ).setItems( options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(i == 0){  // camera clicked
+                    if(!checkCameraPermission())
+                        requestCameraPermission();
+                    else
+                        pickCamera();
+                    Log.d(TAG, "in camera");
+                }
+                else if(i == 1){  //  gallery clicked
+                    pickGallery();
+                    Log.d(TAG, "in gallery");
+
+                }
+            }
+        } ).show();
     }
 
     //  The function returns the current date and time
@@ -255,4 +383,65 @@ public class AnswerActivity extends Activity {
 
         return todayAsString;
     }
+
+    // request camera permission
+    private void requestCameraPermission(){
+        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
+    }
+
+    private boolean checkCameraPermission(){
+        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean result2 = ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK) == PackageManager.PERMISSION_GRANTED;
+
+        return result1 && result2;
+    }
+
+    // pick from camera - intent
+    private void pickCamera(){
+        if(from == "pic") {
+            Intent piccamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(piccamera, REQUEST_IMAGE_CAPTURE);
+        }
+        else if(from == "video"){
+            Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+            }
+        }
+    }
+
+    // pick from gallery - intent
+    private void pickGallery(){
+        if(from == "pic") {
+            Intent picgallery = new Intent( Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI );
+            startActivityForResult( picgallery, GALLERY_REQUEST_CODE );
+        }
+        else if(from == "video"){
+            Intent videogallery = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            videogallery.setType("video/*");
+            startActivityForResult( videogallery, GALLERY_REQUEST_CODE );
+        }
+    }
+
+    // handle permission results
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        switch (requestCode){
+            case CAMERA_REQUEST_CODE:
+                if(grantResults.length > 0){
+                    // check permission allowed or not
+                    boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    if(cameraAccepted && storageAccepted){
+                        pickCamera();
+                    }
+                    else{
+                        Toast.makeText( this, "Camera & Storage permission are required" , Toast.LENGTH_LONG).show();
+                    }
+                }
+        }
+        super.onRequestPermissionsResult( requestCode, permissions, grantResults);
+    }
+
+
 }

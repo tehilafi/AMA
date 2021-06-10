@@ -1,5 +1,6 @@
 package com.tehilafi.ama.media;
 
+import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -13,18 +14,25 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 
+
 public class UploadPhotoAndVideos {
 
     public static StorageReference storageReff;
     public static FirebaseStorage storage;
 
-
-    public static void uploadImageToFirebase(final String name , final Uri contentUri, final String iduser) {
+    public static boolean uploadImageToFirebase(Context mContext, final String name , final Uri contentUri, final String iduser, final String from, final String numAns) {
 
         storage = FirebaseStorage.getInstance();
         storageReff = storage.getReference();
+        StorageReference reffS = null;
 
-        StorageReference reffS = storageReff.child( "profile picture/" + iduser);
+        if (from == "pic")
+            reffS = storageReff.child( "picture answer/" + numAns );
+        else if (from == "video")
+            reffS = storageReff.child( "video answer/" + numAns );
+        else if (from == "profil")
+            reffS = storageReff.child( "profile picture/" + iduser);
+
         final String timestamp = "" + System.currentTimeMillis();
         reffS.putFile(contentUri).addOnSuccessListener( new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -36,14 +44,36 @@ public class UploadPhotoAndVideos {
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put("title", "" + name);
                     hashMap.put("timestamp", "" + timestamp);
-                    hashMap.put("videoUri", "" + downloadUri);
+                    hashMap.put("contentUri", "" + downloadUri);
+
+
                 }
             }
         }).addOnFailureListener( new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+
             }
         } );
+        return true;
+    }
+
+    public static boolean uploadImageFromCamera(Context mContext, final byte[] bb, final String numAns) {
+
+        storage = FirebaseStorage.getInstance();
+        storageReff = storage.getReference();
+
+        StorageReference reffC = storageReff.child( "picture answer/" + numAns);
+        reffC.putBytes(bb).addOnSuccessListener( new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            }
+        } ).addOnFailureListener( new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            }
+        } );
+        return true;
     }
 
 

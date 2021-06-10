@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,9 +37,6 @@ import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageToFirebase;
 public class ChangProfilActivity extends Activity {
 
     public static final String TAG = "MyTag";
-    public static final int CAMERA_REQUEST_CODE = 102;
-    public static final int GALLERY_REQUEST_CODE = 105;
-
 
     private Uri contentUri;
     private String imageFileName;
@@ -51,6 +49,8 @@ public class ChangProfilActivity extends Activity {
 
     private String nameuser, pas, ph, iduser;
     private EditText user_nameID, passwordID, phoneID;
+
+    private ProgressBar progressBar;
 
     Users users;
 
@@ -75,6 +75,7 @@ public class ChangProfilActivity extends Activity {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReff = storage.getReference();
 
+        progressBar = findViewById(R.id.progressBarID);
 
         profile_image = findViewById( R.id.profile_imageID );
 
@@ -137,7 +138,9 @@ public class ChangProfilActivity extends Activity {
                     reff.child( iduser ).child( "phone" ).setValue( phoneID.getText().toString().trim() );
 
                 // upload profile image to firebase storage
-                uploadImageToFirebase(imageFileName,contentUri, iduser);
+                progressBar.setVisibility( View.VISIBLE );
+                if (uploadImageToFirebase(getApplicationContext(), imageFileName,contentUri, iduser, "profil", "null") == true)
+                    progressBar.setVisibility( View.INVISIBLE );
 
                 Intent intent = new Intent( getBaseContext(), MainActivity.class );
                 startActivity( intent );
