@@ -11,24 +11,29 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.squareup.picasso.Picasso;
 import com.tehilafi.ama.R;
 
 import java.util.ArrayList;
 
 public class ListViewAdapte extends ArrayAdapter<ListView_item> {
 
+    ArrayList<ListView_item> arrayList;
     private Context context;
     private int mResource;
 
-    public ListViewAdapte(@NonNull Context context, int resource, @NonNull ArrayList<ListView_item> objects) {
-        super( context, resource, objects );
+    public ListViewAdapte(@NonNull Context context, int resource, @NonNull ArrayList<ListView_item> arrayList) {
+        super( context, resource, arrayList );
         this.context = context;
         this.mResource = resource;
+        this.arrayList = arrayList;
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        ListView_item listView_item = arrayList.get(position);
+
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         convertView = layoutInflater.inflate(mResource, parent, false);
         ImageView imageprofile = convertView.findViewById( R.id.profileuserID);
@@ -36,12 +41,15 @@ public class ListViewAdapte extends ArrayAdapter<ListView_item> {
         TextView textdate = convertView.findViewById(R.id.dateID);
         TextView textquestion = convertView.findViewById(R.id.questionID);
         ImageView imageans = convertView.findViewById( R.id.with_ansID);
+        ImageView imagestar = convertView.findViewById( R.id.starID);
 
-//        imageprofile.setImageResource(getItem(position).getImage());
         textuserName.setText(getItem(position).getUserName());
         textdate.setText(getItem(position).getDate());
         textquestion.setText(getItem(position).getQuestion());
-//        imageans.setVisibility();
+        Picasso.with(context).load(listView_item.Image).into(imageprofile);
+        imageans.setImageResource(getItem(position).getWith_ans());
+        imagestar.setImageResource(getItem(position).getStar());
+
 
         return convertView;
     }

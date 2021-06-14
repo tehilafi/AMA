@@ -2,18 +2,20 @@ package com.tehilafi.ama.lists;
 
 public class ListView_item {
 
-    int Image;
+    String Image;
     String UserName;
     String Date;
     String Question;
     int With_ans;
+    int Star;
 
-    public ListView_item(int image,  String userName, String date, String question, int with_ans){
+    public ListView_item(String image, String userName, String date, String question, int with_ans, int star){
         Image = image;
         UserName = userName;
         Date = date;
         Question = question;
         With_ans = with_ans;
+        Star = star;
     }
 
     public String getDate() {
@@ -40,7 +42,7 @@ public class ListView_item {
         Date = date;
     }
 
-    public int getImage() {
+    public String getImage() {
         return Image;
     }
 
@@ -48,11 +50,19 @@ public class ListView_item {
         return With_ans;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         Image = image;
     }
 
     public void setWith_ans(int with_ans) {
         With_ans = with_ans;
+    }
+
+    public int getStar() {
+        return Star;
+    }
+    
+    public void setStar(int star) {
+        Star = star;
     }
 }

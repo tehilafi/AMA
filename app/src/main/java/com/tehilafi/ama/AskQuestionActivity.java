@@ -3,6 +3,7 @@ package com.tehilafi.ama;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,19 +27,29 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.tehilafi.ama.db.Answer;
 import com.tehilafi.ama.db.Question;
+import com.tehilafi.ama.db.Users;
 import com.tehilafi.ama.lists.ListViewAdapte;
 import com.tehilafi.ama.lists.ListView_item;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class AskQuestionActivity extends Activity {
 
     private TextView txvLocation;
-    private String locationQuestion;
+    private int idUser, stars = 1;
+    private int starKind, with_answer = R.drawable.empty;
+    private StorageReference storageReff;
+    FirebaseStorage storage;
+    private CircleImageView profile;
 
-    DatabaseReference reff;
+    DatabaseReference reff, reffUser, reffAns;
 
     ListView listView;
     ListViewAdapte listViewAdapte;
@@ -47,6 +60,7 @@ public class AskQuestionActivity extends Activity {
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
     String id_user;
+    int numQuestion;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -67,56 +81,170 @@ public class AskQuestionActivity extends Activity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         mEditor = mPreferences.edit();
 
-            txvLocation = findViewById( R.id.txvLocationID );
-            txvLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
+        //  *******************************  Activity transitions to profile  *******************************
+        profile = findViewById( R.id.profileID );
+        profile.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(android.view.View view) {
+                Intent intent = new Intent( getBaseContext(), ChangProfilActivity.class );
+                startActivity( intent );
+            }
+        } );
+//  *******************************  End activity transitions to profile *******************************
 
-            final String locationToAddQuestion = txvLocation.getText().toString();
+        // get the Firebase  storage reference
+        storage = FirebaseStorage.getInstance();
+        storageReff = storage.getReference();
 
-            reff = FirebaseDatabase.getInstance().getReference("Questions");
-            listView = (ListView)findViewById(R.id.listView1ID);
-            listViewAdapte = new ListViewAdapte(this,R.layout.listview_pre, arrayList);
-            listView.setAdapter(listViewAdapte);
+        // Show the profile image in profileID
+        storageReff.child("profile picture/").child(mPreferences.getString( getString( R.string.id ), "" )).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+        {
+            @Override
+            public void onSuccess(Uri downloadUrl)
+            {
+                Glide.with( AskQuestionActivity.this).load(downloadUrl).into(profile);
+            }
+        });
+
+        txvLocation = findViewById( R.id.txvLocationID );
+        txvLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
+
+        final String locationToAddQuestion = txvLocation.getText().toString();
+
+        reff = FirebaseDatabase.getInstance().getReference("Questions");
+        listView = (ListView)findViewById(R.id.listView1ID);
+        listViewAdapte = new ListViewAdapte(this,R.layout.listview_pre, arrayList);
+        listView.setAdapter(listViewAdapte);
 
 
-            Query myQuery = reff.orderByChild("location");
-            myQuery.addChildEventListener( new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+        Query myQuery = reff.orderByChild("location");
+        myQuery.addChildEventListener( new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                    String location = snapshot.getValue( Question.class ).location();
-                    if(location.equals(getIntent().getStringExtra( "Extra locations" ))){
-                        String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
-                        String nameUser = snapshot.getValue( Question.class ).getUsernameAsk();
-                        String text = snapshot.getValue( Question.class ).getContentQuestion();
-                        String numQuestion = snapshot.getValue( Question.class ).numQuestion();
+                String location = snapshot.getValue( Question.class ).location();
+                if(location.equals(getIntent().getStringExtra( "Extra locations" ))){
+                    String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
+                    String nameUser = snapshot.getValue( Question.class ).getUsernameAsk();
+                    String text = snapshot.getValue( Question.class ).getContentQuestion();
+                    numQuestion = Integer.parseInt( snapshot.getValue( Question.class ).numQuestion() );
+                    idUser = snapshot.getValue( Question.class ).getIdAsking();
 
+                    reffUser= FirebaseDatabase.getInstance().getReference("Users");
+                    Query myQueryUser = reffUser.orderByChild("id");
+                    myQueryUser.addChildEventListener( new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                            if(idUser == snapshot.getValue( Users.class ).getId()){
+                                stars = snapshot.getValue( Users.class ).getScore();
+                                Log.d(TAG, "stars = " + stars);
+                            }
+                            if(stars < 150){
+                                starKind = R.drawable.star1;
+                            }
+                            if(stars >= 150 && stars < 500){
+                                starKind = R.drawable.star2;
+                            }
+                            if(stars >= 500){
+                                starKind = R.drawable.star3;
+                            }
+                        }
 
-                        arrayList.add( new ListView_item( R.drawable.photo_profile_start, nameUser, dateTime,  text , R.drawable.with_answer ) );
-                        items.add( numQuestion );
-                        listViewAdapte.notifyDataSetChanged();
-                    }
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    } );
+
+                    reffAns= FirebaseDatabase.getInstance().getReference("Answers");
+                    Query myQueryAns = reffAns.orderByChild("numQuestion");
+                    myQueryAns.addChildEventListener( new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                            if(numQuestion == snapshot.getValue( Answer.class ).getNumQuestion()){
+                                with_answer =  R.drawable.with_answer;
+                            }
+                            if(stars < 150){
+                                starKind = R.drawable.star1;
+                            }
+                            if(stars >= 150 && stars < 500){
+                                starKind = R.drawable.star2;
+                            }
+                            if(stars >= 500){
+                                starKind = R.drawable.star3;
+                            }
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    } );
+
+                    // Show the profile image in profileID
+                    storageReff.child("profile picture/").child( String.valueOf( idUser ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>()
+                    {
+                        @Override
+                        public void onSuccess(Uri downloadUrl)
+                        {
+                            arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime,  text , with_answer, starKind) );
+                            items.add( String.valueOf(numQuestion));
+                            listViewAdapte.notifyDataSetChanged();
+                        }
+                    });
                 }
+            }
 
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                }
+            }
 
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
-                }
+            }
 
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                }
+            }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            } );
+            }
+        } );
 
 // *******************************  When click on one of the questions  *******************************
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
@@ -128,7 +256,6 @@ public class AskQuestionActivity extends Activity {
                 startActivity(intent);
             }
         } );
-
         }
 
 

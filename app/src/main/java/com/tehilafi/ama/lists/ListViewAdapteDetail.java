@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 public class ListViewAdapteDetail extends ArrayAdapter<ListView_item_detail> {
 
+    private static final String LOG_TAG = ListViewAdapteDetail.class.getSimpleName();
     private Context context;
     private int mResource;
 
@@ -29,30 +30,27 @@ public class ListViewAdapteDetail extends ArrayAdapter<ListView_item_detail> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
-        convertView = layoutInflater.inflate(mResource, parent, false);
-        ImageView imageViewprofile = convertView.findViewById( R.id.profileuserID);
-        TextView textuserName = convertView.findViewById(R.id.userNameID);
-        TextView textdate = convertView.findViewById(R.id.dateID);
-        TextView textanswer = convertView.findViewById(R.id.text_answerID);
-        TextView numLike =  convertView.findViewById(R.id.numLikeID);
-        TextView numDislike =  convertView.findViewById(R.id.numDislikeID);
-        ImageView imageViewvideo = convertView.findViewById( R.id.add_videoID);
-        ImageView imageViewimage = convertView.findViewById( R.id.add_picID);
+        View listItemView = convertView;
+        if(listItemView == null)
+            listItemView = LayoutInflater.from(getContext()).inflate(mResource,parent,false);
+        ListView_item_detail currentDetail = getItem(position);
 
+        TextView textuserName = listItemView.findViewById(R.id.userNameID);
+        TextView textdate = listItemView.findViewById(R.id.dateID);
+        TextView textanswer = listItemView.findViewById(R.id.text_answerID);
+        TextView numLike =  listItemView.findViewById(R.id.numLikeID);
+        TextView numDislike =  listItemView.findViewById(R.id.numDislikeID);
 
-//        imageView.setImageResource(getItem(position).getImage());
-        textuserName.setText(getItem(position).getUserName());
-        textdate.setText(getItem(position).getDate());
-        textanswer.setText(getItem(position).getContent());
-        numLike.setText(getItem(position).getNumLike());
-        numDislike.setText(getItem(position).getNumDislike());
-//        imageViewimage.setImageResource(getItem(position).getAdd_picID());
-//        imageViewvideo.setImageResource(getItem(position).getAdd_videoID());
+        textuserName.setText(currentDetail.getUserName());
+        textdate.setText(currentDetail.getDate());
+        textanswer.setText(currentDetail.getContent());
+        numLike.setText(currentDetail.getNumLike());
+        numDislike.setText(currentDetail.getNumDislike());
 
+        ImageView imageViewprofile = (ImageView) listItemView.findViewById(R.id.profileuserID);
+        imageViewprofile.setImageResource(currentDetail.getImage());
 
+        return listItemView;
 
-
-        return convertView;
     }
 }
