@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +59,6 @@ public class AnswerActivity extends Activity {
     private String iduser;
     private ImageView  add_pic, add_video, importent;
     private String num_question;
-    private RatingBar myRating;
     private ImageView with_ans;
     private int score;
     private String importantQuestions;
@@ -110,9 +108,6 @@ public class AnswerActivity extends Activity {
         }
 
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        myRating = findViewById( R.id.MyRatingID);
-
 
 // *******************************  Get the data from the Question DB  *******************************
         reff = FirebaseDatabase.getInstance().getReference("Questions");
@@ -168,9 +163,9 @@ public class AnswerActivity extends Activity {
             }
         } );
 
-        importent = findViewById(R.id.importentID);
-        if(importantQuestions == "false")
-            importent.setVisibility(View.INVISIBLE);
+//        importent = findViewById(R.id.importentID);
+//        if(importantQuestions == "false")
+//            importent.setVisibility(View.INVISIBLE);
 
         with_ans = findViewById( R.id.with_ansID );
         with_ans.setOnClickListener( new View.OnClickListener() {
