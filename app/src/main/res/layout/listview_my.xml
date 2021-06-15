@@ -1,90 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:id="@+id/a_listView_pre"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:layout_width="match_parent">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileuserID"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:src="@drawable/photo_profile_start"/>
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:scaleType="centerCrop"
+        android:layout_marginTop="13dp"
+        android:src="@drawable/profil"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.019" />
+
+    <ImageView
+        android:id="@+id/starID"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        app:layout_constraintBottom_creator="0"
+        app:layout_constraintBottom_toBottomOf="@+id/profileuserID"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/profileuserID"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_creator="1"
+        app:layout_constraintTop_toTopOf="@+id/profileuserID"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_editor_absoluteX="359dp"
+        app:layout_editor_absoluteY="104dp"
+        tools:layout_constraintBottom_creator="0"
+        tools:layout_constraintRight_creator="0"
+        tools:layout_constraintTop_creator="0" />
 
     <TextView
         android:id="@+id/userNameID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="75dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="75dp"
-        android:fontFamily="sans-serif-black"
-        android:gravity="start"
-        android:text="userName "
+        android:layout_marginTop="13dp"
+        android:text="userName"
         android:textColor="#615e5e"
         android:textSize="12sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:fontFamily="sans-serif"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.02"
+        app:layout_constraintStart_toStartOf="@+id/profileuserID"
+        app:layout_constraintTop_toBottomOf="@+id/profileuserID" />
 
     <TextView
         android:id="@+id/dateID"
-        android:layout_width="162dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="140dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="140dp"
-        android:fontFamily="sans-serif-black"
-        android:gravity="end"
-        android:text="date "
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="sans-serif"
+        android:text="date"
         android:textColor="#615e5e"
         android:textSize="8sp"
-        android:textStyle="bold" />
+        app:layout_constraintStart_toEndOf="@+id/userNameID"
+        app:layout_constraintTop_toTopOf="@+id/userNameID" />
+
 
     <TextView
         android:id="@+id/locationID"
-        android:layout_width="150dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="75dp"
-        android:layout_marginEnd="75dp"
-        android:layout_marginTop="55dp"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
-        android:gravity="start"
-        android:text="question"
+        android:paddingBottom="15dp"
+        android:text="location"
         android:textColor="#615e5e"
-        android:textSize="10sp"
-        android:textStyle="normal"/>
+        android:textSize="12sp"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="@+id/userNameID"
+        app:layout_constraintTop_toBottomOf="@+id/userNameID" />
 
+    <ImageView
+        android:id="@+id/with_ansID"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:focusable="false"
+        app:layout_constraintBottom_toTopOf="@+id/locationID"
+        app:layout_constraintEnd_toEndOf="@+id/locationID" />
 
     <TextView
         android:id="@+id/newID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="37dp"
-        android:layout_marginEnd="65dp"
-        android:layout_marginRight="65dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="sans-serif"
         android:gravity="start"
         android:text="new"
         android:textColor="#fcba06"
         android:textSize="12sp"
-        android:textStyle="normal" />
-
-    <ImageView
-        android:id="@+id/with_ansID"
-        android:layout_width="27dp"
-        android:layout_height="25dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="34dp"
-        android:layout_marginEnd="38dp"
-        android:layout_marginRight="38dp"
-        android:src="@drawable/with_answer" />
+        android:textStyle="normal"
+        app:layout_constraintEnd_toStartOf="@+id/with_ansID"
+        app:layout_constraintTop_toTopOf="@+id/with_ansID"/>
 
 
-</RelativeLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
