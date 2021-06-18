@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.squareup.picasso.Picasso;
 import com.tehilafi.ama.R;
 
 import java.util.ArrayList;
@@ -39,16 +40,23 @@ public class ListViewAdapteDetail extends ArrayAdapter<ListView_item_detail> {
         TextView textdate = listItemView.findViewById(R.id.dateID);
         TextView textanswer = listItemView.findViewById(R.id.text_answerID);
         TextView numLike =  listItemView.findViewById(R.id.numLikeID);
-        TextView numDislike =  listItemView.findViewById(R.id.numDislikeID);
 
         textuserName.setText(currentDetail.getUserName());
         textdate.setText(currentDetail.getDate());
         textanswer.setText(currentDetail.getContent());
         numLike.setText(currentDetail.getNumLike());
-        numDislike.setText(currentDetail.getNumDislike());
 
         ImageView imageViewprofile = (ImageView) listItemView.findViewById(R.id.profileuserID);
-        imageViewprofile.setImageResource(currentDetail.getImage());
+        Picasso.with(context).load(currentDetail.Image).into(imageViewprofile);
+        ImageView imageViewstar = (ImageView) listItemView.findViewById(R.id.starID);
+        Picasso.with(context).load(currentDetail.StarID).into(imageViewstar);
+
+        ImageView add_videoID = (ImageView) listItemView.findViewById(R.id.add_videoID);
+        add_videoID.setImageResource(currentDetail.getAdd_videoID());
+
+        ImageView add_picID = (ImageView) listItemView.findViewById(R.id.add_picID);
+        add_picID.setImageResource(currentDetail.getAdd_picID());
+
 
         return listItemView;
 

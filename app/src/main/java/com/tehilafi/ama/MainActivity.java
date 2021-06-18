@@ -28,7 +28,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,7 +38,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -75,32 +73,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     GoogleMap mMap;
     SearchView searchView;
     SupportMapFragment mapFragment;
-    Location currentLocation, currentLoc;
     FusedLocationProviderClient fusedLocationProviderClient;
-    private static final int REQUEST_CODE = 101;
     static MainActivity instance;
-    LocationRequest locationRequest;
-    private Boolean isWithin0_5km = false;
     Boolean isFirstRun;
     Users users;
     String id;
-    int stars;
-    int scoreUser;
-    private static final String KEY_locatoin = "q_location";
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
-    private DatabaseReference reff, reffLocation;
-    private FirebaseAuth mAuth;
+    private DatabaseReference reff;
     String locationToAddQuestion;
     String id_user;
     String idUser;
     ImageView requestLocation, removeLocation;
-    ImageView add_location, my_question, mainbtn;
     private CircleImageView profile;
-    private Boolean requestLocationButton = true;
     public static final String TAG = "MyTag";
     private StorageReference storageReff;
     FirebaseStorage storage;
+    private String location;
 
 
 
@@ -198,15 +187,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         searchView = findViewById( R.id.search_location );
 
 
-        mAuth = FirebaseAuth.getInstance();
-
         updateRating();
 
 //      *******************************  Search location in map  *******************************
         searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                String location = searchView.getQuery().toString();
+                location = searchView.getQuery().toString();
                 List<Address> addressList = null;
 
                 if (location != null || !location.equals( "" )) {
@@ -219,6 +206,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         String latLngString = String.valueOf( latLng );
                         Toast.makeText( getApplicationContext(), "* "+ latLng + " *", Toast.LENGTH_LONG ).show();
                         mEditor.putString( getString( R.string.location ), latLngString );
+                        mEditor.putString( getString( R.string.searchLocation ), location);
                         mEditor.commit();
 
                         mMap.addMarker( new MarkerOptions().position( latLng ).title( location ) );
@@ -305,36 +293,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     Intent intent;
                     switch (item.getItemId()) {
                         case R.id.mainID:
-                            intent = new Intent( getBaseContext(), MainActivity.class );
-                            startActivity( intent );
                             break;
+                            default:
+                                throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.preID:
-                        if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
-                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-                            intent.putExtra( "Extra locations", locationToAddQuestion );
-                            intent.putExtra( "Extra id", id_user );
-                            startActivity( intent );
-                        }
-                        else
-                            Toast.makeText( MainActivity.this, "Enter Location", Toast.LENGTH_LONG );
-                        break;
-
-                        case R.id.my_questionID:
-                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
-                            Log.d(TAG, "my_token = " + my_token );
-                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
-                            startActivity( intent );
-                            break;
-                        case R.id.add_locationID:
                             if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
-                                intent = new Intent( getBaseContext(), AskingActivity.class );
-                                intent.putExtra( "Extra locations", locationToAddQuestion );
-                                intent.putExtra( "Extra id", id_user );
+                                intent = new Intent( getBaseContext(), AskQuestionActivity.class );
                                 startActivity( intent );
                             }
                             else
-                                Toast.makeText( MainActivity.this, "Enter Location", Toast.LENGTH_LONG );
+                                Toast.makeText( MainActivity.this, "הכנס מיקום לחיפוש", Toast.LENGTH_LONG );
+                            break;
+
+                        case R.id.my_questionID:
+                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.add_locationID:
+                            if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
+                                intent = new Intent( getBaseContext(), AskingActivity.class );
+                                startActivity( intent );
+                            }
+                            else
+                                Toast.makeText( MainActivity.this, "הכנס מיקום לחיפוש", Toast.LENGTH_LONG );
                             break;
                     }
                     return true;

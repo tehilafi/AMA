@@ -43,10 +43,10 @@ public class ListViewAdapte extends ArrayAdapter<ListView_item> {
         ImageView imageans = convertView.findViewById( R.id.with_ansID);
         ImageView imagestar = convertView.findViewById( R.id.starID);
 
+        Picasso.with(context).load(listView_item.Image).into(imageprofile);
         textuserName.setText(getItem(position).getUserName());
         textdate.setText(getItem(position).getDate());
         textquestion.setText(getItem(position).getQuestion());
-        Picasso.with(context).load(listView_item.Image).into(imageprofile);
         imageans.setImageResource(getItem(position).getWith_ans());
         imagestar.setImageResource(getItem(position).getStar());
 

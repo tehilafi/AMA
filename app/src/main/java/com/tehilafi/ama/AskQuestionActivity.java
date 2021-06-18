@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,9 +26,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.tehilafi.ama.db.Answer;
 import com.tehilafi.ama.db.Question;
 import com.tehilafi.ama.db.Users;
 import com.tehilafi.ama.lists.ListViewAdapte;
@@ -43,13 +42,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AskQuestionActivity extends Activity {
 
     private TextView txvLocation;
-    private int idUser, stars = 1;
-    private int starKind, with_answer = R.drawable.empty;
+    private int idUser, stars;
+    private int starKind;
     private StorageReference storageReff;
     FirebaseStorage storage;
     private CircleImageView profile;
+    private Uri downloadUrlProfile;
 
-    DatabaseReference reff, reffUser, reffAns;
+    DatabaseReference reff, reffUser;
 
     ListView listView;
     ListViewAdapte listViewAdapte;
@@ -59,8 +59,6 @@ public class AskQuestionActivity extends Activity {
     public static final String TAG = "MyTag";
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
-    String id_user;
-    int numQuestion;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +79,7 @@ public class AskQuestionActivity extends Activity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         mEditor = mPreferences.edit();
 
-        //  *******************************  Activity transitions to profile  *******************************
+//  *******************************  Activity transitions to profile  *******************************
         profile = findViewById( R.id.profileID );
         profile.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -90,7 +88,6 @@ public class AskQuestionActivity extends Activity {
                 startActivity( intent );
             }
         } );
-//  *******************************  End activity transitions to profile *******************************
 
         // get the Firebase  storage reference
         storage = FirebaseStorage.getInstance();
@@ -106,10 +103,8 @@ public class AskQuestionActivity extends Activity {
             }
         });
 
-        txvLocation = findViewById( R.id.txvLocationID );
-        txvLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
-
-        final String locationToAddQuestion = txvLocation.getText().toString();
+        txvLocation = findViewById(R.id.txvLocationID);
+        txvLocation.setText( mPreferences.getString(getString(R.string.searchLocation), ""));
 
         reff = FirebaseDatabase.getInstance().getReference("Questions");
         listView = (ListView)findViewById(R.id.listView1ID);
@@ -117,28 +112,27 @@ public class AskQuestionActivity extends Activity {
         listView.setAdapter(listViewAdapte);
 
 
+//************************************* Looking for location questions from Questions DB  *************************************
+
         Query myQuery = reff.orderByChild("location");
         myQuery.addChildEventListener( new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                int numComments;
                 String location = snapshot.getValue( Question.class ).location();
-                if(location.equals(getIntent().getStringExtra( "Extra locations" ))){
+                if(location.equals(mPreferences.getString(getString(R.string.searchLocation), ""))){
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String nameUser = snapshot.getValue( Question.class ).getUsernameAsk();
                     String text = snapshot.getValue( Question.class ).getContentQuestion();
-                    numQuestion = Integer.parseInt( snapshot.getValue( Question.class ).numQuestion() );
                     idUser = snapshot.getValue( Question.class ).getIdAsking();
+                    numComments = snapshot.getValue( Question.class ).getNumComments();
 
-                    reffUser= FirebaseDatabase.getInstance().getReference("Users");
-                    Query myQueryUser = reffUser.orderByChild("id");
-                    myQueryUser.addChildEventListener( new ChildEventListener() {
+//************************************* Get the score from Users DB  *************************************
+                    reffUser = FirebaseDatabase.getInstance().getReference("Users").child( String.valueOf( idUser ));
+                    reffUser.addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                            if(idUser == snapshot.getValue( Users.class ).getId()){
-                                stars = snapshot.getValue( Users.class ).getScore();
-                                Log.d(TAG, "stars = " + stars);
-                            }
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                           stars = dataSnapshot.getValue( Users.class).getScore();
                             if(stars < 150){
                                 starKind = R.drawable.star1;
                             }
@@ -149,67 +143,12 @@ public class AskQuestionActivity extends Activity {
                                 starKind = R.drawable.star3;
                             }
                         }
-
                         @Override
-                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                        public void onCancelled(DatabaseError databaseError) {
                         }
+                    });
 
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    } );
-
-                    reffAns= FirebaseDatabase.getInstance().getReference("Answers");
-                    Query myQueryAns = reffAns.orderByChild("numQuestion");
-                    myQueryAns.addChildEventListener( new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                            if(numQuestion == snapshot.getValue( Answer.class ).getNumQuestion()){
-                                with_answer =  R.drawable.with_answer;
-                            }
-                            if(stars < 150){
-                                starKind = R.drawable.star1;
-                            }
-                            if(stars >= 150 && stars < 500){
-                                starKind = R.drawable.star2;
-                            }
-                            if(stars >= 500){
-                                starKind = R.drawable.star3;
-                            }
-                        }
-
-                        @Override
-                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    } );
+                    int numQuestion = snapshot.getValue( Question.class ).getNumQuestion();
 
                     // Show the profile image in profileID
                     storageReff.child("profile picture/").child( String.valueOf( idUser ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>()
@@ -217,10 +156,15 @@ public class AskQuestionActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl)
                         {
-                            arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime,  text , with_answer, starKind) );
-                            items.add( String.valueOf(numQuestion));
+                            if(numComments >= 1)
+                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.with_answer, starKind) );
+                            else
+                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.transillumination, starKind) );
+
+                            items.add( String.valueOf( numQuestion ));
                             listViewAdapte.notifyDataSetChanged();
                         }
+
                     });
                 }
             }
@@ -256,8 +200,7 @@ public class AskQuestionActivity extends Activity {
                 startActivity(intent);
             }
         } );
-        }
-
+    }
 
 
     // *******************************  For NavBar  *******************************
@@ -273,29 +216,23 @@ public class AskQuestionActivity extends Activity {
                             break;
 
                         case R.id.preID:
-                            txvLocation.setText( getIntent().getStringExtra( "Extra locations" ) );
                             break;
+                            default:
+                                throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.my_questionID:
-                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
-                            Log.d(TAG, "my_token = " + my_token );
                             intent = new Intent( getBaseContext(), MyAnswerActivity.class );
                             startActivity( intent );
                             break;
 
                         case R.id.add_locationID:
-                            if (getIntent().getStringExtra( "Extra locations" ) != null || !getIntent().getStringExtra( "Extra locations" ).equals( "" )) {
-                                intent = new Intent( getBaseContext(), AskingActivity.class );
-                                intent.putExtra( "Extra locations", getIntent().getStringExtra( "Extra locations" ) );
-                                intent.putExtra( "Extra id", id_user );
-                                startActivity( intent );
-                            }
+                            intent = new Intent( getBaseContext(), AskingActivity.class );
+                            startActivity( intent );
                             break;
                     }
                     return true;
                 }
             };
-// *******************************  End NavBar  *******************************
 
 }
 

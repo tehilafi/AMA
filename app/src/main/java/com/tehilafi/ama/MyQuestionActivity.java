@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,7 +36,7 @@ public class MyQuestionActivity extends Activity {
 
     private Button Questions_I_was_asked;
     private ImageView profile;
-
+    String location;
     DatabaseReference reff;
 
     ListView listView;
@@ -58,6 +60,10 @@ public class MyQuestionActivity extends Activity {
             this.getActionBar().hide();
         } catch (NullPointerException e) {
         }
+
+        // For navBar
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         // Moves to activity of profile
         profile = findViewById( R.id.profileID );
@@ -95,7 +101,7 @@ public class MyQuestionActivity extends Activity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
-                String location = snapshot.getValue( Question.class ).location();
+                location = snapshot.getValue( Question.class ).location();
                 String idAsking = snapshot.getValue( Question.class ).id_user();
                 String userName = snapshot.getValue( Question.class ).getUsernameAsk();
                 String numQuestion = snapshot.getValue( Question.class ).numQuestion();
@@ -148,8 +154,43 @@ public class MyQuestionActivity extends Activity {
                 startActivity(intent);
             }
         } );
-
-
-
     }
+
+    // *******************************  For NavBar  *******************************
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Intent intent;
+                    switch (item.getItemId()) {
+                        case R.id.mainID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.preID:
+                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                            intent.putExtra( "Extra locations", location );
+                            intent.putExtra( "Extra id",  getIntent().getStringExtra( "Extra locations" ) );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.my_questionID:
+                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
+                            Log.d(TAG, "my_token = " + my_token );
+                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.add_locationID:
+                            intent = new Intent( getBaseContext(), AskingActivity.class );
+                            intent.putExtra( "Extra locations", location );
+                            intent.putExtra( "Extra id",  getIntent().getStringExtra( "Extra locations" ) );
+                            startActivity( intent );
+                            break;
+                    }
+                    return true;
+                }
+            };
+// *******************************  End NavBar  *******************************
 }

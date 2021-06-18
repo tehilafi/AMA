@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,7 +50,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageFromCamera;
-import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageToFirebase;
 import static com.tehilafi.ama.not.NotificationSender.sendNotification;
 
 public class AnswerActivity extends Activity {
@@ -58,17 +59,20 @@ public class AnswerActivity extends Activity {
     private Button btnSave;
     private String iduser;
     private ImageView  add_pic, add_video, importent;
-    private String num_question;
     private ImageView with_ans;
-    private int score;
+    private int score, numAns, numPIc, numVideo;
     private String importantQuestions;
     private Uri videoUri = null;
     private String[] cameraPermissions;
     private ProgressBar progressBar;
     private Uri contentUri;
     private String imageFileName;
-    private String from;
+    private String from = "empty";
     private int num_ans;
+    String id_user;
+    String location;
+    private SharedPreferences mPreferences;
+    int num_question, numComments;
 
     private AlertDialog.Builder builder;
 
@@ -91,7 +95,7 @@ public class AnswerActivity extends Activity {
     ArrayList<String> askingToken = new ArrayList<String>();
 
     public static long counter = 0;
-    DatabaseReference reff, reffAnswer, reffUser;
+    DatabaseReference reff, reffQ, reffAnswer, reffUser;
     Answer answer;
     Users users;
 
@@ -109,59 +113,91 @@ public class AnswerActivity extends Activity {
 
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-// *******************************  Get the data from the Question DB  *******************************
-        reff = FirebaseDatabase.getInstance().getReference("Questions");
-        Query myQuery = reff.orderByChild("numQuestion");
-        myQuery.addChildEventListener( new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+        // For navBar
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-                num_question = getIntent().getStringExtra("Extra numQuestion");
-                Log.d(TAG, "Extra numQuestion" + num_question);
-                String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
-                if(numberQuestion.equals(num_question)){
-                    String content = snapshot.getValue( Question.class ).content();
-                    String location = snapshot.getValue( Question.class ).location();
+
+        num_question = Integer.parseInt( getIntent().getStringExtra("Extra numQuestion") );
+        reff = FirebaseDatabase.getInstance().getReference("Questions").child( String.valueOf(num_question));
+        reff.addValueEventListener( new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                int numberQuestion = snapshot.getValue( Question.class ).getNumQuestion();
+                if (numberQuestion == num_question) {
+                    String content = snapshot.getValue( Question.class ).getContentQuestion();
+                    location = snapshot.getValue( Question.class ).getLocation();
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String userName = snapshot.getValue( Question.class ).getUsernameAsk();
-                    id_asking = snapshot.getValue( Question.class ).id_user();
+                    id_asking = String.valueOf( snapshot.getValue( Question.class ).getIdAsking() );
                     importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
-                    Log.d(TAG, "importantQuestions = " + importantQuestions);
+                    numComments = snapshot.getValue( Question.class).getNumComments();
 
-
-
-                    txvname = findViewById(R.id.txvnameID);
-                    txvname.setText(userName);
-                    txvdateTime = findViewById(R.id.txvdateTimeID);
-                    txvdateTime.setText(dateTime);
-                    txvLocation = findViewById(R.id.txvLocationID);
-                    txvLocation.setText(location);
-                    txvquestion = findViewById(R.id.txvquestionID);
-                    txvquestion.setText(content);
+                    txvname = findViewById( R.id.txvnameID );
+                    txvname.setText( userName );
+                    txvdateTime = findViewById( R.id.txvdateTimeID );
+                    txvdateTime.setText( dateTime );
+                    txvLocation = findViewById( R.id.txvLocationID );
+                    txvLocation.setText( location );
+                    txvquestion = findViewById( R.id.txvquestionID );
+                    txvquestion.setText( content );
                 }
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
-        } );
+        });
+//        Query myQuery = reff.orderByChild("numQuestion");
+//        myQuery.addChildEventListener( new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//
+//                Log.d(TAG, "Extra numQuestion" + num_question);
+//                String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
+//                if(numberQuestion.equals(num_question)){
+//                    String content = snapshot.getValue( Question.class ).content();
+//                    location = snapshot.getValue( Question.class ).location();
+//                    String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
+//                    String userName = snapshot.getValue( Question.class ).getUsernameAsk();
+//                    id_asking = snapshot.getValue( Question.class ).id_user();
+//                    importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
+//                    Log.d(TAG, "importantQuestions = " + importantQuestions);
+//
+//                    txvname = findViewById(R.id.txvnameID);
+//                    txvname.setText(userName);
+//                    txvdateTime = findViewById(R.id.txvdateTimeID);
+//                    txvdateTime.setText(dateTime);
+//                    txvLocation = findViewById(R.id.txvLocationID);
+//                    txvLocation.setText(location);
+//                    txvquestion = findViewById(R.id.txvquestionID);
+//                    txvquestion.setText(content);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        } );
 
 //        importent = findViewById(R.id.importentID);
 //        if(importantQuestions == "false")
@@ -179,22 +215,21 @@ public class AnswerActivity extends Activity {
         } );
 
 
-// *******************************  Get the token of device asking  *******************************
+// *******************************  Get the token of device asking and details from Users DB  *******************************
         reffUser = FirebaseDatabase.getInstance().getReference("Users");
         Query myQueryUser = reffUser.orderByChild("token");
         myQueryUser.addChildEventListener( new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 int idAsking = snapshot.getValue( Users.class ).getId();
-                Log.d(TAG, "idAsking = " + idAsking);
-                Log.d(TAG, "String.valueOf( idAsking )  = " + String.valueOf( idAsking ) );
                 if (id_asking.equals( String.valueOf( idAsking ) ))
                     askingToken.add( snapshot.getValue( Users.class ).getToken() );
                 if(mPreferences.getString(getString(R.string.id), "").equals(String.valueOf(snapshot.getValue( Users.class ).getId()))) {
                     score = snapshot.getValue( Users.class ).getScore();
-                    Log.d( TAG, "score is = " + score );
+                    numAns = snapshot.getValue( Users.class ).getNumAnswer();
+                    numPIc = snapshot.getValue( Users.class ).getNumPicture();
+                    numVideo = snapshot.getValue( Users.class ).getNumVideo();
                 }
-                Log.d(TAG, "askingToken = " + askingToken);
             }
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -218,8 +253,8 @@ public class AnswerActivity extends Activity {
         } );
 // *******************************  Sava the answer data in the Answers DB  *******************************
         answer = new Answer();
-        reff = FirebaseDatabase.getInstance().getReference().child( "Answers" );
-        reff.addValueEventListener( new ValueEventListener() {
+        reffAnswer = FirebaseDatabase.getInstance().getReference().child( "Answers" );
+        reffAnswer.addValueEventListener( new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists())
@@ -236,10 +271,10 @@ public class AnswerActivity extends Activity {
         // get the Firebase  storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReff = storage.getReference();
-        progressBar = findViewById(R.id.progressBarID);
-
+//        progressBar = findViewById(R.id.progressBarID);
 
         edtContent = findViewById( R.id.edtContentID );
+
         btnSave = findViewById( R.id.btnSaveID );
         btnSave.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -252,24 +287,30 @@ public class AnswerActivity extends Activity {
                     checkContent = true;
                 if (checkContent) {
 
-
                     num_ans= (int)counter;
                     // save in DB question
                     answer.setIdAsking( Integer.parseInt(id_asking) );
                     answer.setContentAnswer( edtContent.getText().toString().trim() );
                     answer.setNumAnswer(num_ans +1);
-                    answer.setNumQuestion(Integer.parseInt(num_question));
+                    answer.setNumQuestion(num_question);
                     answer.setIdAnswering(Integer.parseInt(mPreferences.getString(getString(R.string.id), "")));
                     answer.setDateTimeAnswer(currentDateTime());
                     answer.setNumLikes(0);
-                    answer.setNumComments(0);
                     answer.setUserNameAns(mPreferences.getString(getString(R.string.name), ""));
 
-                    progressBar.setVisibility( View.VISIBLE );
-                    if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf(num_ans +1) ) == true)
-                        progressBar.setVisibility( View.INVISIBLE );
+//                    progressBar.setVisibility( View.VISIBLE );
+//                    Log.d(TAG, "from ==" + from);
+//                        if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf( num_ans + 1 ) ) == true) {
+////                        progressBar.setVisibility( View.INVISIBLE );
+//                            // update picture namber
+//                            if (from == "pic")
+//                                reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
+//                            if (from == "video")
+//                                reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numVideo" ).setValue( numVideo + 1 );
+//                        }
 
-                    reff.child( String.valueOf( counter + 1 ) ).setValue(answer);
+
+                    reffAnswer.child( String.valueOf( counter + 1 ) ).setValue(answer);
 
                     // update score
                     int score_now;
@@ -279,9 +320,14 @@ public class AnswerActivity extends Activity {
                         score_now = score + 10;
                     reffUser.child(mPreferences.getString(getString(R.string.id), "")).child("score").setValue(score_now);
 
+                    // update answer namber
+                    reffUser.child(mPreferences.getString(getString(R.string.id), "")).child("numAnswer").setValue(numAns+1);
+
+                    // update num aswers to question
+                    reff.child("numComments").setValue(numComments+1);
+
                     // send notification to tokens of asking
                     sendNotification( AnswerActivity.this, askingToken, "try", "massege", "answer");
-
                 }
             else
                 Toast.makeText(AnswerActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
@@ -296,13 +342,13 @@ public class AnswerActivity extends Activity {
             public void onClick(View v) {
                 from = "pic";
                 pickDialog();
-
             }
         } );
         add_video = findViewById( R.id.add_videoID );
         add_video.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "add_video on cliked");
                 from = "video";
                 pickDialog();
 
@@ -331,9 +377,12 @@ public class AnswerActivity extends Activity {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
             byte bb[] = bytes.toByteArray();
 
-            progressBar.setVisibility( View.VISIBLE );
-            if (uploadImageFromCamera(getApplicationContext(), bb, String.valueOf(num_ans +1)) == true)
-                progressBar.setVisibility( View.INVISIBLE );
+//            progressBar.setVisibility( View.VISIBLE );
+            if (uploadImageFromCamera(getApplicationContext(), bb, String.valueOf(num_ans +1)) == true) {
+//                progressBar.setVisibility( View.INVISIBLE );
+                // update picture namber
+                reffUser.child(mPreferences.getString(getString(R.string.id), "")).child("numPicture").setValue(numPIc+1);
+            }
         }
         else if(requestCode == VIDEO_PICK_CAMERA_CODE && resultCode == RESULT_OK) {
             contentUri = data.getData();
@@ -437,6 +486,44 @@ public class AnswerActivity extends Activity {
         }
         super.onRequestPermissionsResult( requestCode, permissions, grantResults);
     }
+
+    // *******************************  For NavBar  *******************************
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Intent intent;
+                    switch (item.getItemId()) {
+                        case R.id.mainID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.preID:
+                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                            intent.putExtra( "Extra locations", location );
+                            intent.putExtra( "Extra id", id_user );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.my_questionID:
+                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
+                            Log.d(TAG, "my_token = " + my_token );
+                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
+                            startActivity( intent );
+                            break;
+
+                            case R.id.add_locationID:
+                                intent = new Intent( getBaseContext(), AskingActivity.class );
+                                intent.putExtra( "Extra locations", location );
+                                intent.putExtra( "Extra id", id_user );
+                                startActivity( intent );
+                                break;
+                    }
+                    return true;
+                }
+            };
+
 
 
 }

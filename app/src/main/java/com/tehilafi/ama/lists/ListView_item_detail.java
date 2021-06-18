@@ -2,39 +2,35 @@ package com.tehilafi.ama.lists;
 
 public class ListView_item_detail {
 
-    int Image;
+    String Image;
     String UserName;
     String Date;
     String Content;
     String NumLike;
-    String NumDislike;
     int Add_videoID;
     int Add_picID;
+    int StarID;
 
-    public ListView_item_detail(int image,  String userName, String date, String content, String numLike, String numDislike, int add_videoID,  int add_picID){
+    public ListView_item_detail(String image,  String userName, String date, String content, String numLike, int add_videoID,  int add_picID, int starID){
         Image = image;
         UserName = userName;
         Date = date;
         Content = content;
         NumLike = numLike;
-        NumDislike = numDislike;
+        Add_videoID = add_videoID;
+        Add_picID = add_picID;
+        StarID = starID;
     }
 
     public void setNumLike(String numLike) {
         NumLike = numLike;
     }
 
-    public void setNumDislike(String numDislike) {
-        NumDislike = numDislike;
-    }
 
     public String getNumLike() {
         return NumLike;
     }
 
-    public String getNumDislike() {
-        return NumDislike;
-    }
 
     public String getDate() {
         return Date;
@@ -60,7 +56,7 @@ public class ListView_item_detail {
         Date = date;
     }
 
-    public int getImage() {
+    public String getImage() {
         return Image;
     }
 
@@ -72,7 +68,7 @@ public class ListView_item_detail {
         return Add_picID;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         Image = image;
     }
 
@@ -82,5 +78,13 @@ public class ListView_item_detail {
 
     public void setAdd_picID(int add_picID) {
         Add_picID = add_picID;
+    }
+
+    public int getStarID() {
+        return StarID;
+    }
+
+    public void setStarID(int starID) {
+        StarID = starID;
     }
 }

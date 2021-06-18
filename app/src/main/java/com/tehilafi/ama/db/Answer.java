@@ -10,8 +10,6 @@ public class Answer {
     private String dateTimeAnswer;
     private String userNameAns;
     private int numLikes;
-    private int numComments;
-
 
     public Answer() {
     }
@@ -32,16 +30,8 @@ public class Answer {
         return numLikes;
     }
 
-    public int getNumComments() {
-        return numComments;
-    }
-
     public void setNumLikes(int numLikes) {
         this.numLikes = numLikes;
-    }
-
-    public void setNumComments(int numComments) {
-        this.numComments = numComments;
     }
 
     public void setDateTimeAnswer(String dateTimeAnswer) {

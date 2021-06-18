@@ -1,7 +1,6 @@
 package com.tehilafi.ama;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,7 +16,6 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,24 +33,13 @@ public class LoginActivity extends Activity {
 
     private Button logIn;
     private EditText password, userName, idUser, phone;
-    private int score;
     private String token;
-    private CheckBox access_location;
-    private Intent intent;
     private DatabaseReference reff;
-    Context context1=this;
     Users users;
     Users chec_users;
 
-
-    FirebaseAuth firebaseAuth;
     public static final String TAG = "MyTag";
 
-
-    private static final String MY_PREFERENCES = "pref_previously_started";
-
-
-    private static final String KEY_ID = "id";
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
@@ -94,67 +80,71 @@ public class LoginActivity extends Activity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
 
-
+        // Init
         users = new Users();
         chec_users=new Users();
         reff = FirebaseDatabase.getInstance().getReference().child( "Users" );
-        score = 10;
+
         logIn.setOnClickListener(  new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText( LoginActivity.this, "innnnn!!", Toast.LENGTH_LONG ).show();
-
-                users.setUserName( userName.getText().toString().trim() );
-                users.setPassword( password.getText().toString().trim() );
-                users.setId(Integer.parseInt(idUser.getText().toString().trim()));
-                users.setPhone( phone.getText().toString().trim() );
-                users.setScore(score);
-                users.setLatitude(0.0);
-                users.setLongitude(0.0);
-                users.setToken(token);
+//                users.setUserName( userName.getText().toString().trim() );
+//                users.setPassword( password.getText().toString().trim() );
+//                users.setId(Integer.parseInt(idUser.getText().toString().trim()));
+//                users.setPhone( phone.getText().toString().trim() );
+//                users.setScore(score);
+//                users.setLatitude(0.0);
+//                users.setLongitude(0.0);
+//                users.setToken(token);
+//                users.setImportantQuestions(3);
+//                users.setNumLike(0);
+//                users.setNumLike(0);
 
                 boolean check_token, check_username, check_password, check_id, check_phone;
 
                 //If one of the details is missing:
+
                 if(token.equals( "" ))
                     check_token = false;
                 else
                     check_token = true;
 
                 if (userName.getText().toString().equals( "" )) {
-                    Toast.makeText( LoginActivity.this, "Missing userName", Toast.LENGTH_LONG ).show();
+                    Toast.makeText( LoginActivity.this, "חסר שם משתמש", Toast.LENGTH_LONG ).show();
                     check_username = false;
                 } else
                     check_username = true;
+
                 if (password.getText().toString().equals( "" )) {
-                    Toast.makeText( LoginActivity.this, "Missing password", Toast.LENGTH_LONG ).show();
+                    Toast.makeText( LoginActivity.this, "חסר סיסמה", Toast.LENGTH_LONG ).show();
                     check_password = false;
                 } else
                     check_password = true;
+
                 if (idUser.getText().toString().equals( "" )) {
-                    Toast.makeText( LoginActivity.this, "Missing id", Toast.LENGTH_LONG ).show();
+                    Toast.makeText( LoginActivity.this,"חסר ת.ז", Toast.LENGTH_LONG ).show();
                     check_id = false;
                 } else {
-                    check_id = true;
-
                     if (validId(Integer.parseInt( idUser.getText().toString())))
                         check_id = true;
                     else
                         check_id = false;
                 }
+
                 if (phone.getText().toString().equals( "" )) {
-                    Toast.makeText( LoginActivity.this, "Missing phone", Toast.LENGTH_LONG ).show();
+                    Toast.makeText( LoginActivity.this, "חסר מספר טלפון", Toast.LENGTH_LONG ).show();
                     check_phone = false;
                 } else
                     check_phone = true;
 
+//************************************  Save the data in Users DB  *************************************
                 if(check_username && check_password  && check_phone && check_id && check_token){
-
                     reff.child(idUser.getText().toString().trim()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot){
+
+                        // if ID user already exists
                         if (snapshot.exists()) {
-                           Toast.makeText(LoginActivity.this, "id alredy exits", Toast.LENGTH_LONG).show();
                             Query myQueryUser = reff.orderByChild("id");
                             myQueryUser.addChildEventListener( new ChildEventListener() {
                                 @Override
@@ -164,7 +154,7 @@ public class LoginActivity extends Activity {
                                         startActivity(intent);
                                     }
                                     else
-                                        Toast.makeText(LoginActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(LoginActivity.this, "שמשתמש מחובר לאפליקציה. הפרטים לא נכונים", Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override
@@ -189,16 +179,23 @@ public class LoginActivity extends Activity {
                             });
 
                         }
-                        // Save the data in DB if the id is dosent exists
+
+                        // if ID user dosent exists
                         else {
                             users.setUserName( userName.getText().toString().trim() );
                             users.setPassword( password.getText().toString().trim() );
                             users.setId(Integer.parseInt(idUser.getText().toString().trim()));
                             users.setPhone( phone.getText().toString().trim() );
-                            users.setScore( score );
+                            users.setScore(10);
                             users.setLatitude(0.0);
                             users.setLongitude(0.0);
                             users.setToken(token);
+                            users.setImportantQuestions(3);
+                            users.setNumLike(0);
+                            users.setNumAnswer(0);
+                            users.setNumPicture(0);
+                            users.setNumVideo(0);
+
 
                             reff.child( idUser.getText().toString().trim() ).setValue( users );
 
@@ -223,7 +220,6 @@ public class LoginActivity extends Activity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                     });
                 }
@@ -235,50 +231,46 @@ public class LoginActivity extends Activity {
 
     // Function check if ID is valid
     public boolean validId(int idNumber){
-//        int sum = 0, i = 1;
-//
-//        int check_digit = idNumber % 10; // the last digit its the check digit
-//        int temp = idNumber / 10;
-//
-//        for ( i = 1; i < 9; i++)
-//        {
-//            if (i % 2 == 0)
-//            {
-//                sum += temp % 10; // the digit * 1
-//                temp = temp / 10;
-//            }
-//            else // if (i % 2 != 0)
-//            {
-//                int counter = (temp % 10) * 2; // the digit * 2
-//                temp = temp / 10;
-//                if (counter > 9) //if tje multiplied number is more than one digit, the digits are summed
-//                {
-//                    int n = 0;
-//                    while (counter != 0)
-//                    {
-//                        n += counter % 10;
-//                        counter = counter / 10;
-//                    }
-//                    sum += n;
-//                }
-//                else
-//                    sum += counter;
-//            }
-//        }
-//         //find how much need to complete to divide the digit by ten.
-//        int balance = 0;
-//        while (sum % 10 != 0)
-//        {
-//            balance++;
-//            sum++;
-//        }
-//        if (balance == check_digit)
-//            return true;
-//        else
-//            return false;
-        return true;
+        int sum = 0, i = 1;
+        int check_digit = idNumber % 10; // the last digit its the check digit
+        int temp = idNumber / 10;
 
-
+        for ( i = 1; i < 9; i++)
+        {
+            if (i % 2 == 0)
+            {
+                sum += temp % 10; // the digit * 1
+                temp = temp / 10;
+            }
+            else // if (i % 2 != 0)
+            {
+                int counter = (temp % 10) * 2; // the digit * 2
+                temp = temp / 10;
+                if (counter > 9) //if tje multiplied number is more than one digit, the digits are summed
+                {
+                    int n = 0;
+                    while (counter != 0)
+                    {
+                        n += counter % 10;
+                        counter = counter / 10;
+                    }
+                    sum += n;
+                }
+                else
+                    sum += counter;
+            }
+        }
+         //find how much need to complete to divide the digit by ten.
+        int balance = 0;
+        while (sum % 10 != 0)
+        {
+            balance++;
+            sum++;
+        }
+        if (balance == check_digit)
+            return true;
+        else
+            return false;
     }
 }
 
