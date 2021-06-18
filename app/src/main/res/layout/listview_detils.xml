@@ -84,7 +84,7 @@
         android:paddingBottom="15dp"
         android:text="answer"
         android:textColor="#615e5e"
-        android:textSize="10sp"
+        android:textSize="11sp"
         android:fontFamily="sans-serif"
         android:textStyle="normal"
         app:layout_constraintStart_toStartOf="@+id/profileuserID"
@@ -92,46 +92,13 @@
 
 
     <ImageView
-        android:id="@+id/dislikeID"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="28dp"
-        android:focusable="false"
-        android:onClick="disLike"
-        android:src="@drawable/dislike"
-        app:layout_constraintBottom_toTopOf="@+id/text_answerID"
-        app:layout_constraintEnd_toEndOf="@+id/text_answerID" />
-
-    <TextView
-        android:id="@+id/numDislikeID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="3dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginTop="2dp"
-        android:fontFamily="sans-serif"
-        android:text="num"
-        android:textColor="#615e5e"
-        android:textSize="10sp"
-        app:layout_constraintEnd_toStartOf="@+id/dislikeID"
-        app:layout_constraintTop_toTopOf="@+id/dislikeID"/>
-
-
-
-    <ImageView
         android:id="@+id/likeID"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="28dp"
-        android:focusable="false"
-        android:onClick="like"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginBottom="30dp"
         android:src="@drawable/like"
-        app:layout_constraintEnd_toStartOf="@+id/dislikeID"
-        app:layout_constraintTop_toTopOf="@+id/dislikeID"/>
+        app:layout_constraintEnd_toEndOf="@+id/text_answerID"
+        app:layout_constraintBottom_toTopOf="@+id/text_answerID"/>
 
     <TextView
         android:id="@+id/numLikeID"
@@ -181,9 +148,6 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
-        android:focusable="false"
-        android:onClick="viewPic"
-        android:src="@drawable/add_pic"
         app:layout_constraintEnd_toStartOf="@+id/line3"
         app:layout_constraintTop_toTopOf="@+id/line2"/>
 
@@ -194,9 +158,6 @@
         android:layout_height="23dp"
         android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
-        android:focusable="false"
-        android:onClick="viewVideo"
-        android:src="@drawable/add_video"
         app:layout_constraintStart_toStartOf="@+id/line3"
         app:layout_constraintTop_toTopOf="@+id/line2"
         android:layout_marginLeft="20dp" />

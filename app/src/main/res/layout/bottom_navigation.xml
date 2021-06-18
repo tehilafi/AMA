@@ -5,29 +5,29 @@
     <item
         android:id="@+id/mainID"
         android:icon="@drawable/search"
-        android:title="Home"
-        android:layout_height="33dp"
-        android:layout_width="24dp"/>
+        android:title="מפה"
+        android:layout_height="30dp"
+        android:layout_width="20dp"/>
 
     <item
         android:id="@+id/preID"
-        android:icon="@drawable/send"
-        android:title="Pre Question"
-        android:layout_height="29dp"
-        android:layout_width="33dp"/>
+        android:icon="@drawable/pre_q"
+        android:title="שאלות קודמות"
+        android:layout_height="26dp"
+        android:layout_width="30dp"/>
 
     <item
         android:id="@+id/my_questionID"
         android:icon="@drawable/q_a"
-        android:title="My Question"
-        android:layout_height="27dp"
-        android:layout_width="31dp"/>
+        android:title="שאלות ותשובות"
+        android:layout_height="24dp"
+        android:layout_width="28dp"/>
     <item
         android:id="@+id/add_locationID"
         android:icon="@drawable/send"
-        android:title="Send Question"
-        android:layout_height="29dp"
-        android:layout_width="33dp"/>
+        android:title="שלח שאלה"
+        android:layout_height="26dp"
+        android:layout_width="30dp"/>
 
 
 </menu>

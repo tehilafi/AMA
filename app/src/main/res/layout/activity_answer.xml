@@ -357,17 +357,31 @@
 
     <Button
         android:id="@+id/btnSaveID"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
+        android:fontFamily="sans-serif"
         android:layout_marginTop="30dp"
-        android:text="SEND"
+        android:text="שלח"
         android:textColor="#168a91"
-        android:textSize="16sp"
+        android:textSize="18sp"
+        android:background="@drawable/botton"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintlayout2" />
+
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/navbar_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bootom_nav"
+        tools:layout_editor_absoluteX="31dp"
+        app:labelVisibilityMode="labeled"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

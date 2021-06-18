@@ -7,6 +7,8 @@
     <string name="ph">tabian.com.sharedpreferences.ph</string>
     <string name="myToken">tabian.com.sharedpreferences.myToken</string>
     <string name="location">tabian.com.sharedpreferences.location</string>
+    <string name="searchLocation">tabian.com.sharedpreferences.searchLocation</string>
+
 
     <string name="map_key" translatable="false">AIzaSyDZBTVI5QwopPeZ8dA8LXYo70S-T9ex-Ds</string>
 

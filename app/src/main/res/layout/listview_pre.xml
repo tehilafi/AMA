@@ -28,6 +28,7 @@
         android:id="@+id/starID"
         android:layout_width="18dp"
         android:layout_height="18dp"
+        android:src="@drawable/star"
         app:layout_constraintBottom_creator="0"
         app:layout_constraintBottom_toBottomOf="@+id/profileuserID"
         app:layout_constraintEnd_toEndOf="parent"
