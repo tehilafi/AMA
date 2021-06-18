@@ -87,20 +87,32 @@
 
         <activity android:name=".LoginActivity"></activity>
 
+        <activity android:name=".OneAnswerActivity"></activity>
+
         <activity android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light"></activity>
 
         <activity android:name=".AskQuestionActivity"
-            android:theme="@style/Theme.AppCompat.Light">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light"></activity>
 
-        <activity android:name=".AskingActivity"></activity>
-        <activity android:name=".AnswerDetailActivity"></activity>
-        <activity android:name=".MyQuestionActivity"></activity>
-        <activity android:name=".MyAnswerActivity"></activity>
-        <activity android:name=".ChangProfilActivity"></activity>
-        <activity android:name=".AnswerActivity"></activity>
+        <activity android:name=".AskingActivity"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+
+        <activity android:name=".AnswerDetailActivity"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+
+        <activity android:name=".MyQuestionActivity"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+
+        <activity android:name=".MyAnswerActivity"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+
+        <activity android:name=".ChangProfilActivity"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+
+        <activity android:name=".AnswerActivity"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+
 
 
         <service

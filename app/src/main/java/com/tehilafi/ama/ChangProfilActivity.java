@@ -2,25 +2,33 @@ package com.tehilafi.ama;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.tehilafi.ama.db.Users;
@@ -37,6 +45,7 @@ import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageToFirebase;
 public class ChangProfilActivity extends Activity {
 
     public static final String TAG = "MyTag";
+    private static Context context;
 
     private Uri contentUri;
     private String imageFileName;
@@ -46,13 +55,12 @@ public class ChangProfilActivity extends Activity {
     // for profile_image
     private StorageReference storageReff;
     private DatabaseReference reff;
-
+    private TextView usernameID, nLID,  nAID, nPID, nVID;
     private String nameuser, pas, ph, iduser;
     private EditText user_nameID, passwordID, phoneID;
-
-    private ProgressBar progressBar;
-
+    private ImageView ratingID;
     Users users;
+    private String numLike = "NUll", numAns = "NULL", numPic = "NULL", numVideo = "NULL";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +78,13 @@ public class ChangProfilActivity extends Activity {
         // Init
         reff = FirebaseDatabase.getInstance().getReference().child( "Users" );
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        // For navBar
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         // get the Firebase  storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReff = storage.getReference();
-
-        progressBar = findViewById(R.id.progressBarID);
 
         profile_image = findViewById( R.id.profile_imageID );
 
@@ -97,12 +106,6 @@ public class ChangProfilActivity extends Activity {
             }
         });
 
-// *************************************  Save user details in users DB *************************************
-
-        user_nameID = findViewById( R.id.user_nameID );
-        passwordID = findViewById( R.id.passwordID );
-        phoneID = findViewById( R.id.phoneID );
-
         iduser = mPreferences.getString( getString( R.string.id ), "" );
         if (iduser == "")
             iduser = "null";
@@ -116,31 +119,73 @@ public class ChangProfilActivity extends Activity {
         if (ph == "")
             ph = "null";
 
+        usernameID = findViewById( R.id.usernameID );
+        usernameID.setText(nameuser);
+// *************************************  Save user details in users DB *************************************
+
+        user_nameID = findViewById( R.id.user_nameID );
+        passwordID = findViewById( R.id.passwordID );
+        phoneID = findViewById( R.id.phoneID );
+        nLID = findViewById(R.id.nLID);
+        nAID = findViewById(R.id.nAID);
+        nPID = findViewById(R.id.nPID);
+        nVID = findViewById(R.id.nVID);
+
         user_nameID.setText( nameuser );
         passwordID.setText( pas );
         phoneID.setText( ph );
 
         users = new Users();
-        reff = FirebaseDatabase.getInstance().getReference( "Users" );
+        reff = FirebaseDatabase.getInstance().getReference( "Users" ).child(iduser);
+
+//************************************* Get the score from Users DB  *************************************
+        ratingID = findViewById( R.id.ratingID );
+        reff.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int stars = dataSnapshot.getValue( Users.class).getScore();
+                if(stars < 150)
+                    ratingID.setImageResource(R.drawable.star1);
+                if(stars >= 150 && stars < 500)
+                    ratingID.setImageResource(R.drawable.star2);
+                if(stars >= 500)
+                    ratingID.setImageResource(R.drawable.star3);
+
+                numLike = String.valueOf( dataSnapshot.getValue( Users.class).getNumLike() );
+                nLID.setText(numLike);
+                numAns = String.valueOf( dataSnapshot.getValue( Users.class).getNumAnswer() );
+                nAID.setText(numAns);
+                numPic = String.valueOf( dataSnapshot.getValue( Users.class).getNumPicture() );
+                nPID.setText(numPic);
+                numVideo = String.valueOf( dataSnapshot.getValue( Users.class).getNumVideo() );
+                nVID.setText(numVideo);
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
 
         btnSave = findViewById( R.id.btnSaveID );
         btnSave.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(android.view.View view) {
 
-                if (!nameuser.equals( user_nameID.getText().toString().trim() ))
-                    reff.child( iduser ).child( "userName" ).setValue( user_nameID.getText().toString().trim() );
+                if (!nameuser.equals( user_nameID.getText().toString().trim() )) {
+                    reff.child( "userName" ).setValue( user_nameID.getText().toString().trim() );
+                    usernameID.setText(user_nameID.getText().toString().trim());
 
+                }
                 if (!pas.equals( passwordID.getText().toString().trim() ))
-                    reff.child( iduser ).child( "password" ).setValue( passwordID.getText().toString().trim() );
+                    reff.child( "password" ).setValue( passwordID.getText().toString().trim() );
 
                 if (!ph.equals( phoneID.getText().toString().trim() ))
-                    reff.child( iduser ).child( "phone" ).setValue( phoneID.getText().toString().trim() );
+                    reff.child( "phone" ).setValue( phoneID.getText().toString().trim() );
 
                 // upload profile image to firebase storage
-                progressBar.setVisibility( View.VISIBLE );
-                if (uploadImageToFirebase(getApplicationContext(), imageFileName,contentUri, iduser, "profil", "null") == true)
-                    progressBar.setVisibility( View.INVISIBLE );
+                if (uploadImageToFirebase(getApplicationContext(), imageFileName,contentUri, iduser, "profil", "null") == false)
+                    Toast.makeText( ChangProfilActivity.this, "התמונה לא התעדכנה", Toast.LENGTH_SHORT ).show();
 
                 Intent intent = new Intent( getBaseContext(), MainActivity.class );
                 startActivity( intent );
@@ -170,6 +215,43 @@ public class ChangProfilActivity extends Activity {
         else{
             Toast.makeText(this, "Error. Try again", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // *******************************  For NavBar  *******************************
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                    Intent intent;
+                    switch (item.getItemId()) {
+                        case R.id.mainID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.preID:
+                            Toast.makeText( ChangProfilActivity.this, "צריך להכניס קודם מקום", Toast.LENGTH_SHORT ).show();
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.my_questionID:
+                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
+                            startActivity( intent );
+                            break;
+
+                        case R.id.add_locationID:
+                            Toast.makeText( ChangProfilActivity.this, "צריך להכניס קודם מקום", Toast.LENGTH_SHORT ).show();
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            break;
+                    }
+                    return true;
+                }
+            };
+
+    public static Context getAppContext() {
+        return ChangProfilActivity.context;
     }
 }
 
