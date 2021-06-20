@@ -3,6 +3,7 @@ package com.tehilafi.ama;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,17 +29,26 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tehilafi.ama.db.Users;
+
+import java.util.HashMap;
 
 
 public class LoginActivity extends Activity {
 
     private Button logIn;
     private EditText password, userName, idUser, phone;
-    private String token;
+    private String token = null;
     private DatabaseReference reff;
     Users users;
     Users chec_users;
+
+    private StorageReference storageReff;
+    private StorageReference reffS = null;
+
 
     public static final String TAG = "MyTag";
 
@@ -56,6 +68,10 @@ public class LoginActivity extends Activity {
         } catch (NullPointerException e) {
         }
 
+        // get the Firebase  storage reference
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageReff = storage.getReference();
+
         // Find the token of the device
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -65,6 +81,7 @@ public class LoginActivity extends Activity {
                             token=task.getResult().getToken();
                             Log.d(TAG, "onComplete: Token: "+token);
                         }else{
+                            Toast.makeText( LoginActivity.this, "אי אפשר לעקוב אחר המכשיר", Toast.LENGTH_SHORT ).show();
                         }
 
                     }
@@ -88,23 +105,13 @@ public class LoginActivity extends Activity {
         logIn.setOnClickListener(  new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                users.setUserName( userName.getText().toString().trim() );
-//                users.setPassword( password.getText().toString().trim() );
-//                users.setId(Integer.parseInt(idUser.getText().toString().trim()));
-//                users.setPhone( phone.getText().toString().trim() );
-//                users.setScore(score);
-//                users.setLatitude(0.0);
-//                users.setLongitude(0.0);
-//                users.setToken(token);
-//                users.setImportantQuestions(3);
-//                users.setNumLike(0);
-//                users.setNumLike(0);
 
                 boolean check_token, check_username, check_password, check_id, check_phone;
 
                 //If one of the details is missing:
 
-                if(token.equals( "" ))
+                Log.d(TAG, "Token =  "+token);
+                if(token.equals( "" ) || token == null)
                     check_token = false;
                 else
                     check_token = true;
@@ -143,7 +150,7 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onDataChange(DataSnapshot snapshot){
 
-                        // if ID user already exists
+//************************************  If ID user already exists  *************************************
                         if (snapshot.exists()) {
                             Query myQueryUser = reff.orderByChild("id");
                             myQueryUser.addChildEventListener( new ChildEventListener() {
@@ -179,8 +186,7 @@ public class LoginActivity extends Activity {
                             });
 
                         }
-
-                        // if ID user dosent exists
+//************************************  If ID user dosent exists  *************************************
                         else {
                             users.setUserName( userName.getText().toString().trim() );
                             users.setPassword( password.getText().toString().trim() );
@@ -196,8 +202,29 @@ public class LoginActivity extends Activity {
                             users.setNumPicture(0);
                             users.setNumVideo(0);
 
-
                             reff.child( idUser.getText().toString().trim() ).setValue( users );
+
+                            // Put default profile image in firebase storage
+                            reffS = storageReff.child( "profile picture/" + idUser.getText().toString().trim());
+                            Uri imageUri = Uri.parse("android.resource://com.tehilafi.ama/" + R.drawable.profil);
+                            reffS.putFile(imageUri).addOnSuccessListener( new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                    while (!uriTask.isSuccessful());
+                                    Uri downloadUri = uriTask.getResult();
+                                    if(uriTask.isSuccessful()){
+                                        HashMap<String, Object> hashMap = new HashMap<>();
+                                        hashMap.put("title", "" + idUser.getText().toString().trim());
+                                        hashMap.put("contentUri", "" + downloadUri);
+                                    }
+                                }
+                            }).addOnFailureListener( new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                }
+                            } );
 
                             String id = idUser.getText().toString();
                             String name = userName.getText().toString();
