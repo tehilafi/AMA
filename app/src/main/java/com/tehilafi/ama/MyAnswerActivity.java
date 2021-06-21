@@ -3,6 +3,7 @@ package com.tehilafi.ama;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +30,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.tehilafi.ama.db.Question;
 import com.tehilafi.ama.db.Users;
 import com.tehilafi.ama.lists.ListViewAdapteMy;
@@ -41,11 +46,14 @@ public class MyAnswerActivity extends Activity {
     private Button Questions_I_sent;
     private TextView newid;
     private ImageView profile;
-    private String content, title, location, numQuestion, id_user, importantQuestions, dateTime, userName, myToken="0";
+    private String location, id_user, myToken="0";
     ArrayList<String> send_to_token = new ArrayList<String>();
 
     private SharedPreferences mPreferences;
     private List<String> items = new ArrayList<String>();
+
+    private StorageReference storageReff;
+    FirebaseStorage storage;
 
     public static final String TAG = "MyTag";
 
@@ -67,11 +75,13 @@ public class MyAnswerActivity extends Activity {
         } catch (NullPointerException e) {
         }
 
+        mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+
         // For navBar
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
-        // Moves to activity of profile
+//*******************************  Activity transitions to profile  *******************************
         profile = findViewById( R.id.profileID );
         profile.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -81,6 +91,21 @@ public class MyAnswerActivity extends Activity {
             }
         } );
 
+        // get the Firebase  storage reference
+        storage = FirebaseStorage.getInstance();
+        storageReff = storage.getReference();
+
+        // Show the profile image in profileID
+        storageReff.child("profile picture/").child(mPreferences.getString( getString( R.string.id ), "" )).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+        {
+            @Override
+            public void onSuccess(Uri downloadUrl)
+            {
+                Glide.with( MyAnswerActivity.this).load(downloadUrl).into(profile);
+            }
+        });
+
+//*******************************  Activity transitions to Questions I sent  *******************************
         Questions_I_sent = findViewById( R.id.Questions_I_sentID );
         Questions_I_sent.setOnClickListener( new View.OnClickListener() {
             @Override
@@ -92,15 +117,13 @@ public class MyAnswerActivity extends Activity {
 
         newid = findViewById( R.id.newID );
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
-
         listView = (ListView)findViewById(R.id.listView1ID);
         listViewAdapteMy = new ListViewAdapteMy(this,R.layout.listview_my, arrayList);
         listView.setAdapter(listViewAdapteMy);
 
-        Log.d(TAG, "my id = " + mPreferences.getString( getString( R.string.id ), "" ));
-        reffUser = FirebaseDatabase.getInstance().getReference( "Users" ).child(mPreferences.getString( getString( R.string.id ), "" ));
-        reffUser.addValueEventListener(new ValueEventListener() {
+        // get token
+        reffUser = FirebaseDatabase.getInstance().getReference( "Users" );
+        reffUser.child(mPreferences.getString( getString( R.string.id ), "" )).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 myToken = dataSnapshot.getValue( Users.class ).getToken();
@@ -110,36 +133,66 @@ public class MyAnswerActivity extends Activity {
             }
         });
 
+//************************************* Looking for question that asked me from Questions DB  *************************************
         reff = FirebaseDatabase.getInstance().getReference("Questions");
         Query myQuery = reff.orderByChild("send_to_tokens");
         myQuery.addChildEventListener( new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                int numComments;
+                final int[] starKind = new int[1];
+                final int[] stars = new int[1];
                 send_to_token = snapshot.getValue( Question.class ).getSend_to_tokens();
-                Log.d(TAG, "send_to_token = " + send_to_token);
-                Log.d(TAG, "myToken = " + myToken);
-                if(send_to_token != null) {
-                    if (send_to_token.contains( myToken )) {
-                        content = snapshot.getValue( Question.class ).content();
-                        location = snapshot.getValue( Question.class ).location();
-                        numQuestion = snapshot.getValue( Question.class ).numQuestion();
-                        id_user = snapshot.getValue( Question.class ).id_user();
-                        importantQuestions = snapshot.getValue( Question.class ).important_questions();
-                        dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
-                        userName = snapshot.getValue( Question.class ).getUsernameAsk();
-                        //////////////////////////////////////////
-                        String anew = "";
-                        //////////////////////////////////////////
+                if(send_to_token != null && send_to_token.contains( myToken )) {
+                    String content = snapshot.getValue( Question.class ).content();
+                    location = snapshot.getValue( Question.class ).location();
+                    String numQuestion = snapshot.getValue( Question.class ).numQuestion();
+                    id_user = snapshot.getValue( Question.class ).id_user();
+                    String importantQuestions = snapshot.getValue( Question.class ).important_questions();
+                    String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
+                    String userName = snapshot.getValue( Question.class ).getUsernameAsk();
+                    numComments = snapshot.getValue( Question.class ).getNumComments();
+                    //////////////////////////////////////////
+                    String anew = "";
+                    //////////////////////////////////////////
 
-                        arrayList.add( new ListView_item_my( R.drawable.photo_profile_start, userName , dateTime, location, anew, R.drawable.with_answer));
-                        items.add( numQuestion );
+//************************************* Get the score from Users DB  *************************************
 
-                        listViewAdapteMy.notifyDataSetChanged();
-                    }
+                    reffUser.child( String.valueOf( id_user )).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            stars[0] = dataSnapshot.getValue( Users.class).getScore();
+                            if(stars[0] < 150)
+                                starKind[0] = R.drawable.star1;
+                            if(stars[0] >= 150 && stars[0] < 500)
+                                starKind[0] = R.drawable.star2;
+                            if(stars[0] >= 500)
+                                starKind[0] = R.drawable.star3;
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+
+                    // Show the profile image in profileID
+                    storageReff.child("profile picture/").child( String.valueOf( id_user ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>()
+                    {
+                        @Override
+                        public void onSuccess(Uri downloadUrl)
+                        {
+
+                            if(numComments >= 1)
+                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, location, anew, R.drawable.with_answer, starKind[0] ) );
+                            else
+                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, location, anew, R.drawable.transillumination, starKind[0] ) );
+
+                            items.add( numQuestion );
+                            listViewAdapteMy.notifyDataSetChanged();
+                        }
+
+                    });
+                    Log.d(TAG, "arrayList = " + arrayList);
                 }
-
-                Log.d(TAG, "items = " + items);
-
             }
 
             @Override
@@ -162,6 +215,9 @@ public class MyAnswerActivity extends Activity {
 
             }
         } );
+
+        Log.d(TAG, "arrayList 2 = " + arrayList);
+
 
 // *******************************  When click on one of the questions  *******************************
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {

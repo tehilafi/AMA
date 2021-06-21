@@ -42,13 +42,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AskQuestionActivity extends Activity {
 
     private TextView txvLocation;
-    private int idUser, stars;
-    private int starKind;
     private StorageReference storageReff;
     FirebaseStorage storage;
     private CircleImageView profile;
     private Uri downloadUrlProfile;
-
     DatabaseReference reff, reffUser;
 
     ListView listView;
@@ -106,42 +103,41 @@ public class AskQuestionActivity extends Activity {
         txvLocation = findViewById(R.id.txvLocationID);
         txvLocation.setText( mPreferences.getString(getString(R.string.searchLocation), ""));
 
-        reff = FirebaseDatabase.getInstance().getReference("Questions");
         listView = (ListView)findViewById(R.id.listView1ID);
         listViewAdapte = new ListViewAdapte(this,R.layout.listview_pre, arrayList);
         listView.setAdapter(listViewAdapte);
 
 
 //************************************* Looking for location questions from Questions DB  *************************************
-
+        reff = FirebaseDatabase.getInstance().getReference("Questions");
         Query myQuery = reff.orderByChild("location");
         myQuery.addChildEventListener( new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 int numComments;
+                final int[] starKind = new int[1];
+                final int[] stars = new int[1];
                 String location = snapshot.getValue( Question.class ).location();
                 if(location.equals(mPreferences.getString(getString(R.string.searchLocation), ""))){
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String nameUser = snapshot.getValue( Question.class ).getUsernameAsk();
                     String text = snapshot.getValue( Question.class ).getContentQuestion();
-                    idUser = snapshot.getValue( Question.class ).getIdAsking();
+                    int idUser = snapshot.getValue( Question.class ).getIdAsking();
                     numComments = snapshot.getValue( Question.class ).getNumComments();
 
 //************************************* Get the score from Users DB  *************************************
-                    reffUser = FirebaseDatabase.getInstance().getReference("Users").child( String.valueOf( idUser ));
+
+                    reffUser = FirebaseDatabase.getInstance().getReference("Users").child( String.valueOf(idUser));
                     reffUser.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                           stars = dataSnapshot.getValue( Users.class).getScore();
-                            if(stars < 150){
-                                starKind = R.drawable.star1;
-                            }
-                            if(stars >= 150 && stars < 500){
-                                starKind = R.drawable.star2;
-                            }
-                            if(stars >= 500){
-                                starKind = R.drawable.star3;
-                            }
+                            stars[0] = dataSnapshot.getValue( Users.class).getScore();
+                            if(stars[0] < 150)
+                                starKind[0] = R.drawable.star1;
+                            if(stars[0] >= 150 && stars[0] < 500)
+                                starKind[0] = R.drawable.star2;
+                            if(stars[0] >= 500)
+                                starKind[0] = R.drawable.star3;
                         }
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
@@ -157,9 +153,9 @@ public class AskQuestionActivity extends Activity {
                         public void onSuccess(Uri downloadUrl)
                         {
                             if(numComments >= 1)
-                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.with_answer, starKind) );
+                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.with_answer, starKind[0] ) );
                             else
-                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.transillumination, starKind) );
+                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.transillumination, starKind[0] ) );
 
                             items.add( String.valueOf( numQuestion ));
                             listViewAdapte.notifyDataSetChanged();
