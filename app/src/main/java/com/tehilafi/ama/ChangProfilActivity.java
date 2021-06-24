@@ -7,7 +7,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -15,6 +17,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +54,7 @@ public class ChangProfilActivity extends Activity {
     private String imageFileName;
     private CircleImageView profile_image;
     private Button btnSave;
-
+    private Boolean onClick_profile_image = false;
     // for profile_image
     private StorageReference storageReff;
     private DatabaseReference reff;
@@ -60,6 +63,7 @@ public class ChangProfilActivity extends Activity {
     private EditText user_nameID, passwordID, phoneID;
     private ImageView ratingID;
     Users users;
+    private ProgressBar progressBarID;
     private String numLike = "NUll", numAns = "NULL", numPic = "NULL", numVideo = "NULL";
 
     @Override
@@ -85,6 +89,7 @@ public class ChangProfilActivity extends Activity {
         // get the Firebase  storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReff = storage.getReference();
+        progressBarID = findViewById(R.id.progressBarID);
 
         profile_image = findViewById( R.id.profile_imageID );
 
@@ -103,6 +108,7 @@ public class ChangProfilActivity extends Activity {
             @Override
             public void onClick(View v) {
                 CropImage.activity().setAspectRatio( 1, 1 ).start( ChangProfilActivity.this );
+                onClick_profile_image = true;
             }
         });
 
@@ -184,9 +190,17 @@ public class ChangProfilActivity extends Activity {
                     reff.child( "phone" ).setValue( phoneID.getText().toString().trim() );
 
                 // upload profile image to firebase storage
-                if (uploadImageToFirebase(getApplicationContext(), imageFileName,contentUri, iduser, "profil", "null") == false)
-                    Toast.makeText( ChangProfilActivity.this, "התמונה לא התעדכנה", Toast.LENGTH_SHORT ).show();
+                Log.d(TAG, "contentUri = " + contentUri);
+                if(onClick_profile_image)
+                    if (uploadImageToFirebase(getApplicationContext(), imageFileName, contentUri, iduser, "profil", "null") == false)
+                        Toast.makeText( ChangProfilActivity.this, "התמונה לא התעדכנה", Toast.LENGTH_SHORT ).show();
 
+                progressBarID.setVisibility( View.VISIBLE);
+                (new Handler()).postDelayed(this::continued, 2500);
+
+            }
+
+            private void continued() {
                 Intent intent = new Intent( getBaseContext(), MainActivity.class );
                 startActivity( intent );
             }
@@ -224,13 +238,13 @@ public class ChangProfilActivity extends Activity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
-                        case R.id.mainID:
+                        case R.id.preID:
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
                             break;
 
-                        case R.id.preID:
-                            Toast.makeText( ChangProfilActivity.this, "צריך להכניס קודם מקום", Toast.LENGTH_SHORT ).show();
+                        case R.id.mainID:
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
                             break;
@@ -241,9 +255,9 @@ public class ChangProfilActivity extends Activity {
                             break;
 
                         case R.id.add_locationID:
-                            Toast.makeText( ChangProfilActivity.this, "צריך להכניס קודם מקום", Toast.LENGTH_SHORT ).show();
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
                             break;
                     }
                     return true;
