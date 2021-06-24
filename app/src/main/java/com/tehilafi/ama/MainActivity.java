@@ -38,13 +38,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.karumi.dexter.Dexter;
@@ -52,7 +47,6 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.tehilafi.ama.db.Question;
 import com.tehilafi.ama.db.Users;
 import com.tehilafi.ama.location.Common;
 import com.tehilafi.ama.location.MyBackgroundService;
@@ -80,7 +74,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     String id;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
-    private DatabaseReference reff;
+    private DatabaseReference reff, reffUser;
     String locationToAddQuestion;
     String id_user;
     String idUser;
@@ -116,7 +110,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onListenLocation(final SendLocationToActivity event) {
         if (event != null) {
-            Toast.makeText( mService, event.getLocation().getLatitude() + " / " + event.getLocation().getLongitude(), Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( mService, event.getLocation().getLatitude() + " / " + event.getLocation().getLongitude(), Toast.LENGTH_SHORT ).show();
             id = mPreferences.getString( getString( R.string.id ), "" );
             users = new Users();
             reff = FirebaseDatabase.getInstance().getReference( "Users" );
@@ -163,10 +157,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(Uri downloadUrl)
             {
-                Glide.with( MainActivity.this).load(downloadUrl).into(profile);
+                Glide.with( getApplicationContext()).load(downloadUrl).into(profile);
             }
         });
-
 
 
         getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).edit()
@@ -186,9 +179,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         instance = this;
         searchView = findViewById( R.id.search_location );
 
-
-        updateRating();
-
 //      *******************************  Search location in map  *******************************
         searchView.setOnQueryTextListener( new SearchView.OnQueryTextListener() {
             @Override
@@ -197,23 +187,26 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 List<Address> addressList = null;
 
                 if (location != null || !location.equals( "" )) {
-
                     try {
                         Geocoder geocoder = new Geocoder( MainActivity.this );
                         addressList = geocoder.getFromLocationName( location, 3 );
-                        Address address = addressList.get( 0 );
-                        LatLng latLng = new LatLng( address.getLatitude(), address.getLongitude() );
-                        String latLngString = String.valueOf( latLng );
-                        Toast.makeText( getApplicationContext(), "* "+ latLng + " *", Toast.LENGTH_LONG ).show();
-                        mEditor.putString( getString( R.string.location ), latLngString );
-                        mEditor.putString( getString( R.string.searchLocation ), location);
-                        mEditor.commit();
+                        if(addressList.size() > 0) {
+                            Address address = addressList.get( 0 );
+                            LatLng latLng = new LatLng( address.getLatitude(), address.getLongitude() );
+                            String latLngString = String.valueOf( latLng );
+                            Toast.makeText( getApplicationContext(), "* " + latLng + " *", Toast.LENGTH_LONG ).show();
+                            mEditor.putString( getString( R.string.location ), latLngString );
+                            mEditor.putString( getString( R.string.searchLocation ), location );
 
-                        mMap.addMarker( new MarkerOptions().position( latLng ).title( location ) );
-                        mMap.animateCamera( CameraUpdateFactory.newLatLngZoom( latLng, 10 ) );
+                            mEditor.commit();
 
-                        locationToAddQuestion = location;
+                            mMap.addMarker( new MarkerOptions().position( latLng ).title( location ) );
+                            mMap.animateCamera( CameraUpdateFactory.newLatLngZoom( latLng, 10 ) );
 
+                            locationToAddQuestion = location;
+                        }
+                        else
+                            Toast.makeText( MainActivity.this, "כתובת לא תקינה", Toast.LENGTH_SHORT ).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -292,19 +285,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
+                        case R.id.preID:
+                            if(location == null || locationToAddQuestion.equals( "" )) {
+                                Toast.makeText( MainActivity.this, "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
+                            }
+                            else{
+                                intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                                startActivity( intent );
+                                break;
+                            }
+
                         case R.id.mainID:
                             break;
                             default:
-                                throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
-
-                        case R.id.preID:
-                            if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
-                                intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-                                startActivity( intent );
-                            }
-                            else
-                                Toast.makeText( MainActivity.this, "הכנס מיקום לחיפוש", Toast.LENGTH_LONG );
-                            break;
+                            throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.my_questionID:
                             intent = new Intent( getBaseContext(), MyAnswerActivity.class );
@@ -312,62 +306,20 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             break;
 
                         case R.id.add_locationID:
-                            if (locationToAddQuestion != null || !locationToAddQuestion.equals( "" )) {
+                            if(location == null || locationToAddQuestion.equals( "" )) {
+                                Toast.makeText( MainActivity.this, "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
+                            }
+                            else{
                                 intent = new Intent( getBaseContext(), AskingActivity.class );
                                 startActivity( intent );
+                                break;
                             }
-                            else
-                                Toast.makeText( MainActivity.this, "הכנס מיקום לחיפוש", Toast.LENGTH_LONG );
-                            break;
                     }
                     return true;
                 }
             };
 // *******************************  End NavBar  *******************************
 
-    private void updateRating(){
-        reff = FirebaseDatabase.getInstance().getReference( "Users" );
-        Query myQuery = reff.orderByChild("score");
-        myQuery.addChildEventListener( new ChildEventListener() {
-           @Override
-           public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-               String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
-//               if(id.equals(snapshot.getValue( Users.class ).getId())) {
-//                   scoreUser = snapshot.getValue( Users.class ).getScore();
-//                   if(scoreUser < 50)
-//                       stars = 1;
-//                   if(scoreUser >= 60 && scoreUser < 130)
-//                       stars = 2;
-//                   if(scoreUser >= 130 && scoreUser < 280)
-//                       stars = 3;  // image
-//                   if(scoreUser >= 280 && scoreUser < 570)
-//                       stars = 4;
-//                   if(scoreUser >= 570)
-//                       stars = 5; // video
-//
-//                   reff.child(id).child("stars").setValue(stars);
-//               }
-           }
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        });
-    }
 
             // To see the current location on the map
     private void getCurrentLocation() {
