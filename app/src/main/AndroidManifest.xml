@@ -87,7 +87,7 @@
 
         <activity android:name=".LoginActivity"></activity>
 
-        <activity android:name=".OneAnswerActivity"></activity>
+        <activity android:name=".OneAnswerActivity"/>
 
         <activity android:name=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light"></activity>
@@ -102,10 +102,20 @@
             android:theme="@style/Theme.AppCompat.Light"></activity>
 
         <activity android:name=".MyQuestionActivity"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
+            android:theme="@style/Theme.AppCompat.Light">
+            <intent-filter>
+                <action android:name="MyQuestionActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <activity android:name=".MyAnswerActivity"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
+            android:theme="@style/Theme.AppCompat.Light">
+            <intent-filter>
+                <action android:name="MyAnswerActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <activity android:name=".ChangProfilActivity"
             android:theme="@style/Theme.AppCompat.Light"></activity>

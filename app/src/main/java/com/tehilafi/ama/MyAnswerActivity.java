@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -47,8 +46,6 @@ public class MyAnswerActivity extends Activity {
     private TextView newid;
     private ImageView profile;
     private String location, id_user, myToken="0";
-    ArrayList<String> send_to_token = new ArrayList<String>();
-
     private SharedPreferences mPreferences;
     private List<String> items = new ArrayList<String>();
 
@@ -101,7 +98,7 @@ public class MyAnswerActivity extends Activity {
             @Override
             public void onSuccess(Uri downloadUrl)
             {
-                Glide.with( MyAnswerActivity.this).load(downloadUrl).into(profile);
+                Glide.with( getApplicationContext()).load(downloadUrl).into(profile);
             }
         });
 
@@ -114,8 +111,6 @@ public class MyAnswerActivity extends Activity {
                 startActivity( intent );
             }
         } );
-
-        newid = findViewById( R.id.newID );
 
         listView = (ListView)findViewById(R.id.listView1ID);
         listViewAdapteMy = new ListViewAdapteMy(this,R.layout.listview_my, arrayList);
@@ -140,21 +135,20 @@ public class MyAnswerActivity extends Activity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 int numComments;
+                int importan;
                 final int[] starKind = new int[1];
                 final int[] stars = new int[1];
-                send_to_token = snapshot.getValue( Question.class ).getSend_to_tokens();
+                ArrayList<String> send_to_token = snapshot.getValue( Question.class ).getSend_to_tokens();
                 if(send_to_token != null && send_to_token.contains( myToken )) {
                     String content = snapshot.getValue( Question.class ).content();
-                    location = snapshot.getValue( Question.class ).location();
+                    location = snapshot.getValue( Question.class ).getLocation();
+                    String loc = snapshot.getValue( Question.class ).getLocation();
                     String numQuestion = snapshot.getValue( Question.class ).numQuestion();
                     id_user = snapshot.getValue( Question.class ).id_user();
-                    String importantQuestions = snapshot.getValue( Question.class ).important_questions();
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String userName = snapshot.getValue( Question.class ).getUsernameAsk();
                     numComments = snapshot.getValue( Question.class ).getNumComments();
-                    //////////////////////////////////////////
-                    String anew = "";
-                    //////////////////////////////////////////
+                    Boolean importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
 
 //************************************* Get the score from Users DB  *************************************
 
@@ -180,18 +174,19 @@ public class MyAnswerActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl)
                         {
-
+                            String text_mark = "";
+                            if(importantQuestions)
+                                text_mark = " ! ";
                             if(numComments >= 1)
-                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, location, anew, R.drawable.with_answer, starKind[0] ) );
+                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc , R.drawable.with_answer, starKind[0], text_mark) );
                             else
-                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, location, anew, R.drawable.transillumination, starKind[0] ) );
+                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc, R.drawable.transillumination, starKind[0], text_mark) );
 
                             items.add( numQuestion );
                             listViewAdapteMy.notifyDataSetChanged();
                         }
 
                     });
-                    Log.d(TAG, "arrayList = " + arrayList);
                 }
             }
 
@@ -216,9 +211,6 @@ public class MyAnswerActivity extends Activity {
             }
         } );
 
-        Log.d(TAG, "arrayList 2 = " + arrayList);
-
-
 // *******************************  When click on one of the questions  *******************************
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
@@ -238,30 +230,26 @@ public class MyAnswerActivity extends Activity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
+                        case R.id.preID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
+                            break;
+
                         case R.id.mainID:
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
                             break;
 
-                        case R.id.preID:
-                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-                            intent.putExtra( "Extra locations", location );
-                            intent.putExtra( "Extra id", id_user );
-                            startActivity( intent );
-                            break;
-
                         case R.id.my_questionID:
-                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
-                            Log.d(TAG, "my_token = " + my_token );
-                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
-                            startActivity( intent );
                             break;
+                            default:
+                            throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.add_locationID:
-                            intent = new Intent( getBaseContext(), AskingActivity.class );
-                            intent.putExtra( "Extra locations", location );
-                            intent.putExtra( "Extra id", id_user );
+                            intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
                             break;
                     }
                     return true;

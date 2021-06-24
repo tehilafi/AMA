@@ -33,12 +33,12 @@ public class ListViewAdapte extends ArrayAdapter<ListView_item> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         ListView_item listView_item = arrayList.get(position);
-
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         convertView = layoutInflater.inflate(mResource, parent, false);
         ImageView imageprofile = convertView.findViewById( R.id.profileuserID);
         TextView textuserName = convertView.findViewById(R.id.userNameID);
         TextView textdate = convertView.findViewById(R.id.dateID);
+        TextView textnumQ = convertView.findViewById(R.id.numQID);
         TextView textquestion = convertView.findViewById(R.id.questionID);
         ImageView imageans = convertView.findViewById( R.id.with_ansID);
         ImageView imagestar = convertView.findViewById( R.id.starID);
@@ -46,6 +46,7 @@ public class ListViewAdapte extends ArrayAdapter<ListView_item> {
         Picasso.with(context).load(listView_item.Image).into(imageprofile);
         textuserName.setText(getItem(position).getUserName());
         textdate.setText(getItem(position).getDate());
+        textnumQ.setText(getItem(position).getNumQ());
         textquestion.setText(getItem(position).getQuestion());
         imageans.setImageResource(getItem(position).getWith_ans());
         imagestar.setImageResource(getItem(position).getStar());

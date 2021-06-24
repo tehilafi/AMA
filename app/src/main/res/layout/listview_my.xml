@@ -7,6 +7,23 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:id="@+id/constraintlayoutID"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@drawable/bold_white"-->
+<!--        android:paddingTop="13dp"-->
+<!--        android:paddingBottom="20dp"-->
+<!--        app:layout_constraintLeft_creator="1"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_creator="0"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_editor_absoluteX="16dp"-->
+<!--        app:layout_editor_absoluteY="140dp"-->
+<!--        tools:layout_constraintLeft_creator="0"-->
+<!--        tools:layout_constraintTop_creator="0">-->
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileuserID"
         android:layout_width="35dp"
@@ -54,7 +71,7 @@
         android:fontFamily="sans-serif"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintHorizontal_bias="0.2"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.02"
         app:layout_constraintStart_toStartOf="@+id/profileuserID"
@@ -77,44 +94,42 @@
 
     <TextView
         android:id="@+id/locationID"
-        android:layout_width="280dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:fontFamily="sans-serif"
+        android:layout_marginBottom="20dp"
         android:paddingBottom="15dp"
         android:text="location"
         android:textColor="#615e5e"
         android:textSize="12sp"
         android:textStyle="normal"
-        app:layout_constraintStart_toStartOf="@+id/userNameID"
-        app:layout_constraintTop_toBottomOf="@+id/userNameID" />
+        app:layout_constraintStart_toStartOf="@+id/profileuserID"
+        app:layout_constraintTop_toBottomOf="@+id/profileuserID" />
+
+    <TextView
+        android:id="@+id/markID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="8dp"
+        android:text=""
+        android:textColor="#fcba06"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/profileuserID"
+        app:layout_constraintEnd_toStartOf="@+id/locationID"
+        android:layout_marginRight="15dp" />
 
     <ImageView
         android:id="@+id/with_ansID"
         android:layout_width="33dp"
         android:layout_height="33dp"
+        android:layout_marginBottom="10dp"
         android:focusable="false"
         app:layout_constraintBottom_toTopOf="@+id/locationID"
         app:layout_constraintEnd_toEndOf="@+id/locationID" />
-
-    <TextView
-        android:id="@+id/newID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
-        android:fontFamily="sans-serif"
-        android:gravity="start"
-        android:text="new"
-        android:textColor="#fcba06"
-        android:textSize="12sp"
-        android:textStyle="normal"
-        app:layout_constraintEnd_toStartOf="@+id/with_ansID"
-        app:layout_constraintTop_toTopOf="@+id/with_ansID"/>
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

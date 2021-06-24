@@ -333,7 +333,7 @@ public class AnswerActivity extends Activity {
                     reff.child("numComments").setValue(numComments+1);
 
                     // send notification to tokens of asking
-                    sendNotification( AnswerActivity.this, askingToken, "תשובה חדשה",  edtContent.getText().toString().trim(), "answer");
+                    sendNotification( AnswerActivity.this, askingToken, "תשובה חדשה",  edtContent.getText().toString().trim(), "answer", "MyQuestionActivity");
 
                     progressBarID.setVisibility( View.VISIBLE);
                     (new Handler()).postDelayed(this::continued, 3000);

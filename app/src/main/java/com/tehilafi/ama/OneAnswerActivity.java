@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -31,17 +32,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class OneAnswerActivity extends Activity {
 
-    private TextView txvname, txvdateTime,  txvanswer, numLikeID;
-    private String num_answer, id_asking, id_answer;
+    private TextView txvname, txvdateTime,  txvanswer;
+    private String num_answer, id_asking, id_answer, numL = "NUll";
     public static final String TAG = "MyTag";
     DatabaseReference reff, reffUser;
-    ImageView imageView, starID, transillumination, closeID, add_picID, add_videoID, likeID;
+    ImageView imageView, starID, likeID, whiteID;
     VideoView videoView;
     private SharedPreferences mPreferences;
     private CircleImageView profileuserID;
     private StorageReference storageReff;
     FirebaseStorage storage;
-    private int numLike, score;
+    private int numLike = 0, score, numLNew = 0;
 
 
 
@@ -70,35 +71,82 @@ public class OneAnswerActivity extends Activity {
         videoView = findViewById( R.id.videoViewID );
         starID = findViewById( R.id.starID );
         profileuserID = findViewById( R.id.profileuserID );
-        transillumination = findViewById( R.id.transilluminationID );
-        add_picID = findViewById( R.id.add_picID );
-        add_videoID = findViewById( R.id.add_videoID );
         likeID = findViewById( R.id.likeID );
-        closeID = findViewById( R.id.closeID );
+        whiteID = findViewById(R.id.whiteID);
+
 
         storageReff.child("picture answer/").child(num_answer).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                add_picID.setImageResource(R.drawable.add_pic);
-            }
+                if (score < 150)
+                    Toast.makeText( OneAnswerActivity.this, "ברמת הדירוג שלך אי אפשר לצפות בתמונות", Toast.LENGTH_SHORT ).show();
+                else {
+                    Toast.makeText( OneAnswerActivity.this, "viewPic", Toast.LENGTH_SHORT ).show();
+                    // Show the image
+                    storageReff.child( "picture answer/" ).child(num_answer).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri downloadUrl) {
+                            Glide.with( getApplicationContext()).load( downloadUrl ).into( imageView );
+
+                        }
+                    } );
+                }            }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                add_picID.setImageResource(R.drawable.transillumination);
+                imageView.setImageResource(R.drawable.transillumination);
             }
         });
 
-        storageReff.child("video answer/").child(num_answer).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                add_videoID.setImageResource(R.drawable.add_video);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                add_videoID.setImageResource(R.drawable.transillumination);
-            }
-        });
+//        storageReff.child("video answer/").child(num_answer).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//           @Override
+//           public void onSuccess(Uri uri) {
+//               if (score < 500)
+//                   Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
+//               else {
+//                   whiteID.setVisibility(View.INVISIBLE);
+//                   storageReff.child( "video answer/" ).child( String.valueOf( "numAns" ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
+//                       @Override
+//                       public void onSuccess(Uri downloadUrl) {
+//                           DownloadManager.Request request = new DownloadManager.Request( Uri.parse( String.valueOf( downloadUrl ) ) );
+//                           request.setDescription( "download" );
+//                           request.setTitle( "" + downloadUrl + ".mp4" );
+//                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//                               request.allowScanningByMediaScanner();
+//                               request.setNotificationVisibility( DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED );
+//                           }
+//                           request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, "" + downloadUrl + ".mp4" );
+//                           // get download service and enqueue file
+//                           DownloadManager manager = (DownloadManager) getSystemService( Context.DOWNLOAD_SERVICE );
+//                           manager.enqueue( request );
+//                           Toast.makeText( OneAnswerActivity.this, "download!!!!", Toast.LENGTH_SHORT ).show();
+//
+//                           // View video in viewVideo from gallery
+//                           MediaController mediaController = new MediaController( OneAnswerActivity.this );
+//                           mediaController.setAnchorView( videoView );
+//                           //specify the location of media file
+//                           Uri uri = Uri.parse( "אחסון פנימי/DCIM/Camera/111.mp4" );
+//                           Toast.makeText( OneAnswerActivity.this, "uri" + uri, Toast.LENGTH_SHORT ).show();
+//                           Log.d( TAG, "uri = " + uri );
+//
+//                           //Setting MediaController and URI, then starting the videoView
+//                           videoView.setMediaController( mediaController );
+//                           videoView.setVideoURI( uri );
+//                           videoView.requestFocus();
+//                           videoView.start();
+//
+//
+//                       }
+//                   } ).addOnFailureListener( new OnFailureListener() {
+//                       @Override
+//                       public void onFailure(@NonNull Exception exception) {
+//                           videoView.setVisibility( View.INVISIBLE );
+//                       }
+//                   } );
+//               }
+//           }
+//        });
+
 
 // *******************************  Get the data from the Answer DB  *******************************
         reff = FirebaseDatabase.getInstance().getReference("Answers").child(num_answer);
@@ -116,7 +164,7 @@ public class OneAnswerActivity extends Activity {
                 storageReff.child( "profile picture/" ).child( id_answer ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri downloadUrl) {
-                        Glide.with( OneAnswerActivity.this ).load( downloadUrl ).into( profileuserID );
+                        Glide.with( getApplicationContext()).load( downloadUrl ).into( profileuserID );
                     }
                 } );
 
@@ -135,8 +183,8 @@ public class OneAnswerActivity extends Activity {
         });
 
 // *******************************  Get score from Users DB  *******************************
-        reffUser = FirebaseDatabase.getInstance().getReference("Users").child(mPreferences.getString( getString( R.string.id ), "" ));
-        reffUser.addValueEventListener(new ValueEventListener() {
+        reffUser = FirebaseDatabase.getInstance().getReference("Users");
+        reffUser.child(mPreferences.getString( getString( R.string.id ), "" )).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 score = dataSnapshot.getValue( Users.class ).getScore();
@@ -148,117 +196,33 @@ public class OneAnswerActivity extends Activity {
 
 // *******************************  OnClick  *******************************
 
-        closeID.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                closeID.setImageResource( R.drawable.transillumination );
-                transillumination.setImageResource( R.drawable.transillumination );
-                imageView.setImageResource( R.drawable.transillumination );
-
-                // update num like to answer
-                reff.child( "numLikes" ).setValue(numLike+1);
-            }
-        } );
-
         likeID.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(android.view.View view) {
-                numLikeID.setText("numLike+1");
-                likeID.setImageResource(R.drawable.like_yellow);
-                likeID.setEnabled(false);
+               likeID.setImageResource( R.drawable.like_yellow );
+               likeID.setEnabled( false );
 
-                // update num like to answer user
-                reffUser = FirebaseDatabase.getInstance().getReference("Users").child(id_answer).child("numlike");
-                reffUser.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        int numL = dataSnapshot.getValue( Users.class ).getNumLike();
-                        reffUser.setValue(numL+1);
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
+               // update num like to answer
+               reff.child( "numLikes" ).setValue( numLike + 1 );
 
+               // update num like in User DB
+               Log.d( TAG, "id_answer = " + id_answer );
+               reffUser = FirebaseDatabase.getInstance().getReference( "Users" ).child( id_answer );
+               reffUser.addValueEventListener( new ValueEventListener() {
+                   @Override
+                   public void onDataChange(@NonNull DataSnapshot snapshot) {
+                       numL = String.valueOf( snapshot.getValue( Users.class ).getNumLike() );
+                       numLNew= Integer.parseInt( numL);
+                   }
 
-
-
+                   @Override
+                   public void onCancelled(@NonNull DatabaseError error) {
+                   }
+               } );
+                reffUser.child( "numLike" ).setValue( numLNew + 1 );
             }
-        } );
+        });
 
-        add_picID.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                if (score < 150)
-                    Toast.makeText( OneAnswerActivity.this, "ברמת הדירוג שלך אי אפשר לצפות בתמונות", Toast.LENGTH_SHORT ).show();
-                else {
-                    Toast.makeText( OneAnswerActivity.this, "viewPic", Toast.LENGTH_SHORT ).show();
-                    // Show the image in profileID
-                    storageReff.child( "picture answer/" ).child(num_answer).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri downloadUrl) {
-                            transillumination.setImageResource( R.drawable.half_trans );
-                            Glide.with( OneAnswerActivity.this ).load( downloadUrl ).into( imageView );
-                            closeID.setImageResource( R.drawable.ic_baseline_close_24 );
-                        }
-                    } );
-                }
-            }
-        } );
-
-//        add_videoID.setOnClickListener( new View.OnClickListener() {
-//            @Override
-//            public void onClick(android.view.View view) {
-//                if(score < 150)
-//                    Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
-//                else if(score >= 150 && score < 500)
-//                    Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
-//                else{
-////            Toast.makeText( this, "numAns = " + numAns, Toast.LENGTH_SHORT ).show();
-//                    storageReff.child("video answer/").child( String.valueOf( "numAns" ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>()
-//                    {
-//                        @Override
-//                        public void onSuccess(Uri downloadUrl) {
-//                            transillumination.setImageResource(R.drawable.half_trans);
-//                            DownloadManager.Request request = new DownloadManager.Request( Uri.parse( String.valueOf( downloadUrl ) ) );
-//                            request.setDescription( "download" );
-//                            request.setTitle( "" + downloadUrl+".mp4" );
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//                                request.allowScanningByMediaScanner();
-//                                request.setNotificationVisibility( DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED );
-//                            }
-//                            request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, "" + downloadUrl + ".mp4" );
-////                // get download service and enqueue file
-//                            DownloadManager manager = (DownloadManager) getSystemService( Context.DOWNLOAD_SERVICE );
-//                            manager.enqueue( request );
-//                            Toast.makeText( AnswerDetailActivity.this, "download!!!!", Toast.LENGTH_SHORT ).show();
-//
-//                            // View video in viewVideo from gallery
-//                            MediaController mediaController= new MediaController(AnswerDetailActivity.this);
-//                            mediaController.setAnchorView(videoView);
-//                            //specify the location of media file
-//                            Uri uri = Uri.parse("אחסון פנימי/DCIM/Camera/111.mp4");
-//                            Toast.makeText( AnswerDetailActivity.this, "uri"+ uri, Toast.LENGTH_SHORT ).show();
-//                            Log.d(TAG, "uri = "+ uri);
-//
-//                            //Setting MediaController and URI, then starting the videoView
-//                            videoView.setMediaController(mediaController);
-//                            videoView.setVideoURI(uri);
-//                            videoView.requestFocus();
-//                            videoView.start();
-//
-//                            closeID.setImageResource(R.drawable.ic_baseline_close_24);
-//
-//                        }
-//                    });
-//                    //        videoView.setVideoPath("android.resource://"+getPackageName()+"/"+R.raw.numAns);
-////        MediaController mediaController= new MediaController(AnswerDetailActivity.this);
-////        mediaController.setAnchorView(videoView);
-////        videoView.setMediaController(mediaController);
-//
-//                }
-//            }
-//        } );
     }
 }
 

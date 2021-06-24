@@ -2,22 +2,18 @@ package com.tehilafi.ama.db;
 
 import java.util.ArrayList;
 
-public class Question {
+public class Question{
     private int numQuestion;
     private int idAsking;
     private String usernameAsk;
     private String contentQuestion;
     private String location;
-    private String important_questions;
-    private String latLngString;
+    private String latLng;
+    private Boolean important_questions;
     private ArrayList<String> send_to_tokens;
     private String dateTimeQuestion;
     private int numLikes;
     private int numComments;
-
-
-    public Question(){
-    }
 
     public String getDateTimeQuestion() {
         return dateTimeQuestion;
@@ -75,7 +71,7 @@ public class Question {
         return location;
     }
 
-    public String getImportant_questions() {
+    public boolean getImportant_questions() {
         return important_questions;
     }
 
@@ -97,16 +93,16 @@ public class Question {
         this.location = location;
     }
 
-    public void setImportant_questions(String important_questions) {
+    public void setImportant_questions(Boolean important_questions) {
         this.important_questions = important_questions;
     }
 
-    public String getLatLngString() {
-        return latLngString;
+    public String getLatLng() {
+        return latLng;
     }
 
-    public void setLatLngString(String latLngString) {
-        this.latLngString = latLngString;
+    public void setLatLng(String latLng) {
+        this.latLng = latLng;
     }
 
     public String location() {
@@ -120,9 +116,6 @@ public class Question {
     }
     public String id_user() {
         return String.valueOf(this.idAsking);
-    }
-    public String important_questions() {
-        return this.important_questions;
     }
 
 

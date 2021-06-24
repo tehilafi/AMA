@@ -1,18 +1,20 @@
 package com.tehilafi.ama.lists;
 
-public class ListView_item {
+public class ListView_item{
 
     String Image;
     String UserName;
     String Date;
+    String NumQ;
     String Question;
     int With_ans;
     int Star;
 
-    public ListView_item(String image, String userName, String date, String question, int with_ans, int star){
+    public ListView_item(String image, String userName, String date, String numQ, String question, int with_ans, int star){
         Image = image;
         UserName = userName;
         Date = date;
+        NumQ = numQ;
         Question = question;
         With_ans = with_ans;
         Star = star;
@@ -65,4 +67,18 @@ public class ListView_item {
     public void setStar(int star) {
         Star = star;
     }
+
+    public String getNumQ() {
+        return NumQ;
+    }
+
+//    public static class ByNumQ implements Comparator<ListView_item>{
+//
+//        @Override
+//        public int compare(ListView_item t1, ListView_item t2) {
+//            if(t1.getNumQ().compareTo(t2.getNumQ()) == -1)
+//                return 1;
+//            return -1;
+//        }
+//    }
 }

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
@@ -51,16 +52,16 @@ public class AskingActivity extends Activity {
 
     private Button send;
     private TextView textViewTheLocation, edtContent, impoetant;
-    private String iduser, latLngString, important_questions = "false", location_question;
+    private String iduser, latLngString,  location_question;
+    private Boolean important_questions = false;
     private CheckBox checkBox;
     private int score, numImportantQuestions;
     public static long counter = 0;
-    Double lat, lng;
     private CircleImageView profile;
     private StorageReference storageReff;
     FirebaseStorage storage;
     private SharedPreferences mPreferences;
-    private int num_question;
+    private int num_question, counter_checkBox = 0;
 
 
     private DatabaseReference reff, reffUser;
@@ -96,7 +97,7 @@ public class AskingActivity extends Activity {
         textViewTheLocation = findViewById( R.id.textViewTheLocationID );
         edtContent = findViewById( R.id.edtContentID);
         checkBox = findViewById( R.id.checkBoxID);
-        impoetant = findViewById( R.id.impoetantID);
+        impoetant = findViewById( R.id.importantID);
         profile = findViewById(R.id.profileID);
 
 //  *******************************  Activity transitions to profile  *******************************
@@ -137,7 +138,6 @@ public class AskingActivity extends Activity {
         if(location_question == "")
             location_question = "null";
 
-
         textViewTheLocation.setText(location_question);
 
         question = new Question();
@@ -154,9 +154,7 @@ public class AskingActivity extends Activity {
             }
         });
 
-
 //************************************  Get  data from Users DB  *************************************
-
         Query myQuery = reffUser;
         myQuery.addChildEventListener( new ChildEventListener() {
            @Override
@@ -164,14 +162,18 @@ public class AskingActivity extends Activity {
                String token = snapshot.getValue( Users.class ).getToken();
                String myToken = "0";
                int idd = snapshot.getValue( Users.class ).getId();
-               lat = snapshot.getValue( Users.class ).getLatitude();
-               lng = snapshot.getValue( Users.class ).getLongitude();
+               Double lat = snapshot.getValue( Users.class ).getLatitude();
+               Double lng = snapshot.getValue( Users.class ).getLongitude();
 
                if (iduser.equals( String.valueOf( idd ) )) {
                    score = snapshot.getValue( Users.class ).getScore();
                    numImportantQuestions = snapshot.getValue( Users.class ).getImportantQuestions();
+                   impoetant.setText(" נשארו לך " + numImportantQuestions + "  שאלות חשובות ");
+                   if(numImportantQuestions <= 0)
+                       checkBox.setEnabled(false);
                    myToken = snapshot.getValue( Users.class ).getToken();
                }
+
                // split latLngString to longitude and latitude
                String[] s = latLngString.split( "\\(" );
                String s1 = s[1];
@@ -182,7 +184,7 @@ public class AskingActivity extends Activity {
                float[] results = new float[1];
                Location.distanceBetween( Double.parseDouble( la ), Double.parseDouble( ln ), lat, lng, results );
                float distanceInMeters = results[0];
-               if (distanceInMeters < 700) {
+               if (distanceInMeters < 800) {
                    if(token != myToken)
                        tokens.add( token );
                }
@@ -209,56 +211,59 @@ public class AskingActivity extends Activity {
             }
         });
 
-        impoetant.setText(" שאלות חשובות" + numImportantQuestions + "נשאר לך ");
-        if(numImportantQuestions == 0)
-            checkBox.setEnabled(false);
-
 //************************************  Save the data in Questions DB  *************************************
 
         send.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!edtContent.getText().toString().equals( "" )) {
+
                     // send notification to tokens
-                    Log.d( TAG, "array tokens = " + tokens );
-                    sendNotification( AskingActivity.this, tokens, "try", "massege", "question" );
+                    Log.d(TAG, "tokens  send = " + tokens);
+                    sendNotification( AskingActivity.this, tokens, "שאלה חדשה",  edtContent.getText().toString().trim(), "question", "MyAnswerActivity" );
 
                     num_question = (int) counter;
                     question.setLocation( mPreferences.getString( getString( R.string.searchLocation ), "" )  );
                     question.setIdAsking( Integer.parseInt( iduser ) );
                     question.setContentQuestion( edtContent.getText().toString().trim() );
                     question.setNumQuestion( num_question + 1 );
-                    question.setImportant_questions( important_questions );
-                    question.setLatLngString( latLngString );
+                    question.setImportant_questions(important_questions);
+                    question.setLatLng( latLngString );
                     question.setSend_to_tokens( tokens );
                     question.setDateTimeQuestion( currentDateTime() );
                     question.setNumLikes( 0 );
                     question.setNumComments( 0 );
                     question.setUsernameAsk( mPreferences.getString( getString( R.string.name ), "" ) );
 
-                    reff.child( String.valueOf( counter + 1 ) ).setValue( question );
+                    reff.child( String.valueOf( counter + 1 ) ).setValue(question);
 
                     // Update score
                     int score_now = score += 4;
                     reffUser.child( iduser ).child( "score" ).setValue( score_now );
 
-                    Intent intent = new Intent( getBaseContext(), MainActivity.class );
-                    startActivity( intent );
+                    (new Handler()).postDelayed(this::continued, 1000);
+
                 } else
                     Toast.makeText( AskingActivity.this, "כתוב את השאלה", Toast.LENGTH_LONG ).show();
+            }
+
+            private void continued() {
+                Intent intent = new Intent( getBaseContext(), MainActivity.class );
+                startActivity( intent );
             }
         });
 
     }
 
     // If marked the question as important
-    public void itemClicked(View v) {
-        important_questions = "true";
-        numImportantQuestions = numImportantQuestions - 1;
+    public void checkBoxOnClick(View v) {
+        important_questions = true;
+        counter_checkBox ++;
+        if(counter_checkBox % 2 == 0)
+            numImportantQuestions = numImportantQuestions + 1;
+        else
+            numImportantQuestions = numImportantQuestions - 1;
         reffUser.child( iduser ).child( "importantQuestions" ).setValue( numImportantQuestions );
-
-
-
     }
 
     //  The function returns the current date and time
@@ -272,7 +277,7 @@ public class AskingActivity extends Activity {
     }
 
 
-    // *******************************  For NavBar  *******************************
+// *******************************  For NavBar  *******************************
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @SuppressLint("NonConstantResourceId")
@@ -280,13 +285,13 @@ public class AskingActivity extends Activity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
-                        case R.id.mainID:
-                            intent = new Intent( getBaseContext(), MainActivity.class );
+                        case R.id.preID:
+                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
                             startActivity( intent );
                             break;
 
-                        case R.id.preID:
-                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
+                        case R.id.mainID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
                             break;
 

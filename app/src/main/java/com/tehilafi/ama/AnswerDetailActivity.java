@@ -101,16 +101,7 @@ public class AnswerDetailActivity extends Activity {
         starID = findViewById(R.id.starID);
         profileuserID = findViewById(R.id.profileuserID);
         num_ansID = findViewById(R.id.num_ansID);
-        transillumination = findViewById(R.id.transilluminationID);
-        closeID = findViewById(R.id.closeID);
-        closeID.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(android.view.View view) {
-                closeID.setImageResource(R.drawable.transillumination);
-                transillumination.setImageResource(R.drawable.transillumination);
-                imageView.setImageResource(R.drawable.transillumination);
-            }
-        } );
+
 
 
 //  *******************************  Activity transitions to profile  *******************************
@@ -133,7 +124,7 @@ public class AnswerDetailActivity extends Activity {
             @Override
             public void onSuccess(Uri downloadUrl)
             {
-                Glide.with( AnswerDetailActivity.this).load(downloadUrl).into(profile);
+                Glide.with( getApplicationContext()).load(downloadUrl).into(profile);
             }
         });
 
@@ -154,7 +145,7 @@ public class AnswerDetailActivity extends Activity {
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String userName = snapshot.getValue( Question.class ).getUsernameAsk();
                     id_asking = snapshot.getValue( Question.class ).id_user();
-                    String importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
+                    boolean importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
                     int numA = snapshot.getValue( Question.class ).getNumComments();
                     Log.d(TAG, "id_asking!! = " + id_asking);
 
@@ -195,7 +186,8 @@ public class AnswerDetailActivity extends Activity {
                                 starKind = R.drawable.star3;
                             }
 
-                            Glide.with( AnswerDetailActivity.this).load(starKind).into(starID);
+                            Glide.with( getApplicationContext()).load(starKind).into(starID);
+
                         }
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
@@ -352,30 +344,26 @@ public class AnswerDetailActivity extends Activity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
+                        case R.id.preID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
+                            break;
+
                         case R.id.mainID:
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
                             break;
 
-                        case R.id.preID:
-                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-                            intent.putExtra( "Extra locations", location );
-                            intent.putExtra( "Extra id", id_user );
-                            startActivity( intent );
-                            break;
-
                         case R.id.my_questionID:
-                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
-                            Log.d(TAG, "my_token = " + my_token );
                             intent = new Intent( getBaseContext(), MyAnswerActivity.class );
                             startActivity( intent );
                             break;
 
                         case R.id.add_locationID:
-                            intent = new Intent( getBaseContext(), AskingActivity.class );
-                            intent.putExtra( "Extra locations", location );
-                            intent.putExtra( "Extra id", id_user );
+                            intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
                             break;
                     }
                     return true;

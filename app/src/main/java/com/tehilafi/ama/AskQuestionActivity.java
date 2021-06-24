@@ -3,6 +3,7 @@ package com.tehilafi.ama;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class AskQuestionActivity extends Activity {
 
@@ -112,13 +114,42 @@ public class AskQuestionActivity extends Activity {
         reff = FirebaseDatabase.getInstance().getReference("Questions");
         Query myQuery = reff.orderByChild("location");
         myQuery.addChildEventListener( new ChildEventListener() {
+
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 int numComments;
                 final int[] starKind = new int[1];
                 final int[] stars = new int[1];
-                String location = snapshot.getValue( Question.class ).location();
-                if(location.equals(mPreferences.getString(getString(R.string.searchLocation), ""))){
+                String location = snapshot.getValue( Question.class ).getLocation();
+                String latlng = snapshot.getValue( Question.class ).getLatLng();
+                String true_latlng = mPreferences.getString( getString( R.string.location ), "" );
+                boolean within_range = false;
+
+//**************************************************************************************************************
+                // split true_latlng to longitude and latitude
+                String[] s_true_latlng = true_latlng.split( "\\(" );
+                String s1_true_latlng = s_true_latlng[1];
+                s_true_latlng = s1_true_latlng.split( "\\," );
+                String la_true_latlng = s_true_latlng[0];
+                String ln_true_latlng = s_true_latlng[1].substring( 0, s_true_latlng[1].length() - 1 );
+
+                // split latlng to longitude and latitude
+                String[] s = latlng.split( "\\(" );
+                String s1 = s[1];
+                s = s1.split( "\\," );
+                String la = s[0];
+                String ln = s[1].substring( 0, s[1].length() - 1 );
+
+                // Check if the location is within range
+                float[] results = new float[1];
+                Location.distanceBetween( Double.parseDouble( la_true_latlng ), Double.parseDouble( ln_true_latlng ), Double.parseDouble( la ), Double.parseDouble( ln ), results );
+                float distanceInMeters = results[0];
+                if (distanceInMeters < 200) {
+                    within_range = true;
+                }
+//**************************************************************************************************************
+
+                if(location.equals(mPreferences.getString(getString(R.string.searchLocation), "")) || within_range == true){
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String nameUser = snapshot.getValue( Question.class ).getUsernameAsk();
                     String text = snapshot.getValue( Question.class ).getContentQuestion();
@@ -152,13 +183,27 @@ public class AskQuestionActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl)
                         {
-                            if(numComments >= 1)
-                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.with_answer, starKind[0] ) );
-                            else
-                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, text, R.drawable.transillumination, starKind[0] ) );
+//                            Collections.sort(arrayList, new ListView_item.ByNumQ() );
 
+
+                            if(numComments >= 1) {
+                                ListView_item itm = new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ), text, R.drawable.with_answer, starKind[0] );
+                                arrayList.add(itm);
+//                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ),  text, R.drawable.with_answer, starKind[0] ) );
+                            }
+                            else {
+                                ListView_item itm = new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ), text, R.drawable.transillumination, starKind[0] );
+                                arrayList.add(itm);
+                                //arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ), text, R.drawable.transillumination, starKind[0] ) );
+                            }
                             items.add( String.valueOf( numQuestion ));
+
+//                            Collections.sort(arrayList, new ListView_item.ByNumQ() );
+
+
                             listViewAdapte.notifyDataSetChanged();
+//                            Collections.sort(arrayList, new ListView_item.ByNumQ() );
+
                         }
 
                     });
@@ -184,7 +229,9 @@ public class AskQuestionActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
+
         } );
+//        Collections.sort(arrayList, new ListView_item.ByNumQ() );
 
 // *******************************  When click on one of the questions  *******************************
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
@@ -198,23 +245,22 @@ public class AskQuestionActivity extends Activity {
         } );
     }
 
-
-    // *******************************  For NavBar  *******************************
+        // *******************************  For NavBar  *******************************
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
+                        case R.id.preID:
+                            break;
+                        default:
+                            throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
+
                         case R.id.mainID:
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
                             break;
-
-                        case R.id.preID:
-                            break;
-                            default:
-                                throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.my_questionID:
                             intent = new Intent( getBaseContext(), MyAnswerActivity.class );

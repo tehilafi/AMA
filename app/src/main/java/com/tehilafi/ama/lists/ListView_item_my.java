@@ -2,22 +2,22 @@ package com.tehilafi.ama.lists;
 
 public class ListView_item_my {
 
-    int Image;
+    String Image;
     String UserName;
     String Date;
     String Location;
-    String Anew;
     int With_ans;
+    int Star;
+    String Mark;
 
-
-
-    public ListView_item_my(int image, String userName, String date, String location, String anew, int with_ans){
+    public ListView_item_my(String image, String userName, String date, String location, int with_ans, int star, String mark){
         Image = image;
         UserName = userName;
         Date = date;
         Location = location;
-        Anew = anew;
         With_ans = with_ans;
+        Star = star;
+        Mark = mark;
 
     }
 
@@ -42,19 +42,13 @@ public class ListView_item_my {
         return Location;
     }
 
-    public String getAnew() {
-        return Anew;
-    }
 
     public void setLocation(String location) {
         Location = location;
     }
 
-    public void setAnew(String anew) {
-        Anew = anew;
-    }
 
-    public int getImage() {
+    public String getImage() {
         return Image;
     }
 
@@ -62,11 +56,27 @@ public class ListView_item_my {
         return With_ans;
     }
 
-    public void setImage(int image) {
+    public void setImage(String image) {
         Image = image;
     }
 
     public void setWith_ans(int with_ans) {
         With_ans = with_ans;
+    }
+
+    public int getStar() {
+        return Star;
+    }
+
+    public void setStar(int star) {
+        Star = star;
+    }
+
+    public String getMark() {
+        return Mark;
+    }
+
+    public void setMark(String mark) {
+        Mark = mark;
     }
 }

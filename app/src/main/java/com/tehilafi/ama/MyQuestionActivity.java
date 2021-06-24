@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -98,7 +97,7 @@ public class MyQuestionActivity extends Activity {
             @Override
             public void onSuccess(Uri downloadUrl)
             {
-                Glide.with( MyQuestionActivity.this).load(downloadUrl).into(profile);
+                Glide.with( getApplicationContext()).load(downloadUrl).into(profile);
             }
         });
 
@@ -130,14 +129,13 @@ public class MyQuestionActivity extends Activity {
                 final int[] stars = new int[1];
                 String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                 location = snapshot.getValue( Question.class ).location();
+                String loc = snapshot.getValue( Question.class ).location();
                 String idAsking = snapshot.getValue( Question.class ).id_user();
                 String userName = snapshot.getValue( Question.class ).getUsernameAsk();
                 String numQuestion = snapshot.getValue( Question.class ).numQuestion();
                 numComments = snapshot.getValue( Question.class ).getNumComments();
+                Boolean importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
 
-                //////////////////////////////////////////
-                String anew = "";
-                //////////////////////////////////////////
                 //************************************* Get the score from Users DB  *************************************
                 reffUser = FirebaseDatabase.getInstance().getReference("Users");
                 reffUser.child( String.valueOf( idAsking )).addValueEventListener(new ValueEventListener() {
@@ -156,6 +154,7 @@ public class MyQuestionActivity extends Activity {
                     }
                 });
 
+
                 if(idAsking.equals(idUser)){
                     // Show the profile image in profileID
                     storageReff.child("profile picture/").child( String.valueOf( idAsking ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>()
@@ -163,13 +162,16 @@ public class MyQuestionActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl)
                         {
-                            if(numComments >= 1)
-                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, location, anew, R.drawable.with_answer, starKind[0] ) );
+                            String text_mark = "";
+                            if(importantQuestions)
+                                text_mark = " ! ";
+                            if(numComments >= 1 )
+                                    arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc, R.drawable.with_answer, starKind[0], text_mark) );
                             else
-                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, location, anew, R.drawable.transillumination, starKind[0] ) );
-
+                                    arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc, R.drawable.transillumination, starKind[0], text_mark) );
                             items.add( numQuestion );
-                            listViewAdapteMy.notifyDataSetChanged();                            }
+                            listViewAdapteMy.notifyDataSetChanged();
+                        }
 
                     });
                 }
@@ -216,30 +218,26 @@ public class MyQuestionActivity extends Activity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
+                        case R.id.preID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
+                            break;
+
                         case R.id.mainID:
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
                             break;
 
-                        case R.id.preID:
-                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-                            intent.putExtra( "Extra locations", location );
-                            intent.putExtra( "Extra id",  getIntent().getStringExtra( "Extra locations" ) );
-                            startActivity( intent );
-                            break;
-
                         case R.id.my_questionID:
-                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
-                            Log.d(TAG, "my_token = " + my_token );
-                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
-                            startActivity( intent );
                             break;
+                        default:
+                            throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.add_locationID:
-                            intent = new Intent( getBaseContext(), AskingActivity.class );
-                            intent.putExtra( "Extra locations", location );
-                            intent.putExtra( "Extra id",  getIntent().getStringExtra( "Extra locations" ) );
+                            intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
                             break;
                     }
                     return true;

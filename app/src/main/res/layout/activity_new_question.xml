@@ -154,7 +154,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:onClick="itemClicked"
+        android:onClick="checkBoxOnClick"
         android:text="סמן תשובה כחשובה"
         android:textColor="#453b3b"
         android:textSize="16sp"
@@ -166,7 +166,7 @@
 
 
     <TextView
-        android:id="@+id/impoetantID"
+        android:id="@+id/importantID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
@@ -193,18 +193,20 @@
         android:background="@drawable/botton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/impoetantID" />
+        app:layout_constraintTop_toBottomOf="@+id/importantID" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
         android:background="@drawable/navbar_border"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:itemBackground="@color/exo_white"
+        app:itemIconTint="@color/bnv_tab_item_foreground"
         app:menu="@menu/bootom_nav"
         tools:layout_editor_absoluteX="31dp"
-        app:labelVisibilityMode="labeled"/>
+        app:itemIconSize="28dp"
+        app:labelVisibilityMode="unlabeled" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -301,7 +301,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.my_questionID:
-                            intent = new Intent( getBaseContext(), MyAnswerActivity.class );
+                            intent = new Intent( getBaseContext(), MyQuestionActivity.class );
                             startActivity( intent );
                             break;
 

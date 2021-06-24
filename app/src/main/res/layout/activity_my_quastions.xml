@@ -30,9 +30,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintlayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/bold_white"
         app:layout_constraintLeft_creator="1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +44,7 @@
         app:layout_editor_absoluteY="140dp"
         tools:layout_constraintLeft_creator="0"
         tools:layout_constraintTop_creator="0"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="80dp">
 
         <ImageView
             android:id="@+id/line1"
@@ -64,12 +65,12 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
-            android:text="Questions I was askedID"
+            android:text=" שאלות שנשלחו אלי "
             android:background="@drawable/gray_line"
             android:fontFamily="sans-serif-light"
             android:gravity="center"
             android:textColor="#615e5e"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="normal"
             app:layout_constraintEnd_toStartOf="@+id/line1"
             app:layout_constraintTop_toTopOf="parent" />
@@ -81,12 +82,12 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="20dp"
             android:layout_marginLeft="20dp"
-            android:text="Questions I sent"
+            android:text=" שאלות ששלחתי "
             android:background="@drawable/yellow_line"
             android:fontFamily="sans-serif-light"
             android:gravity="center"
             android:textColor="#615e5e"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="normal"
             app:layout_constraintStart_toStartOf="@+id/line1"
             app:layout_constraintTop_toTopOf="parent" />
@@ -118,13 +119,15 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
         android:background="@drawable/navbar_border"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:itemBackground="@color/exo_white"
+        app:itemIconTint="@color/bnv_tab_item_foreground"
         app:menu="@menu/bootom_nav"
         tools:layout_editor_absoluteX="31dp"
-        app:labelVisibilityMode="labeled"/>
+        app:itemIconSize="28dp"
+        app:labelVisibilityMode="unlabeled" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
