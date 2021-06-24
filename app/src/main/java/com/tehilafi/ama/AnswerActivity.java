@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -27,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -49,40 +52,45 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageFromCamera;
+import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadImageToFirebase;
+import static com.tehilafi.ama.media.UploadPhotoAndVideos.uploadVideoToFirebase;
 import static com.tehilafi.ama.not.NotificationSender.sendNotification;
 
 public class AnswerActivity extends Activity {
 
-    private TextView txvname, txvdateTime, txvLocation, txvquestion;
+    private TextView txvname, txvdateTime, txvLocation, txvquestion, num_ansID;
     private EditText edtContent;
     private Button btnSave;
     private String iduser;
+    private CircleImageView profileID, profileuserID;
     private ImageView  add_pic, add_video, importent;
-    private ImageView with_ans;
-    private int score, numAns, numPIc, numVideo;
-    private String importantQuestions;
+    private ImageView with_ans, starID;
+    private int score, numAns, numPIc, numVideo, stars;
+    private Boolean importantQuestions, from1 = false, from2 = false, from3 = false ;
     private Uri videoUri = null;
     private String[] cameraPermissions;
-    private ProgressBar progressBar;
-    private Uri contentUri;
-    private String imageFileName;
+    private ProgressBar progressBarID;
+    private Uri contentUri, contentUri1;
+    private String imageFileName , imageFileName1;
     private String from = "empty";
     private int num_ans;
     String id_user;
     String location;
     private SharedPreferences mPreferences;
     int num_question, numComments;
-
     private AlertDialog.Builder builder;
+    private byte bb[];
 
 
     public static final int CAMERA_REQUEST_CODE = 102;
     public static final int GALLERY_REQUEST_CODE = 105;
-    private static final int CAMERA_PIC_REQUEST = 1111;
-    private static final int VIDEO_PICK_CAMERA_CODE = 101;
     static final int REQUEST_IMAGE_CAPTURE = 100;
     static final int REQUEST_VIDEO_CAPTURE = 1;
+    static final int RESULT_LOAD_IMG = 101;
+
 
     StorageReference storageReff;
     FirebaseStorage storage;
@@ -117,6 +125,42 @@ public class AnswerActivity extends Activity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
+        // get the Firebase  storage reference
+        storage = FirebaseStorage.getInstance();
+        storageReff = storage.getReference();
+
+        profileuserID = findViewById(R.id.profileuserID);
+        profileID = findViewById(R.id.profileID);
+        starID = findViewById(R.id.starID);
+        num_ansID = findViewById(R.id.num_ansID);
+        add_pic = findViewById( R.id.add_picID );
+
+///////////////////////////////////////
+        answer = new Answer();
+        reffAnswer = FirebaseDatabase.getInstance().getReference().child( "Answers" );
+        reffAnswer.addValueEventListener( new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                    counter = (snapshot.getChildrenCount());
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+/////////////////////////////////////////
+
+        // Show the profile image in profileID
+        storageReff.child("profile picture/").child(mPreferences.getString( getString( R.string.id ), "" )).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
+        {
+            @Override
+            public void onSuccess(Uri downloadUrl)
+            {
+                Glide.with( AnswerActivity.this).load(downloadUrl).into(profileID);
+            }
+        });
+
 
         num_question = Integer.parseInt( getIntent().getStringExtra("Extra numQuestion") );
         reff = FirebaseDatabase.getInstance().getReference("Questions").child( String.valueOf(num_question));
@@ -133,6 +177,8 @@ public class AnswerActivity extends Activity {
                     id_asking = String.valueOf( snapshot.getValue( Question.class ).getIdAsking() );
                     importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
                     numComments = snapshot.getValue( Question.class).getNumComments();
+                    int numA = snapshot.getValue( Question.class ).getNumComments();
+
 
                     txvname = findViewById( R.id.txvnameID );
                     txvname.setText( userName );
@@ -142,6 +188,7 @@ public class AnswerActivity extends Activity {
                     txvLocation.setText( location );
                     txvquestion = findViewById( R.id.txvquestionID );
                     txvquestion.setText( content );
+                    num_ansID.setText(numA + " תשובות ");
                 }
             }
 
@@ -149,71 +196,17 @@ public class AnswerActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-//        Query myQuery = reff.orderByChild("numQuestion");
-//        myQuery.addChildEventListener( new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//
-//                Log.d(TAG, "Extra numQuestion" + num_question);
-//                String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
-//                if(numberQuestion.equals(num_question)){
-//                    String content = snapshot.getValue( Question.class ).content();
-//                    location = snapshot.getValue( Question.class ).location();
-//                    String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
-//                    String userName = snapshot.getValue( Question.class ).getUsernameAsk();
-//                    id_asking = snapshot.getValue( Question.class ).id_user();
-//                    importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
-//                    Log.d(TAG, "importantQuestions = " + importantQuestions);
-//
-//                    txvname = findViewById(R.id.txvnameID);
-//                    txvname.setText(userName);
-//                    txvdateTime = findViewById(R.id.txvdateTimeID);
-//                    txvdateTime.setText(dateTime);
-//                    txvLocation = findViewById(R.id.txvLocationID);
-//                    txvLocation.setText(location);
-//                    txvquestion = findViewById(R.id.txvquestionID);
-//                    txvquestion.setText(content);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        } );
-
-//        importent = findViewById(R.id.importentID);
-//        if(importantQuestions == "false")
-//            importent.setVisibility(View.INVISIBLE);
 
         with_ans = findViewById( R.id.with_ansID );
         with_ans.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(android.view.View view) {
                 Intent intent = new Intent(getBaseContext(), AnswerDetailActivity.class);
-                intent.putExtra( "Extra numQuestion", num_question );
+                intent.putExtra( "Extra numQuestion", getIntent().getStringExtra("Extra numQuestion") );
                 startActivity(intent);
                 startActivity(intent);
             }
         } );
-
 
 // *******************************  Get the token of device asking and details from Users DB  *******************************
         reffUser = FirebaseDatabase.getInstance().getReference("Users");
@@ -229,6 +222,7 @@ public class AnswerActivity extends Activity {
                     numAns = snapshot.getValue( Users.class ).getNumAnswer();
                     numPIc = snapshot.getValue( Users.class ).getNumPicture();
                     numVideo = snapshot.getValue( Users.class ).getNumVideo();
+
                 }
             }
             @Override
@@ -251,6 +245,14 @@ public class AnswerActivity extends Activity {
 
             }
         } );
+
+        if(score < 150)
+            starID.setImageResource(R.drawable.star1);
+        if(stars >= 150 && stars < 500)
+            starID.setImageResource(R.drawable.star2);
+        if(stars >= 500)
+            starID.setImageResource(R.drawable.star3);
+
 // *******************************  Sava the answer data in the Answers DB  *******************************
         answer = new Answer();
         reffAnswer = FirebaseDatabase.getInstance().getReference().child( "Answers" );
@@ -271,7 +273,7 @@ public class AnswerActivity extends Activity {
         // get the Firebase  storage reference
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageReff = storage.getReference();
-//        progressBar = findViewById(R.id.progressBarID);
+        progressBarID = findViewById(R.id.progressBarID);
 
         edtContent = findViewById( R.id.edtContentID );
 
@@ -286,7 +288,6 @@ public class AnswerActivity extends Activity {
                 } else
                     checkContent = true;
                 if (checkContent) {
-
                     num_ans= (int)counter;
                     // save in DB question
                     answer.setIdAsking( Integer.parseInt(id_asking) );
@@ -298,23 +299,28 @@ public class AnswerActivity extends Activity {
                     answer.setNumLikes(0);
                     answer.setUserNameAns(mPreferences.getString(getString(R.string.name), ""));
 
-//                    progressBar.setVisibility( View.VISIBLE );
-//                    Log.d(TAG, "from ==" + from);
-//                        if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf( num_ans + 1 ) ) == true) {
-////                        progressBar.setVisibility( View.INVISIBLE );
-//                            // update picture namber
-//                            if (from == "pic")
-//                                reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
-//                            if (from == "video")
-//                                reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numVideo" ).setValue( numVideo + 1 );
-//                        }
+                    if(from2){
+                        Log.d( TAG, "contentUri from2 = " + contentUri1 );
+                        if (uploadVideoToFirebase( getApplicationContext(), imageFileName1, contentUri1, "null", from, String.valueOf( num_ans + 1 ) ) == true)
+                            reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
+                        else
+                            Toast.makeText( AnswerActivity.this, "העלאה נכשלה", Toast.LENGTH_SHORT ).show();
+                    }
+                    if(from1)
+                        reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
 
+                    if(from3) {
+                        if(uploadImageFromCamera(getApplicationContext(), bb, String.valueOf(num_ans + 1)) == true)
+                            reffUser.child(mPreferences.getString(getString(R.string.id), "")).child("numPicture").setValue(numPIc+1);
+                        else
+                            Toast.makeText( AnswerActivity.this, "העלאה נכשלה", Toast.LENGTH_SHORT ).show();
+                    }
 
                     reffAnswer.child( String.valueOf( counter + 1 ) ).setValue(answer);
 
                     // update score
                     int score_now;
-                    if(importantQuestions.equals("true"))
+                    if(importantQuestions)
                         score_now = score + 13;
                     else
                         score_now = score + 10;
@@ -327,16 +333,21 @@ public class AnswerActivity extends Activity {
                     reff.child("numComments").setValue(numComments+1);
 
                     // send notification to tokens of asking
-                    sendNotification( AnswerActivity.this, askingToken, "try", "massege", "answer");
+                    sendNotification( AnswerActivity.this, askingToken, "תשובה חדשה",  edtContent.getText().toString().trim(), "answer");
+
+                    progressBarID.setVisibility( View.VISIBLE);
+                    (new Handler()).postDelayed(this::continued, 3000);
                 }
             else
                 Toast.makeText(AnswerActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
+            }
 
-
+            private void continued() {
+               Intent intent = new Intent( getBaseContext(), MyAnswerActivity.class );
+               startActivity( intent );
             }
         });
 
-        add_pic = findViewById( R.id.add_picID );
         add_pic.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -348,57 +359,56 @@ public class AnswerActivity extends Activity {
         add_video.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "add_video on cliked");
                 from = "video";
                 pickDialog();
-
             }
         });
-
     }
 
     @Override
     protected void onActivityResult (int requestCode, int resultCode, @androidx.annotation.Nullable Intent data){
         super.onActivityResult( requestCode, resultCode, data );
-
-        if ((requestCode == GALLERY_REQUEST_CODE || requestCode == CAMERA_PIC_REQUEST || requestCode == REQUEST_VIDEO_CAPTURE) && resultCode == RESULT_OK && data != null) {
-            Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE );
+        // image from galerya
+        if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK && data != null) {
             contentUri = data.getData();
-            Log.d(TAG, "contentUri = " + contentUri);
-            mediaScanIntent.setData(contentUri);
-            this.sendBroadcast( mediaScanIntent );
+            Log.d( TAG, "contentUri pic = " + contentUri );
             String timeStamp = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
             imageFileName = "JPEG_" + timeStamp;
+            if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf( (int)counter + 1 ) ) == true)
+                from1 = true;
+            else
+                Toast.makeText( AnswerActivity.this, "העלאה נכשלה", Toast.LENGTH_SHORT ).show();
+        }
+        // video
+        else if ((requestCode == REQUEST_VIDEO_CAPTURE || requestCode == GALLERY_REQUEST_CODE) && resultCode == RESULT_OK && data != null) {
+            Intent mediaScanIntent1 = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE );
+            contentUri1 = data.getData();
+            Log.d( TAG, "contentUri1 video = " + contentUri1 );
+            String timeStamp1 = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
+            imageFileName1 = "JPEG_" + timeStamp1;
+            from2 = true;
 
         }
+        // image from camera
         else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-            byte bb[] = bytes.toByteArray();
-
-//            progressBar.setVisibility( View.VISIBLE );
-            if (uploadImageFromCamera(getApplicationContext(), bb, String.valueOf(num_ans +1)) == true) {
-//                progressBar.setVisibility( View.INVISIBLE );
-                // update picture namber
-                reffUser.child(mPreferences.getString(getString(R.string.id), "")).child("numPicture").setValue(numPIc+1);
-            }
+            bb = bytes.toByteArray();
+            Log.d(TAG, "bb innn = " + bb);
+            from3 = true;
         }
-        else if(requestCode == VIDEO_PICK_CAMERA_CODE && resultCode == RESULT_OK) {
-            contentUri = data.getData();
 
-        }
         else{
             Toast.makeText(this, "Error. Try again", Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Error. requestCode = " + requestCode + "resultCode = " + resultCode);
+
         }
     }
 
     private void pickDialog() {
-        Log.d(TAG, "in pickDialog");
         String[] options = {"Camera", "Gallery"};
         builder = new AlertDialog.Builder(this);
-
-//        AlertDialog.Builder builder = new AlertDialog.Builder( this );
         builder.setTitle( "Pick picture From" ).setItems( options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -407,12 +417,9 @@ public class AnswerActivity extends Activity {
                         requestCameraPermission();
                     else
                         pickCamera();
-                    Log.d(TAG, "in camera");
                 }
                 else if(i == 1){  //  gallery clicked
                     pickGallery();
-                    Log.d(TAG, "in gallery");
-
                 }
             }
         } ).show();
@@ -446,7 +453,7 @@ public class AnswerActivity extends Activity {
             Intent piccamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(piccamera, REQUEST_IMAGE_CAPTURE);
         }
-        else if(from == "video"){
+        if(from == "video"){
             Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
             if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
                 startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
@@ -458,9 +465,9 @@ public class AnswerActivity extends Activity {
     private void pickGallery(){
         if(from == "pic") {
             Intent picgallery = new Intent( Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI );
-            startActivityForResult( picgallery, GALLERY_REQUEST_CODE );
+            startActivityForResult( picgallery, RESULT_LOAD_IMG );
         }
-        else if(from == "video"){
+        if(from == "video"){
             Intent videogallery = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             videogallery.setType("video/*");
             startActivityForResult( videogallery, GALLERY_REQUEST_CODE );
@@ -494,36 +501,30 @@ public class AnswerActivity extends Activity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Intent intent;
                     switch (item.getItemId()) {
+                        case R.id.preID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
+                            Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
+                            break;
+
                         case R.id.mainID:
                             intent = new Intent( getBaseContext(), MainActivity.class );
                             startActivity( intent );
                             break;
 
-                        case R.id.preID:
-                            intent = new Intent( getBaseContext(), AskQuestionActivity.class );
-                            intent.putExtra( "Extra locations", location );
-                            intent.putExtra( "Extra id", id_user );
-                            startActivity( intent );
-                            break;
-
                         case R.id.my_questionID:
-                            String my_token = mPreferences.getString( getString( R.string.myToken ), "" );
-                            Log.d(TAG, "my_token = " + my_token );
                             intent = new Intent( getBaseContext(), MyAnswerActivity.class );
                             startActivity( intent );
                             break;
 
                             case R.id.add_locationID:
-                                intent = new Intent( getBaseContext(), AskingActivity.class );
-                                intent.putExtra( "Extra locations", location );
-                                intent.putExtra( "Extra id", id_user );
+                                intent = new Intent( getBaseContext(), MainActivity.class );
                                 startActivity( intent );
+                                Toast.makeText( getApplicationContext(), "הכנס מיקום לחיפוש", Toast.LENGTH_SHORT ).show();
                                 break;
                     }
                     return true;
                 }
             };
-
-
 
 }
