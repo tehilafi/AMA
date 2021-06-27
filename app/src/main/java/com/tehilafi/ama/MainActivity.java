@@ -38,8 +38,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.karumi.dexter.Dexter;
@@ -59,6 +62,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -86,7 +91,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private String location;
 
 
-
     // *******************************  Background Service  *******************************
     MyBackgroundService mService = null;
     boolean mBound = false;
@@ -110,10 +114,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onListenLocation(final SendLocationToActivity event) {
         if (event != null) {
-//            Toast.makeText( mService, event.getLocation().getLatitude() + " / " + event.getLocation().getLongitude(), Toast.LENGTH_SHORT ).show();
-            id = mPreferences.getString( getString( R.string.id ), "" );
             users = new Users();
-            reff = FirebaseDatabase.getInstance().getReference( "Users" );
             reff.child( id ).child( "latitude" ).setValue( event.getLocation().getLatitude() );
             reff.child( id ).child( "longitude" ).setValue( event.getLocation().getLongitude() );
 
@@ -141,11 +142,52 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnNavigationItemSelectedListener(navListener);
-
         mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         mEditor = mPreferences.edit();
+
+
+// ******************  A function that is run only once a week and keeps the number of answers the user answered  ******************
+        reff = FirebaseDatabase.getInstance().getReference( "Users" );
+        id = mPreferences.getString( getString( R.string.id ), "" );
+
+        Timer timer = new Timer ();
+        TimerTask t = new TimerTask () {
+            @Override
+            public void run () {
+                reff.child(id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        int numAnswer = dataSnapshot.getValue( Users.class).getNumAnswer();
+                        mEditor.putString( getString( R.string.numAnswer ), String.valueOf( numAnswer ) );
+                        mEditor.commit();
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            }
+        };
+        timer.schedule (t, 0l, 1000*60*60*168);
+
+//******************* If the user answered more than 8 answers per week - the importantQuestions up. *******************
+        reff.child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int numAnswerNow = dataSnapshot.getValue( Users.class).getNumAnswer();
+                int importantQuestions = dataSnapshot.getValue( Users.class).getImportantQuestions();
+                if(numAnswerNow -  Integer.parseInt(mPreferences.getString( getString( R.string.numAnswer ), "" )) >= 8)
+                    reff.child( "importantQuestions" ).setValue(importantQuestions + 1);
+                mEditor.putString( getString( R.string.numAnswer ), String.valueOf(numAnswerNow) );
+                mEditor.commit();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+// *****************************************  End  *****************************************
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         // get the Firebase  storage reference
         storage = FirebaseStorage.getInstance();
@@ -160,7 +202,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Glide.with( getApplicationContext()).load(downloadUrl).into(profile);
             }
         });
-
 
         getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).edit()
                 .putBoolean( "isFirstRun", false ).commit();
