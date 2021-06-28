@@ -1,6 +1,7 @@
 package com.tehilafi.ama;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,6 +45,7 @@ public class OneAnswerActivity extends Activity {
     FirebaseStorage storage;
     private int numLike = 0, score, numLNew = 0;
     private boolean isImageFitToScreen;
+    private Uri imageUri;
 
 
 
@@ -88,6 +89,9 @@ public class OneAnswerActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl) {
                             Glide.with( getApplicationContext()).load( downloadUrl ).into( imageView );
+                            imageUri = downloadUrl;
+                            Log.d(TAG, "imageUri = " + imageUri);
+
 
                         }
                     } );
@@ -200,8 +204,8 @@ public class OneAnswerActivity extends Activity {
         likeID.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(android.view.View view) {
-               likeID.setImageResource( R.drawable.like_yellow );
-               likeID.setEnabled( false );
+                likeID.setImageResource( R.drawable.like_yellow );
+                likeID.setEnabled( false );
 
                // update num like to answer
                reff.child( "numLikes" ).setValue( numLike + 1 );
@@ -227,18 +231,11 @@ public class OneAnswerActivity extends Activity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isImageFitToScreen) {
-                    isImageFitToScreen=false;
-                    imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
-                    imageView.setAdjustViewBounds(true);
-                }else{
-                    isImageFitToScreen=true;
-                    imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT));
-                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                }
+                Intent intent = new Intent(getBaseContext(), BigImageActivity.class);
+                intent.setData(imageUri);
+                startActivity(intent);
             }
         });
-
     }
 }
 

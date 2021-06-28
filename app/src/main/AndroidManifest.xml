@@ -125,6 +125,7 @@
             android:name=".AnswerActivity"
             android:theme="@style/Theme.AppCompat.Light" />
 
+        <activity android:name=".BigImageActivity" />
 
         <service
             android:name=".location.MyBackgroundService"
