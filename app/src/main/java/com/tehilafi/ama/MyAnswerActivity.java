@@ -37,6 +37,8 @@ import com.tehilafi.ama.lists.ListViewAdapteMy;
 import com.tehilafi.ama.lists.ListView_item_my;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -140,11 +142,11 @@ public class MyAnswerActivity extends Activity {
                 final int[] stars = new int[1];
                 ArrayList<String> send_to_token = snapshot.getValue( Question.class ).getSend_to_tokens();
                 if(send_to_token != null && send_to_token.contains( myToken )) {
-                    String content = snapshot.getValue( Question.class ).content();
+                    String content = snapshot.getValue( Question.class ).getContentQuestion();
                     location = snapshot.getValue( Question.class ).getLocation();
                     String loc = snapshot.getValue( Question.class ).getLocation();
-                    String numQuestion = snapshot.getValue( Question.class ).numQuestion();
-                    id_user = snapshot.getValue( Question.class ).id_user();
+                    String numQuestion = String.valueOf( snapshot.getValue( Question.class ).getNumQuestion() );
+                    id_user = String.valueOf( snapshot.getValue( Question.class ).getIdAsking() );
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String userName = snapshot.getValue( Question.class ).getUsernameAsk();
                     numComments = snapshot.getValue( Question.class ).getNumComments();
@@ -178,11 +180,17 @@ public class MyAnswerActivity extends Activity {
                             if(importantQuestions)
                                 text_mark = " ! ";
                             if(numComments >= 1)
-                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc , R.drawable.with_answer, starKind[0], text_mark) );
+                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, String.valueOf(numQuestion), loc , R.drawable.with_answer, starKind[0], text_mark) );
                             else
-                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc, R.drawable.transillumination, starKind[0], text_mark) );
-
+                                arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, String.valueOf(numQuestion), loc, R.drawable.transillumination, starKind[0], text_mark) );
                             items.add( numQuestion );
+
+                            Collections.sort( arrayList, new Comparator<ListView_item_my>(){
+                                @Override
+                                public int compare(ListView_item_my t1, ListView_item_my t2) {
+                                    return Integer.parseInt(t2.getNumQ()) - Integer.parseInt(t1.getNumQ());
+                                }
+                            });
                             listViewAdapteMy.notifyDataSetChanged();
                         }
 
@@ -215,7 +223,6 @@ public class MyAnswerActivity extends Activity {
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText( MyAnswerActivity.this, "Extra numQuestion" + items.get( position ), Toast.LENGTH_SHORT ).show();
                 Intent intent = new Intent(getBaseContext(), AnswerActivity.class);
                 intent.putExtra( "Extra numQuestion", items.get( position ) );
                 startActivity(intent);

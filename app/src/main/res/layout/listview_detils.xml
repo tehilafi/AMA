@@ -74,6 +74,16 @@
         app:layout_constraintTop_toBottomOf="@+id/userNameID"/>
 
     <TextView
+        android:id="@+id/numQID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="4dp"
+        android:textColor="#ffffff"
+        app:layout_constraintStart_toStartOf="@+id/dateID"
+        app:layout_constraintTop_toBottomOf="@+id/dateID" />
+
+    <TextView
         android:id="@+id/text_answerID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

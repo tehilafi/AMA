@@ -10,6 +10,7 @@ public class Answer {
     private String dateTimeAnswer;
     private String userNameAns;
     private int numLikes;
+    private boolean newAnswer;
 
     public Answer() {
     }
@@ -77,6 +78,13 @@ public class Answer {
     public void setContentAnswer(String contentAnswer) {
         this.contentAnswer = contentAnswer;
     }
-    
+
+    public boolean isNewAnswer() {
+        return newAnswer;
+    }
+
+    public void setNewAnswer(boolean newAnswer) {
+        this.newAnswer = newAnswer;
+    }
 }
 

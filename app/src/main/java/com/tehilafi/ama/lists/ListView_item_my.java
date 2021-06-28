@@ -5,15 +5,17 @@ public class ListView_item_my {
     String Image;
     String UserName;
     String Date;
+    String NumQ;
     String Location;
     int With_ans;
     int Star;
     String Mark;
 
-    public ListView_item_my(String image, String userName, String date, String location, int with_ans, int star, String mark){
+    public ListView_item_my(String image, String userName, String date, String numQ, String location, int with_ans, int star, String mark){
         Image = image;
         UserName = userName;
         Date = date;
+        NumQ = numQ;
         Location = location;
         With_ans = with_ans;
         Star = star;
@@ -78,5 +80,13 @@ public class ListView_item_my {
 
     public void setMark(String mark) {
         Mark = mark;
+    }
+
+    public String getNumQ() {
+        return NumQ;
+    }
+
+    public void setNumQ(String numQ) {
+        NumQ = numQ;
     }
 }

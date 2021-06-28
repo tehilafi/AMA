@@ -72,13 +72,7 @@ public class ListView_item{
         return NumQ;
     }
 
-//    public static class ByNumQ implements Comparator<ListView_item>{
-//
-//        @Override
-//        public int compare(ListView_item t1, ListView_item t2) {
-//            if(t1.getNumQ().compareTo(t2.getNumQ()) == -1)
-//                return 1;
-//            return -1;
-//        }
-//    }
+    public void setNumQ(String numQ) {
+        NumQ = numQ;
+    }
 }

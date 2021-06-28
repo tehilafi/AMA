@@ -52,6 +52,8 @@ public class ListViewAdapte extends ArrayAdapter<ListView_item> {
         imagestar.setImageResource(getItem(position).getStar());
 
 
+
+
         return convertView;
     }
 }

@@ -5,16 +5,18 @@ public class ListView_item_detail {
     String Image;
     String UserName;
     String Date;
+    String NumA;
     String Content;
     String NumLike;
     int Add_videoID;
     int Add_picID;
     int StarID;
 
-    public ListView_item_detail(String image,  String userName, String date, String content, String numLike, int add_videoID,  int add_picID, int starID){
+    public ListView_item_detail(String image,  String userName, String date, String numA, String content, String numLike, int add_videoID,  int add_picID, int starID){
         Image = image;
         UserName = userName;
         Date = date;
+        NumA = numA;
         Content = content;
         NumLike = numLike;
         Add_videoID = add_videoID;
@@ -86,5 +88,12 @@ public class ListView_item_detail {
 
     public void setStarID(int starID) {
         StarID = starID;
+    }
+
+    public String getNumA() {
+        return NumA;
+    }
+    public void setNumA(String numA) {
+        NumA = numA;
     }
 }

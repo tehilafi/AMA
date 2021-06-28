@@ -2,7 +2,7 @@ package com.tehilafi.ama.db;
 
 import java.util.ArrayList;
 
-public class Question{
+public class Question {
     private int numQuestion;
     private int idAsking;
     private String usernameAsk;
@@ -14,6 +14,7 @@ public class Question{
     private String dateTimeQuestion;
     private int numLikes;
     private int numComments;
+    private ArrayList<String> newQuestion;
 
     public String getDateTimeQuestion() {
         return dateTimeQuestion;
@@ -105,18 +106,12 @@ public class Question{
         this.latLng = latLng;
     }
 
-    public String location() {
-        return this.location;
-    }
-    public String content() {
-        return this.contentQuestion;
-    }
-    public String numQuestion() {
-        return String.valueOf(this.numQuestion);
-    }
-    public String id_user() {
-        return String.valueOf(this.idAsking);
+    public ArrayList<String> getNewQuestion() {
+        return newQuestion;
     }
 
+    public void setNewQuestion(ArrayList<String> newQuestion) {
+        this.newQuestion = newQuestion;
+    }
 
 }

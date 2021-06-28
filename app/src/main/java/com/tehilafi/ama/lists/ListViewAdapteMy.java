@@ -40,6 +40,7 @@ public class ListViewAdapteMy extends ArrayAdapter<ListView_item_my> {
         ImageView imageprofile = convertView.findViewById( R.id.profileuserID);
         TextView textuserName = convertView.findViewById(R.id.userNameID);
         TextView textdate = convertView.findViewById(R.id.dateID);
+        TextView textnumQ = convertView.findViewById(R.id.numQID);
         TextView textlocation = convertView.findViewById(R.id.locationID);
         ImageView imageans = convertView.findViewById( R.id.with_ansID);
         ImageView imagestar = convertView.findViewById( R.id.starID);
@@ -48,6 +49,7 @@ public class ListViewAdapteMy extends ArrayAdapter<ListView_item_my> {
         Picasso.with(context).load(listView_item_my.Image).into(imageprofile);
         textuserName.setText(getItem(position).getUserName());
         textdate.setText(getItem(position).getDate());
+        textnumQ.setText(getItem(position).getNumQ());
         textlocation.setText(getItem(position).getLocation());
         imageans.setImageResource(getItem(position).getWith_ans());
         imagestar.setImageResource(getItem(position).getStar());

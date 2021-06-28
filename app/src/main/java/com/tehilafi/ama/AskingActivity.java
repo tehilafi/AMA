@@ -234,7 +234,7 @@ public class AskingActivity extends Activity {
                     question.setNumLikes( 0 );
                     question.setNumComments( 0 );
                     question.setUsernameAsk( mPreferences.getString( getString( R.string.name ), "" ) );
-
+                    question.setNewQuestion(null);
                     reff.child( String.valueOf( counter + 1 ) ).setValue(question);
 
                     // Update score

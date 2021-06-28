@@ -36,6 +36,8 @@ import com.tehilafi.ama.lists.ListViewAdapteMy;
 import com.tehilafi.ama.lists.ListView_item_my;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MyQuestionActivity extends Activity {
@@ -128,11 +130,11 @@ public class MyQuestionActivity extends Activity {
                 final int[] starKind = new int[1];
                 final int[] stars = new int[1];
                 String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
-                location = snapshot.getValue( Question.class ).location();
-                String loc = snapshot.getValue( Question.class ).location();
-                String idAsking = snapshot.getValue( Question.class ).id_user();
+                location = snapshot.getValue( Question.class ).getLocation();
+                String loc = snapshot.getValue( Question.class ).getLocation();
+                String idAsking = String.valueOf( snapshot.getValue( Question.class ).getIdAsking() );
                 String userName = snapshot.getValue( Question.class ).getUsernameAsk();
-                String numQuestion = snapshot.getValue( Question.class ).numQuestion();
+                String numQuestion = String.valueOf( snapshot.getValue( Question.class ).getNumQuestion() );
                 numComments = snapshot.getValue( Question.class ).getNumComments();
                 Boolean importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
 
@@ -166,10 +168,17 @@ public class MyQuestionActivity extends Activity {
                             if(importantQuestions)
                                 text_mark = " ! ";
                             if(numComments >= 1 )
-                                    arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc, R.drawable.with_answer, starKind[0], text_mark) );
+                                    arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, String.valueOf(numQuestion), loc, R.drawable.with_answer, starKind[0], text_mark) );
                             else
-                                    arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, loc, R.drawable.transillumination, starKind[0], text_mark) );
+                                    arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, String.valueOf(numQuestion), loc, R.drawable.transillumination, starKind[0], text_mark) );
                             items.add( numQuestion );
+
+                            Collections.sort( arrayList, new Comparator<ListView_item_my>(){
+                                @Override
+                                public int compare(ListView_item_my t1, ListView_item_my t2) {
+                                    return Integer.parseInt(t2.getNumQ()) - Integer.parseInt(t1.getNumQ());
+                                }
+                            });
                             listViewAdapteMy.notifyDataSetChanged();
                         }
 

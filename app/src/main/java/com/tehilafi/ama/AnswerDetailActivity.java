@@ -42,6 +42,8 @@ import com.tehilafi.ama.lists.ListViewAdapteDetail;
 import com.tehilafi.ama.lists.ListView_item_detail;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -138,13 +140,13 @@ public class AnswerDetailActivity extends Activity {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
                 num_question = getIntent().getStringExtra("Extra numQuestion");
-                String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
+                String numberQuestion = String.valueOf( snapshot.getValue( Question.class ).getNumQuestion() );
                 if(numberQuestion.equals(num_question)){
-                    String content = snapshot.getValue( Question.class ).content();
-                    location = snapshot.getValue( Question.class ).location();
+                    String content = snapshot.getValue( Question.class ).getContentQuestion();
+                    location = snapshot.getValue( Question.class ).getLocation();
                     String dateTime = snapshot.getValue( Question.class ).getDateTimeQuestion();
                     String userName = snapshot.getValue( Question.class ).getUsernameAsk();
-                    id_asking = snapshot.getValue( Question.class ).id_user();
+                    id_asking = String.valueOf( snapshot.getValue( Question.class ).getIdAsking() );
                     boolean importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
                     int numA = snapshot.getValue( Question.class ).getNumComments();
                     Log.d(TAG, "id_asking!! = " + id_asking);
@@ -232,7 +234,7 @@ public class AnswerDetailActivity extends Activity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 num_question = getIntent().getStringExtra("Extra numQuestion");
-                String numberQuestion = snapshot.getValue( Question.class ).numQuestion();
+                String numberQuestion = String.valueOf( snapshot.getValue( Question.class ).getNumQuestion() );
                 if(numberQuestion.equals(num_question)){
 
                     String contentAns = snapshot.getValue( Answer.class ).getContentAnswer();
@@ -291,9 +293,16 @@ public class AnswerDetailActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl)
                         {
-                            arrayList.add( new ListView_item_detail( downloadUrl.toString(), userName, dateTime,  contentAns, Integer.toString(numLikes), drawableVKind, drawablePKind, starKind));
+                            Log.d(TAG, "numAns = " + numAns);
+                            arrayList.add( new ListView_item_detail( downloadUrl.toString(), userName, dateTime, String.valueOf( numAns ),  contentAns, Integer.toString(numLikes), drawableVKind, drawablePKind, starKind));
                             items.add( String.valueOf( numAns ) );
 
+                            Collections.sort( arrayList, new Comparator<ListView_item_detail>(){
+                                @Override
+                                public int compare(ListView_item_detail t1, ListView_item_detail t2) {
+                                    return Integer.parseInt(t2.getNumA()) - Integer.parseInt(t1.getNumA());
+                                }
+                            });
                             listViewAdapteDetail.notifyDataSetChanged();
                         }
                     });

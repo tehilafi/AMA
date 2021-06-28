@@ -36,6 +36,8 @@ import com.tehilafi.ama.lists.ListViewAdapte;
 import com.tehilafi.ama.lists.ListView_item;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -183,29 +185,21 @@ public class AskQuestionActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl)
                         {
-//                            Collections.sort(arrayList, new ListView_item.ByNumQ() );
 
-
-                            if(numComments >= 1) {
-                                ListView_item itm = new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ), text, R.drawable.with_answer, starKind[0] );
-                                arrayList.add(itm);
-//                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ),  text, R.drawable.with_answer, starKind[0] ) );
-                            }
-                            else {
-                                ListView_item itm = new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ), text, R.drawable.transillumination, starKind[0] );
-                                arrayList.add(itm);
-                                //arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf( numQuestion ), text, R.drawable.transillumination, starKind[0] ) );
-                            }
+                            if(numComments >= 1)
+                               arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf(numQuestion),  text, R.drawable.with_answer, starKind[0] ) );
+                            else
+                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf(numQuestion), text, R.drawable.transillumination, starKind[0] ) );
                             items.add( String.valueOf( numQuestion ));
 
-//                            Collections.sort(arrayList, new ListView_item.ByNumQ() );
-
-
+                            Collections.sort( arrayList, new Comparator<ListView_item>(){
+                                @Override
+                                public int compare(ListView_item t1, ListView_item t2) {
+                                    return Integer.parseInt(t2.getNumQ()) - Integer.parseInt(t1.getNumQ());
+                                }
+                            });
                             listViewAdapte.notifyDataSetChanged();
-//                            Collections.sort(arrayList, new ListView_item.ByNumQ() );
-
                         }
-
                     });
                 }
             }

@@ -38,11 +38,13 @@ public class ListViewAdapteDetail extends ArrayAdapter<ListView_item_detail> {
 
         TextView textuserName = listItemView.findViewById(R.id.userNameID);
         TextView textdate = listItemView.findViewById(R.id.dateID);
+        TextView textnumA = (TextView) listItemView.findViewById(R.id.numQID);
         TextView textanswer = listItemView.findViewById(R.id.text_answerID);
         TextView numLike =  listItemView.findViewById(R.id.numLikeID);
 
         textuserName.setText(currentDetail.getUserName());
         textdate.setText(currentDetail.getDate());
+        textnumA.setText(currentDetail.getNumA());
         textanswer.setText(currentDetail.getContent());
         numLike.setText(currentDetail.getNumLike());
 

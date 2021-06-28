@@ -102,7 +102,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             mService = binder.getService();
             mBound = true;
         }
-
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mService = null;
@@ -117,7 +116,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             users = new Users();
             reff.child( id ).child( "latitude" ).setValue( event.getLocation().getLatitude() );
             reff.child( id ).child( "longitude" ).setValue( event.getLocation().getLongitude() );
-
         }
     }
 
@@ -139,12 +137,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         if (isFirstRun) {
             //show login activity
             startActivity( new Intent( MainActivity.this, LoginActivity.class ) );
-
         }
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         mEditor = mPreferences.edit();
-
 
 // ******************  A function that is run only once a week and keeps the number of answers the user answered  ******************
         reff = FirebaseDatabase.getInstance().getReference( "Users" );
@@ -175,6 +171,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int numAnswerNow = dataSnapshot.getValue( Users.class).getNumAnswer();
                 int importantQuestions = dataSnapshot.getValue( Users.class).getImportantQuestions();
+                if(mPreferences.getString( getString( R.string.numAnswer ), "" ) == null || mPreferences.getString( getString( R.string.numAnswer ), "" ) == "") {
+                    mEditor.putString( getString( R.string.numAnswer ), "0" );
+                    mEditor.commit();
+                }
                 if(numAnswerNow -  Integer.parseInt(mPreferences.getString( getString( R.string.numAnswer ), "" )) >= 8)
                     reff.child( "importantQuestions" ).setValue(importantQuestions + 1);
                 mEditor.putString( getString( R.string.numAnswer ), String.valueOf(numAnswerNow) );

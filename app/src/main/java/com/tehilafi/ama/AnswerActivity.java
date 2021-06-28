@@ -157,7 +157,7 @@ public class AnswerActivity extends Activity {
             @Override
             public void onSuccess(Uri downloadUrl)
             {
-                Glide.with( AnswerActivity.this).load(downloadUrl).into(profileID);
+                Glide.with( getApplicationContext()).load(downloadUrl).into(profileID);
             }
         });
 
