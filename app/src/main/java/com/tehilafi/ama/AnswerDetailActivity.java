@@ -295,7 +295,6 @@ public class AnswerDetailActivity extends Activity {
                         {
                             Log.d(TAG, "numAns = " + numAns);
                             arrayList.add( new ListView_item_detail( downloadUrl.toString(), userName, dateTime, String.valueOf( numAns ),  contentAns, Integer.toString(numLikes), drawableVKind, drawablePKind, starKind));
-                            items.add( String.valueOf( numAns ) );
 
                             Collections.sort( arrayList, new Comparator<ListView_item_detail>(){
                                 @Override
@@ -334,9 +333,10 @@ public class AnswerDetailActivity extends Activity {
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText( AnswerDetailActivity.this, "Extra numAns" + items.get( position ), Toast.LENGTH_SHORT ).show();
+                ListView_item_detail list1 = arrayList.get(position);
+
                 Intent intent = new Intent(getBaseContext(), OneAnswerActivity.class);
-                intent.putExtra( "Extra numAnswer", items.get( position ) );
+                intent.putExtra( "Extra numAnswer", list1.getNumA());
                 startActivity(intent);
             }
         } );

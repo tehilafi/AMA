@@ -190,7 +190,6 @@ public class AskQuestionActivity extends Activity {
                                arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf(numQuestion),  text, R.drawable.with_answer, starKind[0] ) );
                             else
                                 arrayList.add( new ListView_item( downloadUrl.toString(), nameUser, dateTime, String.valueOf(numQuestion), text, R.drawable.transillumination, starKind[0] ) );
-                            items.add( String.valueOf( numQuestion ));
 
                             Collections.sort( arrayList, new Comparator<ListView_item>(){
                                 @Override
@@ -198,6 +197,7 @@ public class AskQuestionActivity extends Activity {
                                     return Integer.parseInt(t2.getNumQ()) - Integer.parseInt(t1.getNumQ());
                                 }
                             });
+//                            items.add( String.valueOf( numQuestion ));
                             listViewAdapte.notifyDataSetChanged();
                         }
                     });
@@ -231,9 +231,11 @@ public class AskQuestionActivity extends Activity {
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText( AskQuestionActivity.this, "Extra numQuestion" + items.get( position ), Toast.LENGTH_SHORT ).show();
+                ListView_item list1 = arrayList.get(position);
+
                 Intent intent = new Intent(getBaseContext(), AnswerDetailActivity.class);
-                intent.putExtra( "Extra numQuestion", items.get( position ) );
+                intent.putExtra( "Extra numQuestion", list1.getNumQ());
+                Toast.makeText( AskQuestionActivity.this, "Extra numQuestion" + list1.getNumQ(), Toast.LENGTH_SHORT ).show();
                 startActivity(intent);
             }
         } );

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,6 +44,8 @@ public class OneAnswerActivity extends Activity {
     private StorageReference storageReff;
     FirebaseStorage storage;
     private int numLike = 0, score, numLNew = 0;
+    private boolean isImageFitToScreen;
+
 
 
 
@@ -57,8 +60,6 @@ public class OneAnswerActivity extends Activity {
             this.getActionBar().hide();
         } catch (NullPointerException e) {
         }
-
-        // Init
 
         // get the Firebase  storage reference
         storage = FirebaseStorage.getInstance();
@@ -220,6 +221,21 @@ public class OneAnswerActivity extends Activity {
                    }
                } );
                 reffUser.child( "numLike" ).setValue( numLNew + 1 );
+            }
+        });
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isImageFitToScreen) {
+                    isImageFitToScreen=false;
+                    imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT));
+                    imageView.setAdjustViewBounds(true);
+                }else{
+                    isImageFitToScreen=true;
+                    imageView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT));
+                    imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                }
             }
         });
 

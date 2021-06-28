@@ -183,7 +183,6 @@ public class MyAnswerActivity extends Activity {
                                 arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, String.valueOf(numQuestion), loc , R.drawable.with_answer, starKind[0], text_mark) );
                             else
                                 arrayList.add( new ListView_item_my( downloadUrl.toString(), userName, dateTime, String.valueOf(numQuestion), loc, R.drawable.transillumination, starKind[0], text_mark) );
-                            items.add( numQuestion );
 
                             Collections.sort( arrayList, new Comparator<ListView_item_my>(){
                                 @Override
@@ -223,8 +222,9 @@ public class MyAnswerActivity extends Activity {
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                ListView_item_my list1 = arrayList.get(position);
                 Intent intent = new Intent(getBaseContext(), AnswerActivity.class);
-                intent.putExtra( "Extra numQuestion", items.get( position ) );
+                intent.putExtra( "Extra numQuestion", list1.getNumQ());
                 startActivity(intent);
             }
         } );
