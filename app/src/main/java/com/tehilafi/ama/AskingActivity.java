@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -168,7 +167,7 @@ public class AskingActivity extends Activity {
                if (iduser.equals( String.valueOf( idd ) )) {
                    score = snapshot.getValue( Users.class ).getScore();
                    numImportantQuestions = snapshot.getValue( Users.class ).getImportantQuestions();
-                   impoetant.setText(" נשארו לך " + numImportantQuestions + "  שאלות חשובות ");
+                   impoetant.setText(" נשארו לך " + numImportantQuestions + "  שאלות דחופות ");
                    if(numImportantQuestions <= 0)
                        checkBox.setEnabled(false);
                    myToken = snapshot.getValue( Users.class ).getToken();
@@ -219,7 +218,6 @@ public class AskingActivity extends Activity {
                 if (!edtContent.getText().toString().equals( "" )) {
 
                     // send notification to tokens
-                    Log.d(TAG, "tokens  send = " + tokens);
                     sendNotification( AskingActivity.this, tokens, "שאלה חדשה",  edtContent.getText().toString().trim(), "question", "MyAnswerActivity" );
 
                     num_question = (int) counter;
@@ -244,7 +242,7 @@ public class AskingActivity extends Activity {
                     (new Handler()).postDelayed(this::continued, 1000);
 
                 } else
-                    Toast.makeText( AskingActivity.this, "כתוב את השאלה", Toast.LENGTH_LONG ).show();
+                    Toast.makeText( AskingActivity.this, "חסר שאלה", Toast.LENGTH_LONG ).show();
             }
 
             private void continued() {

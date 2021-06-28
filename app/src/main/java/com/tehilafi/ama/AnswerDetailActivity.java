@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -67,7 +66,6 @@ public class AnswerDetailActivity extends Activity {
     private SharedPreferences mPreferences;
     private StorageReference storageReff;
     private CircleImageView profile, profileuserID;
-    private int numLikes, numL;
     private int count = 0;
     ListView listView;
     ListViewAdapteDetail listViewAdapteDetail;
@@ -149,9 +147,8 @@ public class AnswerDetailActivity extends Activity {
                     id_asking = String.valueOf( snapshot.getValue( Question.class ).getIdAsking() );
                     boolean importantQuestions = snapshot.getValue( Question.class ).getImportant_questions();
                     int numA = snapshot.getValue( Question.class ).getNumComments();
-                    Log.d(TAG, "id_asking!! = " + id_asking);
 
-//                  // Show profile image in profileuserID
+                    // Show profile image in profileuserID
                     storageReff.child("profile picture/").child(id_asking).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>()
                     {
                         @Override
@@ -241,7 +238,6 @@ public class AnswerDetailActivity extends Activity {
                     String dateTime = snapshot.getValue( Answer.class ).getDateTimeAnswer();
                     String userName = snapshot.getValue( Answer.class ).getUserNameAns();
                     int id_answer = snapshot.getValue(Answer.class ).getIdAnswering();
-                    numLikes = snapshot.getValue( Answer.class ).getNumLikes();
 
                     //************************************* Get the score from Users DB  *************************************
                     reffUser = FirebaseDatabase.getInstance().getReference("Users").child( String.valueOf( id_answer ));
@@ -262,6 +258,7 @@ public class AnswerDetailActivity extends Activity {
                     });
 
                     int numAns = snapshot.getValue( Answer.class ).getNumAnswer();
+                    int numLikes = snapshot.getValue( Answer.class ).getNumLikes();
 
                     storageReff.child("picture answer/").child( String.valueOf( numAns ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
                         @Override
@@ -293,9 +290,7 @@ public class AnswerDetailActivity extends Activity {
                         @Override
                         public void onSuccess(Uri downloadUrl)
                         {
-                            Log.d(TAG, "numAns = " + numAns);
                             arrayList.add( new ListView_item_detail( downloadUrl.toString(), userName, dateTime, String.valueOf( numAns ),  contentAns, Integer.toString(numLikes), drawableVKind, drawablePKind, starKind));
-
                             Collections.sort( arrayList, new Comparator<ListView_item_detail>(){
                                 @Override
                                 public int compare(ListView_item_detail t1, ListView_item_detail t2) {
@@ -329,7 +324,7 @@ public class AnswerDetailActivity extends Activity {
 
             }
         } );
-        // *******************************  When click on one of the questions  *******************************
+        // *******************************  When click on one of the answer  *******************************
         listView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -342,9 +337,6 @@ public class AnswerDetailActivity extends Activity {
         } );
 
     }
-
-
-
 
     // *******************************  For NavBar  *******************************
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =

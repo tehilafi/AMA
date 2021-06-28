@@ -14,10 +14,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintlayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:paddingBottom="20dp"
         android:background="@drawable/bold_white"
         app:layout_constraintLeft_creator="1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +27,9 @@
         app:layout_editor_absoluteY="140dp"
         tools:layout_constraintLeft_creator="0"
         tools:layout_constraintTop_creator="0"
-        android:layout_marginTop="60dp">
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp">
+
 
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -143,31 +144,23 @@
         <ImageView
             android:id="@+id/imageViewID"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="150dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintTop_toTopOf="@+id/line2" />
 
         <VideoView
             android:id="@+id/videoViewID"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="150dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="@color/exo_white"
+            android:background="@color/exo_white"
             app:layout_constraintTop_toBottomOf="@+id/imageViewID"/>
 
-        <ImageView
-            android:id="@+id/whiteID"
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@color/exo_white"
-            app:layout_constraintTop_toBottomOf="@+id/imageViewID"
-            tools:layout_editor_absoluteX="30dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

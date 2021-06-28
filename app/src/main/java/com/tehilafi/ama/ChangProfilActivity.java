@@ -65,6 +65,8 @@ public class ChangProfilActivity extends Activity {
     Users users;
     private ProgressBar progressBarID;
     private String numLike = "NUll", numAns = "NULL", numPic = "NULL", numVideo = "NULL";
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +83,8 @@ public class ChangProfilActivity extends Activity {
 
         // Init
         reff = FirebaseDatabase.getInstance().getReference().child( "Users" );
-        SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
+        mEditor = mPreferences.edit();
         // For navBar
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
@@ -127,6 +130,8 @@ public class ChangProfilActivity extends Activity {
 
         usernameID = findViewById( R.id.usernameID );
         usernameID.setText(nameuser);
+
+        Log.d("ppp", "mPreferences-nameuser =  " + mPreferences.getString( getString( R.string.name ), "" ));
 // *************************************  Save user details in users DB *************************************
 
         user_nameID = findViewById( R.id.user_nameID );
@@ -180,23 +185,26 @@ public class ChangProfilActivity extends Activity {
 
                 if (!nameuser.equals( user_nameID.getText().toString().trim() )) {
                     reff.child( "userName" ).setValue( user_nameID.getText().toString().trim() );
-                    usernameID.setText(user_nameID.getText().toString().trim());
-
+                    mEditor.putString(getString(R.string.name), user_nameID.getText().toString().trim());
                 }
-                if (!pas.equals( passwordID.getText().toString().trim() ))
+                if (!pas.equals( passwordID.getText().toString().trim() )) {
                     reff.child( "password" ).setValue( passwordID.getText().toString().trim() );
+                    mEditor.putString(getString(R.string.pas), passwordID.getText().toString().trim());
+                }
 
-                if (!ph.equals( phoneID.getText().toString().trim() ))
+                if (!ph.equals( phoneID.getText().toString().trim() )) {
                     reff.child( "phone" ).setValue( phoneID.getText().toString().trim() );
+                    mEditor.putString( getString( R.string.ph ), phoneID.getText().toString().trim() );
+                }
+                mEditor.commit();
 
                 // upload profile image to firebase storage
-                Log.d(TAG, "contentUri = " + contentUri);
                 if(onClick_profile_image)
                     if (uploadImageToFirebase(getApplicationContext(), imageFileName, contentUri, iduser, "profil", "null") == false)
-                        Toast.makeText( ChangProfilActivity.this, "התמונה לא התעדכנה", Toast.LENGTH_SHORT ).show();
+                        Toast.makeText( ChangProfilActivity.this, "שגיאה. התמונה לא עלתה", Toast.LENGTH_SHORT ).show();
 
                 progressBarID.setVisibility( View.VISIBLE);
-                (new Handler()).postDelayed(this::continued, 2500);
+                (new Handler()).postDelayed(this::continued, 500);
 
             }
 
@@ -227,7 +235,7 @@ public class ChangProfilActivity extends Activity {
             imageFileName = "JPEG_" + timeStamp + "." + getFileExt( contentUri );
         }
         else{
-            Toast.makeText(this, "Error. Try again", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "שגיאה. נסה שוב", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -235,7 +234,6 @@ public class AskQuestionActivity extends Activity {
 
                 Intent intent = new Intent(getBaseContext(), AnswerDetailActivity.class);
                 intent.putExtra( "Extra numQuestion", list1.getNumQ());
-                Toast.makeText( AskQuestionActivity.this, "Extra numQuestion" + list1.getNumQ(), Toast.LENGTH_SHORT ).show();
                 startActivity(intent);
             }
         } );

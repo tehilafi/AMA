@@ -1,12 +1,12 @@
 package com.tehilafi.ama;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -79,9 +79,8 @@ public class LoginActivity extends Activity {
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if(task.isSuccessful()){
                             token=task.getResult().getToken();
-                            Log.d(TAG, "onComplete: Token: "+token);
                         }else{
-                            Toast.makeText( LoginActivity.this, "אי אפשר לעקוב אחר המכשיר", Toast.LENGTH_SHORT ).show();
+                            Toast.makeText( LoginActivity.this, "אי אפשר לעקוב אחר מיקום המכשיר", Toast.LENGTH_SHORT ).show();
                         }
 
                     }
@@ -108,9 +107,7 @@ public class LoginActivity extends Activity {
 
                 boolean check_token, check_username, check_password, check_id, check_phone;
 
-                //If one of the details is missing:
-
-                Log.d(TAG, "Token =  "+token);
+                //Check if one of the details is missing:
                 if(token.equals( "" ) || token == null)
                     check_token = false;
                 else
@@ -150,44 +147,8 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onDataChange(DataSnapshot snapshot){
 
-//************************************  If ID user already exists  *************************************
-                        if (snapshot.exists()) {
-                            Query myQueryUser = reff.orderByChild("id");
-                            myQueryUser.addChildEventListener( new ChildEventListener() {
-                                @Override
-                                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                    if(userName.getText().toString().trim().equals(snapshot.getValue( Users.class ).getUserName()) && password.getText().toString().trim().equals(snapshot.getValue( Users.class ).getPassword()) && phone.getText().toString().trim().equals(snapshot.getValue( Users.class ).getPhone())){
-                                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                                        startActivity(intent);
-                                    }
-                                    else
-                                        Toast.makeText(LoginActivity.this, "שמשתמש מחובר לאפליקציה. הפרטים לא נכונים", Toast.LENGTH_LONG).show();
-                                }
-
-                                @Override
-                                public void onChildChanged(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
-
-                                }
-
-                                @Override
-                                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                                }
-
-                                @Override
-                                public void onChildMoved(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-                            });
-
-                        }
 //************************************  If ID user dosent exists  *************************************
-                        else {
+                        if (! snapshot.exists()) {
                             users.setUserName( userName.getText().toString().trim() );
                             users.setPassword( password.getText().toString().trim() );
                             users.setId(Integer.parseInt(idUser.getText().toString().trim()));
@@ -239,19 +200,56 @@ public class LoginActivity extends Activity {
                             mEditor.putString(getString(R.string.myToken), myToken);
                             mEditor.commit();
 
-                            Toast.makeText( LoginActivity.this, "insert!", Toast.LENGTH_SHORT ).show();
-                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                            //set activity_executed inside insert() method.
+                            SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor edt = pref.edit();
+                            edt.putBoolean("activity_executed", true);
+                            edt.commit();
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
-                    }
+                        //************************************  If ID user already exists  *************************************
+                        else if(snapshot.exists()) {
+                            Query myQueryUser = reff.orderByChild("id");
+                            myQueryUser.addChildEventListener( new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                    if(userName.getText().toString().trim().equals(snapshot.getValue( Users.class ).getUserName()) && password.getText().toString().trim().equals(snapshot.getValue( Users.class ).getPassword()) && phone.getText().toString().trim().equals(snapshot.getValue( Users.class ).getPhone())){
+                                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                    else
+                                        Toast.makeText(LoginActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
+                                }
 
+                                @Override
+                                public void onChildChanged(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+
+                                }
+
+                                @Override
+                                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                                }
+
+                                @Override
+                                public void onChildMoved(@NonNull DataSnapshot snapshot, @androidx.annotation.Nullable String previousChildName) {
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+                        }
+                    }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
                     });
                 }
-                else
-                   Toast.makeText(LoginActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -121,7 +121,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void settingGeoFire() {
         myLocationRef = FirebaseDatabase.getInstance().getReference("MyLocation");
-        Toast.makeText( MapsActivity.this, "******" + myLocationRef, Toast.LENGTH_LONG ).show();
         geoFire = new GeoFire(myLocationRef);
     }
 
@@ -195,7 +194,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .append( "/" )
                     .append( event.getLocation().getLongitude() )
                     .toString();
-            Toast.makeText( mService, data, Toast.LENGTH_SHORT ).show();
             initArea(data);
 
         }
@@ -208,7 +206,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         FirebaseDatabase.getInstance().getReference("MyLocation").child("MyCity").setValue(myLocation).addOnCompleteListener( new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText( MapsActivity.this, "Update!!!", Toast.LENGTH_LONG ).show();
 
             }
         } ).addOnFailureListener( new OnFailureListener() {
@@ -250,21 +247,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onStop() {
-        // fusedLocationProviderClient.removeLocationUpdates( locationCallback );
-
         if(mBound){
             unbindService( mServiceConnection );
             mBound = false;
         }
-        // PreferenceManager.getDefaultSharedPreferences( this ).unregisterOnSharedPreferenceChangeListener(this);
-        // EventBus.getDefault().unregister( this );
         super.onStop();
     }
 
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener();
-//        EventBus.getDefault().register( this );
-//    }
+
 }

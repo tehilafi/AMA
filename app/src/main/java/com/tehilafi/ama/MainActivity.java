@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -66,7 +65,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback, SharedPreferences.OnSharedPreferenceChangeListener{
     GoogleMap mMap;
@@ -131,20 +129,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // Hide the Activity Status Bar
         getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
 
-        // to first time of login the app
-        Log.d( TAG, "isFirstRun:" + isFirstRun);
-        isFirstRun = getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).getBoolean( "isFirstRun", true );
-        if (isFirstRun) {
-            //show login activity
-            startActivity( new Intent( MainActivity.this, LoginActivity.class ) );
-        }
-
         mPreferences = PreferenceManager.getDefaultSharedPreferences( this );
         mEditor = mPreferences.edit();
+        id = mPreferences.getString( getString( R.string.id ), "" );
 
 // ******************  A function that is run only once a week and keeps the number of answers the user answered  ******************
+        if(id == null)
+            id = "";
+
         reff = FirebaseDatabase.getInstance().getReference( "Users" );
-        id = mPreferences.getString( getString( R.string.id ), "" );
 
         Timer timer = new Timer ();
         TimerTask t = new TimerTask () {
@@ -199,15 +192,14 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(Uri downloadUrl)
             {
-                Glide.with( getApplicationContext()).load(downloadUrl).into(profile);
+                Glide.with( MainActivity.this).load(downloadUrl).into(profile);
             }
         });
 
-        getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).edit()
-                .putBoolean( "isFirstRun", false ).commit();
+//        getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).edit()
+//                .putBoolean( "isFirstRun", false ).commit();
 
         idUser = getIntent().getStringExtra( "Extra id" );
-        Toast.makeText( MainActivity.this, idUser, Toast.LENGTH_LONG );
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById( R.id.google_map );
         mapFragment.getMapAsync( this );
@@ -235,7 +227,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             Address address = addressList.get( 0 );
                             LatLng latLng = new LatLng( address.getLatitude(), address.getLongitude() );
                             String latLngString = String.valueOf( latLng );
-                            Toast.makeText( getApplicationContext(), "* " + latLng + " *", Toast.LENGTH_LONG ).show();
                             mEditor.putString( getString( R.string.location ), latLngString );
                             mEditor.putString( getString( R.string.searchLocation ), location );
 
@@ -293,12 +284,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         requestLocation.setOnClickListener( new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                requestLocation.setImageResource(R.drawable.allow_location);
+                                removeLocation.setImageResource(R.drawable.disallow_location_grey);
+                                requestLocation.setEnabled( false );
+
                                 mService.requestLocationUpdates();
                             }
                         } );
                         removeLocation.setOnClickListener( new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                removeLocation.setImageResource(R.drawable.disallow_location);
+                                requestLocation.setImageResource(R.drawable.allow_location_grey);
+                                removeLocation.setEnabled( false );
                                 mService.removeLocationUpdates();
 
                             }
@@ -337,9 +335,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             }
 
                         case R.id.mainID:
+                            intent = new Intent( getBaseContext(), MainActivity.class );
+                            startActivity( intent );
                             break;
-                            default:
-                            throw new IllegalStateException( "Unexpected value: " + item.getItemId() );
 
                         case R.id.my_questionID:
                             intent = new Intent( getBaseContext(), MyQuestionActivity.class );
@@ -365,7 +363,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             // To see the current location on the map
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission( this, Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "checkSelfPermission : No");
         }
         else {
             Task<Location> task = fusedLocationProviderClient.getLastLocation();

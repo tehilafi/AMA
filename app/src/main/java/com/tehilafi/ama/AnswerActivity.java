@@ -283,7 +283,7 @@ public class AnswerActivity extends Activity {
             public void onClick(View view) {
                 boolean checkContent;
                 if (edtContent.getText().toString().equals( "" )) {
-                    Toast.makeText( AnswerActivity.this, "Missing Answer", Toast.LENGTH_LONG ).show();
+                    Toast.makeText( AnswerActivity.this, "חסרה תשובה", Toast.LENGTH_LONG ).show();
                     checkContent = false;
                 } else
                     checkContent = true;
@@ -300,7 +300,6 @@ public class AnswerActivity extends Activity {
                     answer.setUserNameAns(mPreferences.getString(getString(R.string.name), ""));
 
                     if(from2){
-                        Log.d( TAG, "contentUri from2 = " + contentUri1 );
                         if (uploadVideoToFirebase( getApplicationContext(), imageFileName1, contentUri1, "null", from, String.valueOf( num_ans + 1 ) ) == true)
                             reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
                         else
@@ -336,10 +335,8 @@ public class AnswerActivity extends Activity {
                     sendNotification( AnswerActivity.this, askingToken, "תשובה חדשה",  edtContent.getText().toString().trim(), "answer", "MyQuestionActivity");
 
                     progressBarID.setVisibility( View.VISIBLE);
-                    (new Handler()).postDelayed(this::continued, 3000);
+                    (new Handler()).postDelayed(this::continued, 1000);
                 }
-            else
-                Toast.makeText(AnswerActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
             }
 
             private void continued() {
@@ -371,7 +368,6 @@ public class AnswerActivity extends Activity {
         // image from galerya
         if (requestCode == RESULT_LOAD_IMG && resultCode == RESULT_OK && data != null) {
             contentUri = data.getData();
-            Log.d( TAG, "contentUri pic = " + contentUri );
             String timeStamp = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
             imageFileName = "JPEG_" + timeStamp;
             if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf( (int)counter + 1 ) ) == true)
@@ -383,7 +379,6 @@ public class AnswerActivity extends Activity {
         else if ((requestCode == REQUEST_VIDEO_CAPTURE || requestCode == GALLERY_REQUEST_CODE) && resultCode == RESULT_OK && data != null) {
             Intent mediaScanIntent1 = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE );
             contentUri1 = data.getData();
-            Log.d( TAG, "contentUri1 video = " + contentUri1 );
             String timeStamp1 = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
             imageFileName1 = "JPEG_" + timeStamp1;
             from2 = true;
@@ -395,12 +390,11 @@ public class AnswerActivity extends Activity {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
             bb = bytes.toByteArray();
-            Log.d(TAG, "bb innn = " + bb);
             from3 = true;
         }
 
         else{
-            Toast.makeText(this, "Error. Try again", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "שגיאה, נסה שוב", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Error. requestCode = " + requestCode + "resultCode = " + resultCode);
 
         }
@@ -485,9 +479,6 @@ public class AnswerActivity extends Activity {
                     boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
                     if(cameraAccepted && storageAccepted){
                         pickCamera();
-                    }
-                    else{
-                        Toast.makeText( this, "Camera & Storage permission are required" , Toast.LENGTH_LONG).show();
                     }
                 }
         }

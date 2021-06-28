@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,7 +46,7 @@ public class OneAnswerActivity extends Activity {
     private int numLike = 0, score, numLNew = 0;
     private boolean isImageFitToScreen;
     private Uri imageUri;
-
+    RecyclerView recyclerView;
 
 
 
@@ -74,8 +74,6 @@ public class OneAnswerActivity extends Activity {
         starID = findViewById( R.id.starID );
         profileuserID = findViewById( R.id.profileuserID );
         likeID = findViewById( R.id.likeID );
-        whiteID = findViewById(R.id.whiteID);
-
 
         storageReff.child("picture answer/").child(num_answer).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -83,16 +81,12 @@ public class OneAnswerActivity extends Activity {
                 if (score < 150)
                     Toast.makeText( OneAnswerActivity.this, "ברמת הדירוג שלך אי אפשר לצפות בתמונות", Toast.LENGTH_SHORT ).show();
                 else {
-                    Toast.makeText( OneAnswerActivity.this, "viewPic", Toast.LENGTH_SHORT ).show();
                     // Show the image
                     storageReff.child( "picture answer/" ).child(num_answer).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri downloadUrl) {
                             Glide.with( getApplicationContext()).load( downloadUrl ).into( imageView );
                             imageUri = downloadUrl;
-                            Log.d(TAG, "imageUri = " + imageUri);
-
-
                         }
                     } );
                 }            }
@@ -109,38 +103,35 @@ public class OneAnswerActivity extends Activity {
 //               if (score < 500)
 //                   Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
 //               else {
-//                   whiteID.setVisibility(View.INVISIBLE);
 //                   storageReff.child( "video answer/" ).child( String.valueOf( "numAns" ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
 //                       @Override
 //                       public void onSuccess(Uri downloadUrl) {
-//                           DownloadManager.Request request = new DownloadManager.Request( Uri.parse( String.valueOf( downloadUrl ) ) );
-//                           request.setDescription( "download" );
-//                           request.setTitle( "" + downloadUrl + ".mp4" );
-//                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//                               request.allowScanningByMediaScanner();
-//                               request.setNotificationVisibility( DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED );
-//                           }
-//                           request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, "" + downloadUrl + ".mp4" );
-//                           // get download service and enqueue file
-//                           DownloadManager manager = (DownloadManager) getSystemService( Context.DOWNLOAD_SERVICE );
-//                           manager.enqueue( request );
-//                           Toast.makeText( OneAnswerActivity.this, "download!!!!", Toast.LENGTH_SHORT ).show();
+////                           DownloadManager.Request request = new DownloadManager.Request( Uri.parse( String.valueOf( downloadUrl ) ) );
+////                           request.setDescription( "download" );
+////                           request.setTitle( "" + downloadUrl + ".mp4" );
+////                           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+////                               request.allowScanningByMediaScanner();
+////                               request.setNotificationVisibility( DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED );
+////                           }
+////                           request.setDestinationInExternalPublicDir( Environment.DIRECTORY_DOWNLOADS, "" + downloadUrl + ".mp4" );
+////                           // get download service and enqueue file
+////                           DownloadManager manager = (DownloadManager) getSystemService( Context.DOWNLOAD_SERVICE );
+////                           manager.enqueue( request );
+////                           Toast.makeText( OneAnswerActivity.this, "download!!!!", Toast.LENGTH_SHORT ).show();
 //
 //                           // View video in viewVideo from gallery
-//                           MediaController mediaController = new MediaController( OneAnswerActivity.this );
-//                           mediaController.setAnchorView( videoView );
-//                           //specify the location of media file
-//                           Uri uri = Uri.parse( "אחסון פנימי/DCIM/Camera/111.mp4" );
-//                           Toast.makeText( OneAnswerActivity.this, "uri" + uri, Toast.LENGTH_SHORT ).show();
-//                           Log.d( TAG, "uri = " + uri );
-//
-//                           //Setting MediaController and URI, then starting the videoView
-//                           videoView.setMediaController( mediaController );
-//                           videoView.setVideoURI( uri );
-//                           videoView.requestFocus();
-//                           videoView.start();
-//
-//
+////                           MediaController mediaController = new MediaController( OneAnswerActivity.this );
+////                           mediaController.setAnchorView( videoView );
+////                           //specify the location of media file
+////                           Uri uri = Uri.parse( "אחסון פנימי/DCIM/Camera/111.mp4" );
+////                           Toast.makeText( OneAnswerActivity.this, "uri" + uri, Toast.LENGTH_SHORT ).show();
+////                           Log.d( TAG, "uri = " + uri );
+////
+////                           //Setting MediaController and URI, then starting the videoView
+////                           videoView.setMediaController( mediaController );
+////                           videoView.setVideoURI( uri );
+////                           videoView.requestFocus();
+////                           videoView.start();
 //                       }
 //                   } ).addOnFailureListener( new OnFailureListener() {
 //                       @Override
@@ -211,7 +202,6 @@ public class OneAnswerActivity extends Activity {
                reff.child( "numLikes" ).setValue( numLike + 1 );
 
                // update num like in User DB
-               Log.d( TAG, "id_answer = " + id_answer );
                reffUser = FirebaseDatabase.getInstance().getReference( "Users" ).child( id_answer );
                reffUser.addValueEventListener( new ValueEventListener() {
                    @Override
@@ -231,12 +221,30 @@ public class OneAnswerActivity extends Activity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), BigImageActivity.class);
-                intent.setData(imageUri);
-                startActivity(intent);
+                if (score < 150)
+                    Toast.makeText( OneAnswerActivity.this, "ברמת הדירוג שלך אי אפשר לצפות בתמונות", Toast.LENGTH_SHORT ).show();
+                else {
+                    Intent intent = new Intent( getBaseContext(), BigImageActivity.class );
+                    intent.setData( imageUri );
+                    startActivity( intent );
+                }
+            }
+        });
+
+        videoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (score < 500)
+                   Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
+                else {
+                    Intent intent = new Intent( getBaseContext(), BigVideoActivity.class );
+                    intent.setData( imageUri );
+                    startActivity( intent );
+                }
             }
         });
     }
+
 }
 
 

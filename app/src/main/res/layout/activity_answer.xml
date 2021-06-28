@@ -208,13 +208,11 @@
         android:layout_marginTop="20dp">
 
 
-
         <TextView
             android:id="@+id/write"
             android:layout_width="140dp"
             android:layout_height="19dp"
             android:layout_marginStart="18dp"
-            android:layout_marginLeft="18dp"
             android:layout_marginTop="10dp"
             android:focusable="true"
             android:fontFamily="sans-serif-light"
@@ -223,24 +221,14 @@
             android:textColor="#615e5e"
             android:textSize="14sp"
             app:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="@+id/writeID"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_creator="0"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_editor_absoluteX="16dp"
             app:layout_editor_absoluteY="140dp"
             tools:layout_constraintLeft_creator="0"
-            tools:layout_constraintTop_creator="0" />
-
-        <ImageView
-            android:id="@+id/writeID"
-            android:layout_width="18dp"
-            android:layout_height="22dp"
-            android:layout_marginStart="128dp"
-            android:layout_marginLeft="128dp"
-            android:src="@drawable/write"
-            app:layout_constraintStart_toEndOf="@+id/write"
-            app:layout_constraintTop_toTopOf="@+id/write" />
+            tools:layout_constraintTop_creator="0"
+            android:layout_marginLeft="18dp" />
 
         <ImageView
             android:id="@+id/line2"
@@ -279,7 +267,7 @@
             android:scrollbarAlwaysDrawVerticalTrack="true"
             android:textColor="#000000"
             android:textColorHint="#000000"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="@+id/line2"
             app:layout_constraintTop_toBottomOf="@+id/line2"/>
@@ -320,35 +308,17 @@
             app:layout_constraintEnd_toStartOf="@+id/line4"
             app:layout_constraintTop_toTopOf="@+id/line3"/>
 
-        <ImageView
-            android:id="@+id/pluse1"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/plus"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/add_picID"
-            app:layout_constraintTop_toTopOf="@+id/line3"/>
-
 
         <ImageView
             android:id="@+id/add_videoID"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="47dp"
+            android:layout_height="47dp"
             android:src="@drawable/add_video"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginStart="40dp"
             android:layout_marginLeft="40dp"
             android:layout_marginBottom="20dp"
             app:layout_constraintStart_toStartOf="@+id/line4"
-            app:layout_constraintTop_toTopOf="@+id/line3"/>
-
-        <ImageView
-            android:id="@+id/pluse2"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/plus"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toStartOf="@+id/add_videoID"
             app:layout_constraintTop_toTopOf="@+id/line3"/>
 
 
