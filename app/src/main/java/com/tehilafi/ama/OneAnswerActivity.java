@@ -47,6 +47,7 @@ public class OneAnswerActivity extends Activity {
     private boolean isImageFitToScreen;
     private Uri imageUri;
     RecyclerView recyclerView;
+    private boolean have_pic = false, have_video = false;
 
 
 
@@ -78,6 +79,7 @@ public class OneAnswerActivity extends Activity {
         storageReff.child("picture answer/").child(num_answer).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
+                have_pic = true;
                 if (score < 150)
                     Toast.makeText( OneAnswerActivity.this, "ברמת הדירוג שלך אי אפשר לצפות בתמונות", Toast.LENGTH_SHORT ).show();
                 else {
@@ -89,7 +91,8 @@ public class OneAnswerActivity extends Activity {
                             imageUri = downloadUrl;
                         }
                     } );
-                }            }
+                }
+            }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
@@ -97,11 +100,12 @@ public class OneAnswerActivity extends Activity {
             }
         });
 
-//        storageReff.child("video answer/").child(num_answer).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//           @Override
-//           public void onSuccess(Uri uri) {
-//               if (score < 500)
-//                   Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
+        storageReff.child("video answer/").child(num_answer).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+           @Override
+           public void onSuccess(Uri uri) {
+               have_video = true;
+               if (score < 500)
+                   Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
 //               else {
 //                   storageReff.child( "video answer/" ).child( String.valueOf( "numAns" ) ).getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
 //                       @Override
@@ -140,8 +144,8 @@ public class OneAnswerActivity extends Activity {
 //                       }
 //                   } );
 //               }
-//           }
-//        });
+           }
+        });
 
 
 // *******************************  Get the data from the Answer DB  *******************************
@@ -221,12 +225,14 @@ public class OneAnswerActivity extends Activity {
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (score < 150)
-                    Toast.makeText( OneAnswerActivity.this, "ברמת הדירוג שלך אי אפשר לצפות בתמונות", Toast.LENGTH_SHORT ).show();
-                else {
-                    Intent intent = new Intent( getBaseContext(), BigImageActivity.class );
-                    intent.setData( imageUri );
-                    startActivity( intent );
+                if(have_pic) {
+                    if (score < 150)
+                        Toast.makeText( OneAnswerActivity.this, "ברמת הדירוג שלך אי אפשר לצפות בתמונות", Toast.LENGTH_SHORT ).show();
+                    else {
+                        Intent intent = new Intent( getBaseContext(), BigImageActivity.class );
+                        intent.setData( imageUri );
+                        startActivity( intent );
+                    }
                 }
             }
         });
@@ -234,12 +240,14 @@ public class OneAnswerActivity extends Activity {
         videoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (score < 500)
-                   Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
-                else {
-                    Intent intent = new Intent( getBaseContext(), BigVideoActivity.class );
-                    intent.setData( imageUri );
-                    startActivity( intent );
+                if (have_video) {
+                    if (score < 500)
+                        Toast.makeText( OneAnswerActivity.this, "ברמת דירוג שלך אי אפשר לצפות בסרטונים", Toast.LENGTH_SHORT ).show();
+                    else {
+                        Intent intent = new Intent( getBaseContext(), BigVideoActivity.class );
+                        intent.setData( imageUri );
+                        startActivity( intent );
+                    }
                 }
             }
         });
