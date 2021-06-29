@@ -45,7 +45,7 @@ public class MyBackgroundService extends Service {
     private static final String CHANNEL_ID = "my_channel";
     private static final String EXTRA_STARTED_FROM_NOTIFICATIN = "com.tehilafi.myapplication"+ ".started_from_notification";
     private final IBinder mBinder = new LocalBinder();
-    private static final long UPDATE_INTERVAL_IN_MIL = 1000*300; // Updated at location every 5 minutes
+    private static final long UPDATE_INTERVAL_IN_MIL = 1000*180; // Updated at location every 3 minutes
     private static final long FASTEST_UPDATE_INTERVAL_IN_MUL = UPDATE_INTERVAL_IN_MIL / 2;
     private static final int NOTI_ID = 1223;
     private boolean mChangingConfiguration = false;
@@ -85,11 +85,11 @@ public class MyBackgroundService extends Service {
         HandlerThread handlerThread = new HandlerThread( "EDMTDev" );
         handlerThread.start();
         mServiceHandler = new Handler( handlerThread.getLooper() );
-//        mNotificationManager = (NotificationManager)getSystemService( NOTIFICATION_SERVICE );
+        mNotificationManager = (NotificationManager)getSystemService( NOTIFICATION_SERVICE );
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel mChannel = new NotificationChannel( CHANNEL_ID , getString( R.string.app_name ), NotificationManager.IMPORTANCE_DEFAULT);
-//            mNotificationManager.createNotificationChannel( mChannel );
+            mNotificationManager.createNotificationChannel( mChannel );
         }
 
 
@@ -154,9 +154,9 @@ public class MyBackgroundService extends Service {
         mLocation = lastLocation;
         EventBus.getDefault().postSticky( new SendLocationToActivity(mLocation) );
 
-        // Update notification content if running as a foreground service
+         //Update notification content if running as a foreground service
         if(serviceIsRunningInForeGround(this)) {
-//            mNotificationManager.notify( NOTI_ID, getNotification() );
+            mNotificationManager.notify( NOTI_ID, getNotification() );
 
             // *******************************  Save current locations in users DB  *******************************
             users = new Users();
@@ -164,13 +164,9 @@ public class MyBackgroundService extends Service {
             String id = mPreferences.getString( getString( R.string.id ), "" );
             reff.child( id ).child( "latitude" ).setValue(Double.parseDouble(Common.getLatitudeText(mLocation)));
             reff.child( id ).child( "longitude" ).setValue(Double.parseDouble(Common.getLongitudeText(mLocation)));
-
-
         }
 
-
     }
-
     private Notification getNotification() {
         Intent intent = new Intent(this, MyBackgroundService.class);
         String text = Common.getLocationText(mLocation);
@@ -179,7 +175,7 @@ public class MyBackgroundService extends Service {
         PendingIntent servicePendingIntent = PendingIntent.getService( this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent activityPendingIntent = PendingIntent.getActivity( this, 0, new Intent(this, MainActivity.class),0 );
 
-        NotificationCompat.Builder builder= new NotificationCompat.Builder(this).addAction(R.drawable.logo, "Launch", activityPendingIntent).addAction(R.drawable.logo, "Remove",servicePendingIntent).setContentText( text ).setContentTitle( Common.getLocationTitle(this)).setOngoing( true ).setPriority( Notification.PRIORITY_HIGH ).setSmallIcon( R.mipmap.ic_launcher).setTicker( text).setWhen( System.currentTimeMillis() );
+        NotificationCompat.Builder builder= new NotificationCompat.Builder(this).addAction(R.drawable.logo, "Launch", activityPendingIntent).addAction(R.drawable.logo, "Remove",servicePendingIntent).setContentText( text ).setContentTitle( Common.getLocationTitle(this)).setOngoing( true ).setPriority( Notification.PRIORITY_HIGH ).setSmallIcon( R.drawable.logo).setTicker( text).setWhen( System.currentTimeMillis() );
 
         // set the channel id for Android o
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){

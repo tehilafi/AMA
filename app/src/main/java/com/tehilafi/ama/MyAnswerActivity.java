@@ -65,6 +65,7 @@ public class MyAnswerActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         setContentView( R.layout.activity_my_answers );
 
         // Hide the Activity Status Bar

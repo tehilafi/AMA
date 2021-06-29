@@ -9,6 +9,8 @@
     <string name="location">tabian.com.sharedpreferences.location</string>
     <string name="searchLocation">tabian.com.sharedpreferences.searchLocation</string>
     <string name="numAnswer">tabian.com.sharedpreferences.numAnswer</string>
+    <string name="requestLocation">tabian.com.sharedpreferences.requestLocation</string>
+
 
     <string name="map_key" translatable="false">AIzaSyDZBTVI5QwopPeZ8dA8LXYo70S-T9ex-Ds</string>
 

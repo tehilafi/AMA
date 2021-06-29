@@ -142,16 +142,13 @@
             android:id="@+id/txvLocationID"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
             android:layout_marginTop="5dp"
             android:fontFamily="sans-serif"
             android:text="location"
             android:textColor="#615e5e"
             android:textSize="14sp"
             app:layout_constraintEnd_toStartOf="@+id/lID"
-            app:layout_constraintTop_toTopOf="@+id/lID"
-            android:layout_marginRight="10dp" />
-
+            app:layout_constraintTop_toTopOf="@+id/lID"/>
         <ImageView
             android:id="@+id/lID"
             android:layout_width="24dp"
@@ -297,6 +294,16 @@
             app:layout_constraintTop_toBottomOf="@+id/line3" />
 
         <ImageView
+            android:id="@+id/checkPID"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/transillumination"
+            android:layout_marginEnd="26dp"
+            android:layout_marginRight="26dp"
+            app:layout_constraintEnd_toStartOf="@+id/line4"
+            app:layout_constraintTop_toTopOf="@+id/line3"/>
+
+        <ImageView
             android:id="@+id/add_picID"
             android:layout_width="27dp"
             android:layout_height="35dp"
@@ -308,6 +315,15 @@
             app:layout_constraintEnd_toStartOf="@+id/line4"
             app:layout_constraintTop_toTopOf="@+id/line3"/>
 
+        <ImageView
+            android:id="@+id/checkVID"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:src="@drawable/transillumination"
+            android:layout_marginStart="26dp"
+            android:layout_marginLeft="26dp"
+            app:layout_constraintStart_toStartOf="@+id/line4"
+            app:layout_constraintTop_toTopOf="@+id/line3"/>
 
         <ImageView
             android:id="@+id/add_videoID"

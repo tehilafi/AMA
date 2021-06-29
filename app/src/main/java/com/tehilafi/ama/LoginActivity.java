@@ -41,10 +41,12 @@ public class LoginActivity extends Activity {
 
     private Button logIn;
     private EditText password, userName, idUser, phone;
-    private String token = null;
     private DatabaseReference reff;
     Users users;
     Users chec_users;
+    String token;
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
 
     private StorageReference storageReff;
     private StorageReference reffS = null;
@@ -52,8 +54,6 @@ public class LoginActivity extends Activity {
 
     public static final String TAG = "MyTag";
 
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if(task.isSuccessful()){
-                            token=task.getResult().getToken();
+                            token = task.getResult().getToken();
                         }else{
                             Toast.makeText( LoginActivity.this, "אי אפשר לעקוב אחר מיקום המכשיר", Toast.LENGTH_SHORT ).show();
                         }
@@ -108,7 +108,7 @@ public class LoginActivity extends Activity {
                 boolean check_token, check_username, check_password, check_id, check_phone;
 
                 //Check if one of the details is missing:
-                if(token.equals( "" ) || token == null)
+                if( token == null || token.equals(""))
                     check_token = false;
                 else
                     check_token = true;
@@ -216,11 +216,15 @@ public class LoginActivity extends Activity {
                                 @Override
                                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                                     if(userName.getText().toString().trim().equals(snapshot.getValue( Users.class ).getUserName()) && password.getText().toString().trim().equals(snapshot.getValue( Users.class ).getPassword()) && phone.getText().toString().trim().equals(snapshot.getValue( Users.class ).getPhone())){
+                                        //set activity_executed inside insert() method.
+                                        SharedPreferences pref = getSharedPreferences("ActivityPREF", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor edt = pref.edit();
+                                        edt.putBoolean("activity_executed", true);
+                                        edt.commit();
+
                                         Intent intent = new Intent(getBaseContext(), MainActivity.class);
                                         startActivity(intent);
                                     }
-                                    else
-                                        Toast.makeText(LoginActivity.this, "אחד הפרטים לא נכונים", Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override

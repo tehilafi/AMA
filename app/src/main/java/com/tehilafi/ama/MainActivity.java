@@ -89,6 +89,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private String location;
 
 
+
+
     // *******************************  Background Service  *******************************
     MyBackgroundService mService = null;
     boolean mBound = false;
@@ -196,8 +198,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-//        getSharedPreferences( "PREFERENCE", MODE_PRIVATE ).edit()
-//                .putBoolean( "isFirstRun", false ).commit();
 
         idUser = getIntent().getStringExtra( "Extra id" );
 
@@ -297,8 +297,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                                 removeLocation.setImageResource(R.drawable.disallow_location);
                                 requestLocation.setImageResource(R.drawable.allow_location_grey);
                                 removeLocation.setEnabled( false );
-                                mService.removeLocationUpdates();
 
+                                mService.removeLocationUpdates();
                             }
                         } );
 
@@ -313,8 +313,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     }
                 } ).check();
-
-
     }
 
 // *******************************  For NavBar  *******************************

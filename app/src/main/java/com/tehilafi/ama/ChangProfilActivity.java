@@ -1,6 +1,7 @@
 package com.tehilafi.ama;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -110,8 +111,14 @@ public class ChangProfilActivity extends Activity {
         profile_image.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CropImage.activity().setAspectRatio( 1, 1 ).start( ChangProfilActivity.this );
-                onClick_profile_image = true;
+                try {
+                    CropImage.activity().setAspectRatio( 1, 1 ).start( ChangProfilActivity.this );
+                    onClick_profile_image = true;
+                }
+                catch (ActivityNotFoundException e){
+                    onClick_profile_image = false;
+
+                }
             }
         });
 
@@ -235,6 +242,7 @@ public class ChangProfilActivity extends Activity {
             imageFileName = "JPEG_" + timeStamp + "." + getFileExt( contentUri );
         }
         else{
+            onClick_profile_image = false;
             Toast.makeText(this, "שגיאה. נסה שוב", Toast.LENGTH_SHORT).show();
         }
     }

@@ -66,7 +66,7 @@ public class AnswerActivity extends Activity {
     private Button btnSave;
     private String iduser;
     private CircleImageView profileID, profileuserID;
-    private ImageView  add_pic, add_video, importent;
+    private ImageView  add_pic, add_video, importent, checkVID, checkPID;
     private ImageView with_ans, starID;
     private int score, numAns, numPIc, numVideo, stars;
     private Boolean importantQuestions, from1 = false, from2 = false, from3 = false ;
@@ -134,6 +134,8 @@ public class AnswerActivity extends Activity {
         starID = findViewById(R.id.starID);
         num_ansID = findViewById(R.id.num_ansID);
         add_pic = findViewById( R.id.add_picID );
+        checkVID = findViewById( R.id.checkVID );
+        checkPID = findViewById( R.id.checkPID );
 
 ///////////////////////////////////////
         answer = new Answer();
@@ -300,8 +302,11 @@ public class AnswerActivity extends Activity {
                     answer.setUserNameAns(mPreferences.getString(getString(R.string.name), ""));
 
                     if(from2){
-                        if (uploadVideoToFirebase( getApplicationContext(), imageFileName1, contentUri1, "null", from, String.valueOf( num_ans + 1 ) ) == true)
+                        if (uploadVideoToFirebase( getApplicationContext(), imageFileName1, contentUri1, "null", from, String.valueOf( num_ans + 1 ) ) == true) {
                             reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
+                            checkVID.setImageResource(R.drawable.ic_baseline_check_24);
+                            checkVID.bringToFront();
+                        }
                         else
                             Toast.makeText( AnswerActivity.this, "העלאה נכשלה", Toast.LENGTH_SHORT ).show();
                     }
@@ -309,8 +314,11 @@ public class AnswerActivity extends Activity {
                         reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
 
                     if(from3) {
-                        if(uploadImageFromCamera(getApplicationContext(), bb, String.valueOf(num_ans + 1)) == true)
-                            reffUser.child(mPreferences.getString(getString(R.string.id), "")).child("numPicture").setValue(numPIc+1);
+                        if(uploadImageFromCamera(getApplicationContext(), bb, String.valueOf(num_ans + 1)) == true) {
+                            reffUser.child( mPreferences.getString( getString( R.string.id ), "" ) ).child( "numPicture" ).setValue( numPIc + 1 );
+                            checkPID.setImageResource( R.drawable.ic_baseline_check_24 );
+                            checkPID.bringToFront();
+                        }
                         else
                             Toast.makeText( AnswerActivity.this, "העלאה נכשלה", Toast.LENGTH_SHORT ).show();
                     }
@@ -370,8 +378,12 @@ public class AnswerActivity extends Activity {
             contentUri = data.getData();
             String timeStamp = new SimpleDateFormat( "yyyyMMdd_HHmmss" ).format( new Date() );
             imageFileName = "JPEG_" + timeStamp;
-            if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf( (int)counter + 1 ) ) == true)
+            if (uploadImageToFirebase( getApplicationContext(), imageFileName, contentUri, "null", from, String.valueOf( (int)counter + 1 ) ) == true) {
                 from1 = true;
+                checkPID.setImageResource(R.drawable.ic_baseline_check_24);
+                checkPID.bringToFront();
+
+            }
             else
                 Toast.makeText( AnswerActivity.this, "העלאה נכשלה", Toast.LENGTH_SHORT ).show();
         }
