@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_splash"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_editor_absoluteX="0dp"
+    app:layout_editor_absoluteY="80dp"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="80dp"
+    tools:context=".SplashScreenActivity">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="315dp"
+        android:layout_height="441.5dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo_locatin"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+
+    <ImageView
+        android:id="@+id/ama"
+        android:layout_width="202dp"
+        android:layout_height="130.6dp"
+        android:padding="5dp"
+        android:src="@drawable/logo"
+        app:layout_constraintBottom_creator="0"
+        app:layout_constraintBottom_toBottomOf="@+id/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_creator="1"
+        app:layout_constraintTop_toTopOf="@+id/logo"
+        app:layout_constraintVertical_bias="0.305"
+        app:layout_editor_absoluteX="359dp"
+        app:layout_editor_absoluteY="104dp"
+        tools:layout_constraintBottom_creator="0"
+        tools:layout_constraintRight_creator="0"
+        tools:layout_constraintTop_creator="0" />
+
+    <ImageView
+        android:id="@+id/s_logo"
+        android:layout_width="132.6dp"
+        android:layout_height="185.9dp"
+        android:padding="5dp"
+        android:src="@drawable/logo_locatin"
+        app:layout_constraintBottom_creator="0"
+        app:layout_constraintBottom_toBottomOf="@+id/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.625"
+        app:layout_constraintRight_creator="1"
+        app:layout_constraintRight_toRightOf="@+id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_creator="1"
+        app:layout_constraintTop_toTopOf="@+id/logo"
+        app:layout_constraintVertical_bias="0.968"
+        app:layout_editor_absoluteX="0dp"
+        app:layout_editor_absoluteY="0dp"
+        tools:layout_constraintBottom_creator="0"
+        tools:layout_constraintRight_creator="0"
+        tools:layout_constraintTop_creator="0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

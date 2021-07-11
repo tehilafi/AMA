@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/a_profil"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_editor_absoluteX="0dp"
+    app:layout_editor_absoluteY="80dp"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="80dp"
+    android:background="@drawable/backgraund"
+    tools:context=".ChangProfilActivity">
+
+
+    <TextView
+        android:id="@+id/usernameID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="שם משתמש"
+        android:textColor="#ffffff"
+        android:textSize="22sp"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profile_imageID"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/profil"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/usernameID" />
+
+    <TextView
+        android:id="@+id/editpID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="עריכת פרופיל"
+        android:textColor="#168a91"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profile_imageID"/>
+
+    <ImageView
+        android:id="@+id/writeID"
+        android:layout_width="14dp"
+        android:layout_height="18dp"
+        android:src="@drawable/write"
+        android:layout_marginBottom="3dp"
+        android:layout_marginStart="3dp"
+        app:layout_constraintStart_toEndOf="@+id/editpID"
+        app:layout_constraintTop_toTopOf="@+id/editpID"
+        android:layout_marginLeft="3dp" />
+
+    <EditText
+        android:id="@+id/user_nameID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="15dp"
+        android:padding="5dp"
+        android:ems="14"
+        android:background="@drawable/rectangle_yellow"
+        android:focusable="true"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center|center_vertical"
+        android:hint="שם משתמש"
+        android:textColor="#777373"
+        android:textSize="16sp"
+        app:layout_constraintLeft_creator="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_creator="0"
+        app:layout_constraintTop_toBottomOf="@+id/editpID"
+        app:layout_editor_absoluteX="16dp"
+        app:layout_editor_absoluteY="140dp"
+        tools:layout_constraintLeft_creator="0"
+        tools:layout_constraintTop_creator="0" />
+
+    <EditText
+        android:id="@+id/passwordID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        android:ems="14"
+        android:background="@drawable/rectangle_yellow"
+        android:focusable="true"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center|center_vertical"
+        android:hint="סיסמה"
+        android:textColor="#777373"
+        android:textSize="16sp"
+        app:layout_constraintLeft_creator="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_creator="0"
+        app:layout_constraintTop_toBottomOf="@+id/user_nameID"
+        app:layout_editor_absoluteX="16dp"
+        app:layout_editor_absoluteY="140dp"
+        tools:layout_constraintLeft_creator="0"
+        tools:layout_constraintTop_creator="0" />
+
+    <EditText
+        android:id="@+id/phoneID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        android:ems="14"
+        android:background="@drawable/rectangle_yellow"
+        android:focusable="true"
+        android:fontFamily="sans-serif-light"
+        android:gravity="center|center_vertical"
+        android:hint="מספר טלפון"
+        android:textColor="#777373"
+        android:textSize="16sp"
+        app:layout_constraintLeft_creator="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_creator="0"
+        app:layout_constraintTop_toBottomOf="@+id/passwordID"
+        app:layout_editor_absoluteX="16dp"
+        app:layout_editor_absoluteY="140dp"
+        tools:layout_constraintLeft_creator="0"
+        tools:layout_constraintTop_creator="0" />
+
+    <ImageView
+        android:id="@+id/ratingID"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/star1"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/phoneID" />
+
+    <TextView
+        android:id="@+id/scoreID"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center"
+        android:text="כל תרומה שלך עוזרת לאחרים, מזכה אותך בנקודות ומקרבת אותך לשלב הבא"
+        android:textColor="#777373"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ratingID"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/detailsID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:paddingBottom="10dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:background="@drawable/rectangle_yellow"
+        app:layout_constraintLeft_creator="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_creator="0"
+        app:layout_constraintTop_toBottomOf="@+id/scoreID"
+        app:layout_editor_absoluteX="16dp"
+        app:layout_editor_absoluteY="140dp"
+        tools:layout_constraintLeft_creator="0"
+        tools:layout_constraintTop_creator="0"
+        android:layout_marginTop="20dp">
+
+
+        <TextView
+            android:id="@+id/like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="לייקים"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/anser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="center"
+            android:text="תשובות"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/like"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/pic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="center"
+            android:text="תמונות"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/anser"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:gravity="center"
+            android:text="סרטונים"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/pic"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+        <ImageView
+            android:id="@+id/likeI"
+            android:layout_width="17dp"
+            android:layout_height="17dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/like_yellow"
+            app:layout_constraintStart_toStartOf="@+id/like"
+            app:layout_constraintTop_toBottomOf="@+id/like" />
+
+        <ImageView
+            android:id="@+id/answerI"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/masseg"
+            app:layout_constraintStart_toStartOf="@+id/anser"
+            app:layout_constraintTop_toBottomOf="@+id/anser" />
+
+        <ImageView
+            android:id="@+id/picI"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/picure"
+            app:layout_constraintStart_toStartOf="@+id/pic"
+            app:layout_constraintTop_toBottomOf="@+id/pic" />
+
+        <ImageView
+            android:id="@+id/videoI"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/video"
+            app:layout_constraintStart_toStartOf="@+id/video"
+            app:layout_constraintTop_toBottomOf="@+id/video" />
+
+        <TextView
+            android:id="@+id/nLID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="7dp"
+            android:gravity="center"
+            android:text="12"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/likeI"
+            app:layout_constraintTop_toBottomOf="@+id/likeI" />
+
+        <TextView
+            android:id="@+id/nAID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="7dp"
+            android:gravity="center"
+            android:text="12"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/answerI"
+            app:layout_constraintTop_toBottomOf="@+id/answerI" />
+
+        <TextView
+            android:id="@+id/nPID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="7dp"
+            android:gravity="center"
+            android:text="14"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/picI"
+            app:layout_constraintTop_toBottomOf="@+id/picI" />
+
+        <TextView
+            android:id="@+id/nVID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="7dp"
+            android:gravity="center"
+            android:text="14"
+            android:textColor="#777373"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/videoI"
+            app:layout_constraintTop_toBottomOf="@+id/videoI" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/btnSaveID"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="עדכן"
+        android:textColor="#168a91"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@drawable/botton"
+        app:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintRight_creator="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailsID"
+        app:layout_constraintVertical_bias="0.183"
+        app:layout_editor_absoluteX="307dp"
+        app:layout_editor_absoluteY="538dp"
+        tools:layout_constraintBottom_creator="0"
+        tools:layout_constraintRight_creator="0" />
+
+    <ProgressBar
+        android:id="@+id/progressBarID"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/navbar_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:itemBackground="@color/exo_white"
+        app:itemIconTint="@color/bnv_tab_item_foreground"
+        app:menu="@menu/bootom_nav"
+        tools:layout_editor_absoluteX="31dp"
+        app:itemIconSize="28dp"
+        app:labelVisibilityMode="unlabeled" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
